@@ -6,7 +6,7 @@ import scala.collection.immutable.Queue
 object Pathfinder {
 
   def findPath(startX : Int, startY : Int, endX : Int, endY : Int, world : World) : Queue[(Int, Int)] = {
-    return null; // TODO
+    return Queue((endX, endY)); // TODO Currently just returns the end point
   }
   
 }
