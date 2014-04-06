@@ -9,7 +9,12 @@ import scalafx.scene.control.Button
 import scalafx.scene.control.Label
 import scalafx.scene.Node
 
+import minirpg.actors._
+import minirpg.model._
+
 object MiniRPGApp extends JFXApp {
+  
+  var player = new Human("Player");
 
   stage = new JFXApp.PrimaryStage {
     title = "MiniRPG";

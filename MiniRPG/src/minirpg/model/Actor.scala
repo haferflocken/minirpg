@@ -7,6 +7,7 @@ import minirpg.util.Pathfinder
 class Actor(iName : String, slotNames : Array[String], defaultPowers : List[Power]) extends Entity {
 
   val slotContents = new LinkedHashMap[String, Gear] ++ slotNames.map(s => (s, null));
+  var equipped : Set[Gear] = Set();
   var powers : Array[Power] = defaultPowers.toArray;
   var path : Queue[(Int, Int)] = null;
   var world : World = null;
@@ -41,11 +42,12 @@ class Actor(iName : String, slotNames : Array[String], defaultPowers : List[Powe
       val equippedG = slotContents(s);
       if (equippedG != null)
         out = equippedG :: out;
-      unequipNoPowersUpdate(equippedG);
+      unequipNoUpdate(equippedG);
       slotContents(s) = g;
     });
     
     initPowers;
+    initEquipped;
     
     return out;
   }
@@ -53,8 +55,9 @@ class Actor(iName : String, slotNames : Array[String], defaultPowers : List[Powe
   // Unequip a piece of gear from this actor.
   // If called with a piece of gear the actor isn't wearing, it'll mess things up.
   def unequip(g : Gear) = {
-    unequipNoPowersUpdate(g);
+    unequipNoUpdate(g);
     initPowers;
+    initEquipped;
   }
   
   // Tell the actor to move to a coordinate.
@@ -66,7 +69,7 @@ class Actor(iName : String, slotNames : Array[String], defaultPowers : List[Powe
   /* * * * * * * * * * * * * *
    * Helper methods.
    * * * * * * * * * * * * * */
-  private def unequipNoPowersUpdate(g : Gear) = {
+  private def unequipNoUpdate(g : Gear) = {
     g.slots.foreach(s => {
       slotContents(s) = null;
     });
@@ -79,5 +82,9 @@ class Actor(iName : String, slotNames : Array[String], defaultPowers : List[Powe
       else
         z ++ p._2.powers;
     }).toArray;
+  }
+  
+  private def initEquipped = {
+    equipped = slotContents.values.toSet;
   }
 }
