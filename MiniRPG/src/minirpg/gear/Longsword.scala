@@ -4,7 +4,7 @@ import minirpg.model._
 
 object Longsword extends Gear {
 
-  override def slots = Array("Weapon");
+  override def slots = Array("Main Hand");
   override def powers = Array(LongswordAttack);
     
 }
