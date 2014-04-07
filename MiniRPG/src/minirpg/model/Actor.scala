@@ -4,18 +4,13 @@ import scala.collection.mutable.LinkedHashMap
 import scala.collection.immutable.Queue
 import minirpg.util.Pathfinder
 
-class Actor(iName : String, slotNames : Array[String], defaultPowers : List[Power]) extends Entity {
+abstract class Actor(val name : String, val slotNames : Array[String], defaultPowers : List[Power]) extends Entity {
 
   val slotContents = new LinkedHashMap[String, Gear] ++ slotNames.map(s => (s, null));
   var equipped : Set[Gear] = Set();
   var powers : Array[Power] = defaultPowers.toArray;
   var path : Queue[(Int, Int)] = null;
   var world : World = null;
-  
-  /* * * * * * * * * * * * * *
-   * Getters.
-   * * * * * * * * * * * * * */
-  def name = iName;
   
   /* * * * * * * * * * * * * *
    * Methods.
