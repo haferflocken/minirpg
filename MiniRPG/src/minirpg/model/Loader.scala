@@ -4,6 +4,6 @@ import java.io.InputStream
 
 trait Loader[E] {
 
-  def load(stream : InputStream) : E;
+  def loadJsonString(data : String) : E;
   
 }

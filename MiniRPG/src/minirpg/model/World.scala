@@ -4,7 +4,8 @@ import scala.collection.mutable.ArraySeq
 
 class World(
     val tileGrid : TileGrid,
-    private var _entities : Vector[Entity]) {
+    private var _entities : Vector[Entity])
+    extends Savable {
   
   def this(tileGrid : TileGrid) = this(tileGrid, Vector[Entity]());
   
@@ -29,13 +30,6 @@ class World(
   def height = tileGrid.height;
   def area = tileGrid.area;
   
-}
-
-object World {
-  
-  def apply() : World = {
-    return null;
-  }
-  
+  def toJsonString() = null;
   
 }

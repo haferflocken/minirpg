@@ -5,6 +5,6 @@ import java.io.InputStream
 
 object TileGridLoader extends Loader[TileGrid] {
 
-  def load(stream : InputStream) : TileGrid = null;
+  def loadJsonString(data : String) : TileGrid = null;
   
 }

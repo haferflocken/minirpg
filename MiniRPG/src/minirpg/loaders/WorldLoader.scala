@@ -5,6 +5,6 @@ import java.io.InputStream
 
 object WorldLoader extends Loader[World] {
 
-  def load(stream : InputStream) : World = null;
+  def loadJsonString(data : String) : World = null;
   
 }

@@ -36,6 +36,6 @@ class TileGrid(
   
   def tileAt(x : Int, y : Int) : Image = tiles(grid(x)(y));
   
-  def toByteArray() = null;
+  def toJsonString() = null;
 
 }
