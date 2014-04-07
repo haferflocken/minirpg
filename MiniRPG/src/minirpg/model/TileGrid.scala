@@ -4,7 +4,13 @@ import scalafx.scene.image.Image
 import scalafx.scene.image.WritableImage
 import scalafx.scene.image.ImageView
 
-class TileGrid(grid : Array[Array[Int]], tiles : Map[Int, Image], val tileWidth : Int, val tileHeight : Int) {
+class TileGrid(
+    grid : Array[Array[Int]],
+    tiles : Map[Int, Image],
+    val tileWidth : Int,
+    val tileHeight : Int)
+    extends Savable {
+  
   def this(grid : Array[Array[Int]], tiles : Map[Int, Image], tileSize : Int) = 
     this(grid, tiles, tileSize, tileSize);
   
@@ -29,5 +35,7 @@ class TileGrid(grid : Array[Array[Int]], tiles : Map[Int, Image], val tileWidth 
   val node = new ImageView(compositeImage);
   
   def tileAt(x : Int, y : Int) : Image = tiles(grid(x)(y));
+  
+  def toByteArray() = null;
 
 }

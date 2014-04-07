@@ -30,3 +30,12 @@ class World(
   def area = tileGrid.area;
   
 }
+
+object World {
+  
+  def apply() : World = {
+    return null;
+  }
+  
+  
+}
