@@ -10,7 +10,6 @@ abstract class Actor(val name : String, val slotNames : Array[String], defaultPo
   var equipped : Set[Gear] = Set();
   var powers : Array[Power] = defaultPowers.toArray;
   var path : Queue[(Int, Int)] = null;
-  var world : World = null;
   
   /* * * * * * * * * * * * * *
    * Methods.
