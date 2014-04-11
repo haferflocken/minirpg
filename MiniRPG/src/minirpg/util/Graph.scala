@@ -3,6 +3,7 @@ package minirpg.util
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.ArrayStack
 import scala.collection.immutable.Queue
+import scala.collection.mutable.PriorityQueue
 
 /**
  * A node in a graph.
@@ -47,8 +48,34 @@ class Graph[K, V](
    * Returns a path from this node to the given node, or null if no path exists.
    */
   def findPath(end : Graph[K, V]) : Queue[Graph[K, V]] = {
-    // TODO
-    null
+    val shortestPaths : PriorityQueue[(Int, Queue[Graph[K, V]])] =
+      new PriorityQueue()(
+          new Ordering[(Int, Queue[Graph[K, V]])] {
+            def compare(a : (Int, Queue[Graph[K, V]]), b : (Int, Queue[Graph[K, V]])) = a._1 compare b._1;
+          });
+    shortestPaths.enqueue((0, Queue(this)));
+    
+    var shortest : (Int, Queue[Graph[K, V]]) = null;
+    do {
+      shortest = shortestPaths.dequeue;
+      val shortEnd = shortest._2.last;
+      if (shortEnd == end) {
+        return shortest._2;
+      }
+      val nextIndex = shortEnd.indexOfLightestConnection;
+      shortestPaths.enqueue((shortest._1 + shortEnd.weights(nextIndex), shortest._2 :+ shortEnd.connections(nextIndex)));
+    } while(true);
+    
+    return null;
+  }
+  
+  def indexOfLightestConnection() : Int = {
+    var minIndex = 0;
+    for (i <- minIndex + 1 until weights.length) {
+      if (weights(i) < weights(minIndex))
+        minIndex = i;
+    }
+    return minIndex;
   }
   
   override def equals(o : Any) : Boolean = {
@@ -86,4 +113,5 @@ object Graph {
       }
     }
   }
+  
 }
