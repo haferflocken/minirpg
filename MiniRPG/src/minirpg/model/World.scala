@@ -59,6 +59,8 @@ class World(
       return null;
     
     val path = startNode.findPath(endNode);
+    if (path == null)
+      return null;
     return path.map(_.id);
   }
   
