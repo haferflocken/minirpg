@@ -1,6 +1,7 @@
 package minirpg.model
 
 import scala.collection.mutable.ArraySeq
+import scala.collection.immutable.Queue
 
 class World(
     val name : String,
@@ -45,6 +46,21 @@ class World(
   val width = tileGrid.width;
   val height = tileGrid.height;
   val area = tileGrid.area;
+  
+  def findPath(x1 : Int, y1 : Int, x2 : Int, y2 : Int) : Queue[(Int, Int)] = {
+    val startId = (x1, y1);
+    val startNode = tileGrid.navMap.getOrElse(startId, null);
+    if (startNode == null)
+      return null;
+    
+    val endId = (x2, y2);
+    val endNode = tileGrid.navMap.getOrElse(endId, null);
+    if (endNode == null)
+      return null;
+    
+    val path = startNode.findPath(endNode);
+    return path.map(_.id);
+  }
   
   def update : Unit = {
     _entities.foreach(updateEntityNodeCoords(_));

@@ -2,7 +2,6 @@ package minirpg.model
 
 import scala.collection.mutable.LinkedHashMap
 import scala.collection.immutable.Queue
-import minirpg.util.Pathfinder
 
 abstract class Actor(val id : String, val name : String, val slotNames : Array[String], defaultPowers : List[Power]) extends Entity {
 
@@ -56,7 +55,7 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
   
   // Tell the actor to move to a coordinate.
   def setMoveTarget(targetX : Int, targetY : Int) = {
-    path = Pathfinder.findPath(x, y, targetX, targetY, world);
+    path = world.findPath(x, y, targetX, targetY);
   }
   
   

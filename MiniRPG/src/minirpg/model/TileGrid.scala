@@ -4,6 +4,8 @@ import minirpg._
 import scalafx.scene.image.Image
 import scalafx.scene.image.WritableImage
 import scalafx.scene.image.ImageView
+import minirpg.util.Graph
+import scala.collection.mutable.ArrayBuffer
 
 class TileGrid(
     _grid : Array[Array[Int]],
@@ -49,6 +51,20 @@ class TileGrid(
   
   val node = new ImageView(compositeImage);
   
+  lazy val navMap : Map[(Int, Int), Graph[(Int, Int), Null]] = {
+    val connections = for(x <- 0 until width; y <- 0 until height if !isSolid(x, y))
+      yield ((x, y), getConnections(x, y));
+    val conMap = connections.toMap;
+    Graph(null, conMap);
+  }
+  
+  def isInBounds(x : Int, y : Int) : Boolean = (x > -1 && y > -1 && x < width && y < height);
+  
+  def getConnections(x : Int, y : Int) : Array[((Int, Int), Int)] = {
+    val neighbors = Array((x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y));
+    return for (n <- neighbors if isInBounds(n._1, n._2) if !isSolid(n._1, n._2)) yield ((n._1, n._2), 1);
+  }
+  
   def tileAt(x : Int, y : Int) : Image = tileMap(tileGrid(x)(y));
   
   def isSolid(x : Int, y : Int) : Boolean = collisionGrid(x)(y);
@@ -56,5 +72,5 @@ class TileGrid(
   def toJsonString() = null;
   
   override def toString() = s"gridDim: $width x $height\ntileDim: $tileWidth x $tileHeight\ngrid: " + _grid.toPrettyString;
-
+  
 }
