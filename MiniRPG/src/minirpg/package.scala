@@ -13,13 +13,21 @@ package object minirpg {
       val subs = for (e <- arr) yield e.mkString("  {", ", ", "}");
       return subs.mkString("{\n", "\n", "\n}");
     }
+    
+    def hasContent : Boolean = {
+      return arr != null && arr.length > 0 && arr(0) != null && arr(0).length > 0;
+    }
   }
   
-  implicit class OpsFor2DArray(val arr : Array[Array[Any]]) {
+  implicit class OpsFor2DArray(val arr : Array[Array[_]]) {
     
     def toPrettyString : String = {
       val subs = for (e <- arr) yield e.mkString("  {", ", ", "}");
       return subs.mkString("{\n", "\n", "\n}");
+    }
+    
+    def hasContent : Boolean = {
+      return arr != null && arr.length > 0 && arr(0) != null && arr(0).length > 0;
     }
   }
   

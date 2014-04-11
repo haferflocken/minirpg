@@ -6,7 +6,7 @@ import scalafx.scene.image.WritableImage
 import scalafx.scene.image.ImageView
 
 class TileGrid(
-    grid : Array[Array[Int]],
+    _grid : Array[Array[Int]],
     tileMap : Map[Int, Image],
     val tileWidth : Int,
     val tileHeight : Int)
@@ -21,8 +21,11 @@ class TileGrid(
   def this(width : Int, height : Int, tileMap : Map[Int, Image], tileSize : Int) =
     this(width, height, tileMap, tileSize, tileSize);
   
-  val width = grid.length;
-  val height = grid(0).length;
+  private val tileGrid = _grid.map(_.map(_.abs));
+  private val collisionGrid = _grid.map(_.map((i : Int) => if (i < 0) true else false));
+  
+  val width = tileGrid.length;
+  val height = tileGrid(0).length;
   val area = width * height;
   
   val tiles = tileMap.values;
@@ -33,7 +36,7 @@ class TileGrid(
   val compositeImage = new WritableImage(pixelWidth, pixelHeight);
   for(x <- 0 to width - 1) {
     for (y <- 0 to height - 1) {
-      val im = tileMap(grid(x)(y));
+      val im = tileMap(tileGrid(x)(y));
       if (im != null) {
         val pRMaybe = im.pixelReader;
         if (!pRMaybe.isEmpty) {
@@ -46,10 +49,12 @@ class TileGrid(
   
   val node = new ImageView(compositeImage);
   
-  def tileAt(x : Int, y : Int) : Image = tileMap(grid(x)(y));
+  def tileAt(x : Int, y : Int) : Image = tileMap(tileGrid(x)(y));
+  
+  def isSolid(x : Int, y : Int) : Boolean = collisionGrid(x)(y);
   
   def toJsonString() = null;
   
-  override def toString() = s"gridDim: $width x $height\ntileDim: $tileWidth x $tileHeight\ngrid: " + grid.toPrettyString;
+  override def toString() = s"gridDim: $width x $height\ntileDim: $tileWidth x $tileHeight\ngrid: " + _grid.toPrettyString;
 
 }
