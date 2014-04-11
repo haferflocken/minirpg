@@ -2,6 +2,10 @@
 	"name" : "World Test",
 	"tileGrid" : "res\ex\world1-tileGrid.json",
 	"entities" : [
-			{ "class" : "Human", "args" : { "name" : "Player", "x" : 2, "y" : 2 } }
+			{
+				"id" : "player",
+				"class" : "Human",
+				"args" : { "name" : "Player", "x" : 2, "y" : 2 }
+			}
 		]
 }

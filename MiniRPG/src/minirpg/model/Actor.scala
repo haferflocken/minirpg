@@ -4,7 +4,7 @@ import scala.collection.mutable.LinkedHashMap
 import scala.collection.immutable.Queue
 import minirpg.util.Pathfinder
 
-abstract class Actor(val name : String, val slotNames : Array[String], defaultPowers : List[Power]) extends Entity {
+abstract class Actor(val id : String, val name : String, val slotNames : Array[String], defaultPowers : List[Power]) extends Entity {
 
   val slotContents = new LinkedHashMap[String, Gear] ++ slotNames.map(s => (s, null));
   var equipped : Set[Gear] = Set();

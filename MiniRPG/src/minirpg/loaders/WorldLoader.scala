@@ -49,6 +49,13 @@ object WorldLoader extends Loader[World] {
   }
   
   private def makeEntity(filePath : String, raw : Map[String, Any]) : Entity = {
+    val rawId = raw.getOrElse("id", null);
+    if (rawId == null || !rawId.isInstanceOf[String]) {
+      warnInvalidField("id", filePath);
+      return null;
+    }
+    val id = rawId.asInstanceOf[String];
+    
     val rawClass = raw.getOrElse("class", null);
     if (rawClass == null || !rawClass.isInstanceOf[String]) {
       warnInvalidField("class", filePath);
@@ -75,7 +82,7 @@ object WorldLoader extends Loader[World] {
       return null;
     }
     
-    val o = Builder.build(className, args);
+    val o = Builder.build(className, id, args);
     if (o == null) 
       return null;
     

@@ -32,6 +32,13 @@ class World(
       _nodes = _nodes.filter(_ != e.node);
   }
   
+  def getEntityById(id : String) : Entity = {
+    val potential = _entities.filter(_.id == id);
+    if (potential.nonEmpty)
+      return potential(0);
+    return null;
+  }
+  
   def entites = _entities;
   def nodes = _nodes;
 

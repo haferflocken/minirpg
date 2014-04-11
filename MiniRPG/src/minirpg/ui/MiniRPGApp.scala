@@ -16,7 +16,7 @@ import minirpg.loaders.WorldLoader
 
 object MiniRPGApp extends JFXApp {
   
-  val world = WorldLoader.loadJsonFile("res\\ex\\world1.json"); //new World("Test", tileGrid, Vector(player));
+  val world = WorldLoader.loadJsonFile("res\\ex\\world1.json");
   println(world);
 
   stage = new JFXApp.PrimaryStage {

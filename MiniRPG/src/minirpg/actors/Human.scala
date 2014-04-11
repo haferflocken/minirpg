@@ -5,8 +5,8 @@ import minirpg.powers._
 import scalafx.scene.shape.Rectangle
 import scalafx.scene.paint.Color
 
-class Human(name : String) extends Actor(
-    name, Array("Head", "Torso", "Legs", "Hands", "Feet", "Main Hand", "Off Hand"), List(Move)) {
+class Human(id : String, name : String) extends Actor(
+    id, name, Array("Head", "Torso", "Legs", "Hands", "Feet", "Main Hand", "Off Hand"), List(Move)) {
   
   val node = new Rectangle() {
     fill = Color.RED;
@@ -17,7 +17,7 @@ class Human(name : String) extends Actor(
 
 object HumanBuilder extends Builder[Human] {
   
-  def build(args : Map[String, Any]) : Human = {
+  def build(id : String, args : Map[String, Any]) : Human = {
     val rawName = args.getOrElse("name", "-no name-");
     if (!rawName.isInstanceOf[String]) {
       println("Argument \"name\" of class \"Human\" must be a string.");
@@ -36,7 +36,7 @@ object HumanBuilder extends Builder[Human] {
       return null;
     }
     val pY = rawY.asInstanceOf[Double].intValue;
-    return new Human(pName) {
+    return new Human(id, pName) {
       x = pX;
       y = pY;
     };
