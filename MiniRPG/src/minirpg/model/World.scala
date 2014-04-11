@@ -3,38 +3,53 @@ package minirpg.model
 import scala.collection.mutable.ArraySeq
 
 class World(
+    val name : String,
     val tileGrid : TileGrid,
     private var _entities : Vector[Entity])
     extends Savable {
   
-  def this(tileGrid : TileGrid) = this(tileGrid, Vector[Entity]());
+  def this(name : String, tileGrid : TileGrid) = this(name, tileGrid, Vector[Entity]());
   
-  _entities.foreach(_.world = this);
-  private var _entityNodes = _entities.map(_.node).filter(_ != null);
+  _entities.foreach((e : Entity) => {
+    e.world = this;
+    updateEntityNodeCoords(e)
+  });
+  private var _nodes = tileGrid.node +: _entities.map(_.node).filter(_ != null);
   
   def addEntity(e : Entity) : Unit = {
     _entities = _entities :+ e;
     e.world = this;
-    if (e.node != null)
-      _entityNodes = _entityNodes :+ e.node;
+    updateEntityNodeCoords(e);
+    
+    if (e.node != null) 
+      _nodes = _nodes :+ e.node;
   }
   
   def removeEntity(e : Entity) : Unit = {
     _entities = _entities.filter(_ != e);
     e.world = null;
     if (e.node != null)
-      _entityNodes = _entityNodes.filter(_ != e.node);
+      _nodes = _nodes.filter(_ != e.node);
   }
   
   def entites = _entities;
-  def entityNodes = _entityNodes;
+  def nodes = _nodes;
 
-  def width = tileGrid.width;
-  def height = tileGrid.height;
-  def area = tileGrid.area;
+  val width = tileGrid.width;
+  val height = tileGrid.height;
+  val area = tileGrid.area;
   
-  def nodes = tileGrid.node +: _entityNodes;
+  def update : Unit = {
+    _entities.foreach(updateEntityNodeCoords(_));
+  }
   
-  def toJsonString() = null;
+  def toJsonString = null;
+  
+  override def toString() = s"$name\n$tileGrid\nentities: " + _entities.mkString(", ");
+  
+  private def updateEntityNodeCoords(e : Entity) : Unit = {
+    e.node.layoutX = e.x * tileGrid.tileWidth;
+    e.node.layoutY = e.y * tileGrid.tileHeight;
+  }
   
 }

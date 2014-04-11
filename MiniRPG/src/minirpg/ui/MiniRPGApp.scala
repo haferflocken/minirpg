@@ -12,23 +12,12 @@ import scalafx.scene.image.Image
 
 import minirpg.actors._
 import minirpg.model._
+import minirpg.loaders.WorldLoader
 
 object MiniRPGApp extends JFXApp {
   
-  val player = new Human("Player") {
-    x = 2;
-    y = 2;
-  };
-  val tileGrid = new TileGrid(
-      Array(
-          Array(1, 1, 1, 1, 1),
-          Array(1, 0, 0, 0, 1),
-          Array(1, 0, 0, 0, 1),
-          Array(1, 0, 0, 0, 1),
-          Array(1, 1, 1, 1, 1)),
-      Map[Int, Image](0 -> null, 1 -> new Image("file:res\\greenSquare.png")),
-      32);
-  val world = new World(tileGrid, Vector(player));
+  val world = WorldLoader.loadJsonFile("res\\ex\\world1.json"); //new World("Test", tileGrid, Vector(player));
+  println(world);
 
   stage = new JFXApp.PrimaryStage {
     title = "MiniRPG";

@@ -10,4 +10,5 @@ trait Entity {
   
   val node : Node;
 
+  override def toString() : String = s"entity at ($x, $y)";
 }

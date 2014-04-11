@@ -2,6 +2,6 @@ package minirpg.model
 
 trait Savable {
   
-  def toJsonString() : String;
+  def toJsonString : String;
 
 }

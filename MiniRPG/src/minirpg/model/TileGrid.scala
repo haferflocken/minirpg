@@ -1,5 +1,6 @@
 package minirpg.model
 
+import minirpg._
 import scalafx.scene.image.Image
 import scalafx.scene.image.WritableImage
 import scalafx.scene.image.ImageView
@@ -48,5 +49,7 @@ class TileGrid(
   def tileAt(x : Int, y : Int) : Image = tileMap(grid(x)(y));
   
   def toJsonString() = null;
+  
+  override def toString() = s"gridDim: $width x $height\ntileDim: $tileWidth x $tileHeight\ngrid: " + grid.toPrettyString;
 
 }

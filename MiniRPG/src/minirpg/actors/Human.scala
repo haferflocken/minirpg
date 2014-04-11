@@ -14,3 +14,34 @@ class Human(name : String) extends Actor(
     height = 32;
   };
 }
+
+object HumanBuilder extends Builder[Human] {
+  
+  def build(args : Map[String, Any]) : Human = {
+    val rawName = args.getOrElse("name", "-no name-");
+    if (!rawName.isInstanceOf[String]) {
+      println("Argument \"name\" of class \"Human\" must be a string.");
+      return null;
+    }
+    val pName = rawName.asInstanceOf[String];
+    val rawX = args.getOrElse("x", null);
+    if (!rawX.isInstanceOf[Double]) {
+      println("Argument \"x\" of class \"Human\" must be a number.");
+      return null;
+    }
+    val pX = rawX.asInstanceOf[Double].intValue;
+    val rawY = args.getOrElse("y", null);
+    if (!rawY.isInstanceOf[Double]) {
+      println("Argument \"y\" of class \"Human\" must be a number.");
+      return null;
+    }
+    val pY = rawY.asInstanceOf[Double].intValue;
+    return new Human(pName) {
+      x = pX;
+      y = pY;
+    };
+  }
+  
+  val buildName = "Human";
+  val buildClass = classOf[Human];
+}
