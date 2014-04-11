@@ -51,11 +51,11 @@ class TileGrid(
   
   val node = new ImageView(compositeImage);
   
-  lazy val navMap : Map[(Int, Int), Graph[(Int, Int), Null]] = {
+  val navMap : Map[(Int, Int), Graph[(Int, Int), Null]] = {
     val connections = for(x <- 0 until width; y <- 0 until height if !isSolid(x, y))
       yield ((x, y), getConnections(x, y));
     val conMap = connections.toMap;
-    Graph(null, conMap);
+    Graph(data = null, rawCons = conMap);
   }
   
   def isInBounds(x : Int, y : Int) : Boolean = (x > -1 && y > -1 && x < width && y < height);

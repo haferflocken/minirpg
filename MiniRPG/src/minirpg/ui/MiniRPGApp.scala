@@ -19,6 +19,8 @@ object MiniRPGApp extends JFXApp {
   val world = WorldLoader.loadJsonFile("res\\ex\\world1.json");
   val player = world.getEntityById("player").asInstanceOf[Actor];
   println(world);
+  println("NavMap: ");
+  println(world.tileGrid.navMap.mkString("\n"));
 
   stage = new JFXApp.PrimaryStage {
     title = "MiniRPG";

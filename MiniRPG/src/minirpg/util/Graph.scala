@@ -54,10 +54,13 @@ class Graph[K, V](
   override def equals(o : Any) : Boolean = {
     if (!o.isInstanceOf[Graph[K, V]])
       return false;
-    return hashCode == o.hashCode;
+    return id == o.asInstanceOf[Graph[K, V]].id;
   }
   
-  override def hashCode : Int = id.hashCode + data.hashCode * 3 + connections.hashCode * 5 + weights.hashCode * 7;
+  override def hashCode : Int = id.hashCode;
+  
+  override def toString =
+    s"id: $id, data: $data, connections: {" + connections.map(_.id).mkString(", ") + "}, weights: {" + weights.mkString(", ") + "}";
   
 }
 
