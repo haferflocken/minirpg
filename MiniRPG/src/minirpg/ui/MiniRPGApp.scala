@@ -17,6 +17,7 @@ import minirpg.loaders.WorldLoader
 object MiniRPGApp extends JFXApp {
   
   val world = WorldLoader.loadJsonFile("res\\ex\\world1.json");
+  val player = world.getEntityById("player").asInstanceOf[Actor];
   println(world);
 
   stage = new JFXApp.PrimaryStage {

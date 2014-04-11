@@ -2,8 +2,8 @@ package minirpg.model
 
 abstract class Power {
 
-  def name : String;
-  def range : Int;
+  val name : String;
+  val range : Int;
   def apply(user : Actor, targets : List[Actor], region : Region) : Unit;
   
 }

@@ -2,7 +2,7 @@ package minirpg.model
 
 abstract class Gear {
   
-  def slots : Array[String];
-  def powers : Array[Power];
+  val slots : Array[String];
+  val powers : Array[Power];
   
 }
