@@ -13,6 +13,8 @@ class Graph[K, V](
     var data : V,
     val connections : ArrayBuffer[Graph[K, V]] = new ArrayBuffer[Graph[K, V]],
     val weights : ArrayBuffer[Int] = new ArrayBuffer[Int]) {
+  
+  type Path = Queue[Graph[K, V]];
 
   /**
    * Connects this node to another node with a given edge weight.
@@ -47,24 +49,35 @@ class Graph[K, V](
   /**
    * Returns a path from this node to the given node, or null if no path exists.
    */
-  def findPath(end : Graph[K, V]) : Queue[Graph[K, V]] = {
-    val shortestPaths : PriorityQueue[(Int, Queue[Graph[K, V]])] =
-      new PriorityQueue()(
-          new Ordering[(Int, Queue[Graph[K, V]])] {
-            def compare(a : (Int, Queue[Graph[K, V]]), b : (Int, Queue[Graph[K, V]])) = a._1 compare b._1;
-          });
-    shortestPaths.enqueue((0, Queue(this)));
+  def findPath(end : Graph[K, V]) : Path = {
+    val paths = new PathQueue[K, V];
+    paths.enqueue(Queue(this), 0);
     
-    var shortest : (Int, Queue[Graph[K, V]]) = null;
-    do {
-      shortest = shortestPaths.dequeue;
-      val shortEnd = shortest._2.last;
-      if (shortEnd == end) {
-        return shortest._2;
+    while(paths.getPriorityAt(0) < Int.MaxValue) {
+      val pair = paths.dequeue;
+      val path = pair._1;
+      val pathLength = pair._2;
+      val last = path.last;
+      val nextIndex = last.indexOfLightestConnection;
+      val next = last.connections(nextIndex);
+      if (next == end) {
+        return path :+ next;
       }
-      val nextIndex = shortEnd.indexOfLightestConnection;
-      shortestPaths.enqueue((shortest._1 + shortEnd.weights(nextIndex), shortest._2 :+ shortEnd.connections(nextIndex)));
-    } while(true);
+      
+      val otherPathIndex = paths.indexOf(next);
+      if (otherPathIndex != -1) {
+        val otherPath = paths.getValueAt(otherPathIndex);
+        val otherPathLength = paths.getPriorityAt(otherPathIndex);
+        if (pathLength < otherPathLength) {
+          paths.removeFrom(otherPathIndex);
+          paths.enqueue(otherPath, Int.MaxValue);
+        }
+        else
+          paths.enqueue(path :+ next, Int.MaxValue);
+      }
+      else
+        paths.enqueue(path :+ next, pathLength + last.weights(nextIndex));
+    }
     
     return null;
   }
