@@ -46,16 +46,42 @@ class PQueue[E] {
     return -1;
   }
   
+  def nonEmpty : Boolean = queue.nonEmpty;
+  
+  override def toString = queue.toString;
+  
   /**
    * A binary search to find where to put a priority.
    */
-  protected def indexFor(priority : Int, start : Int = 0, end : Int = queue.length) : Int = {
-    var check = (start + end)/2;
-    if (check == start || priority == getPriorityAt(check))
+  protected def indexFor(priority : Int, start : Int = 0, end : Int = queue.length - 1) : Int = {
+    if (end < start)
+      return start;
+    
+    val check = (start + end)/2;
+    val checkPriority = getPriorityAt(check);
+    if (checkPriority > priority) {
+      if (check > 0 && getPriorityAt(check - 1) < priority)
+        return check;
+      return indexFor(priority, start, check - 1); 
+    }
+    else if (checkPriority < priority) {
+      if (check + 1 < queue.length && getPriorityAt(check + 1) > priority)
+        return check + 1;
+      return indexFor(priority, check + 1, end);
+    }
+    else
       return check;
-    if (priority < getPriorityAt(check))
-      return indexFor(priority, start, check);
-    return indexFor(priority, check, end);
   }
   
+}
+
+object PQueueTests extends App {
+  val subject = new PQueue[String];
+  
+  subject.enqueue("10a", 10);
+  subject.enqueue("1", 1);
+  subject.enqueue("10b", 10);
+  subject.enqueue("5", 5);
+  
+  println(subject);
 }

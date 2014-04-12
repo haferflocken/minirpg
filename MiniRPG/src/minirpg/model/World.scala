@@ -2,6 +2,7 @@ package minirpg.model
 
 import scala.collection.mutable.ArraySeq
 import scala.collection.immutable.Queue
+import minirpg.util.Graph
 
 class World(
     val name : String,
@@ -49,18 +50,13 @@ class World(
   
   def findPath(x1 : Int, y1 : Int, x2 : Int, y2 : Int) : Queue[(Int, Int)] = {
     val startId = (x1, y1);
-    val startNode = tileGrid.navMap.getOrElse(startId, null);
-    if (startNode == null)
-      return null;
-    
     val endId = (x2, y2);
-    val endNode = tileGrid.navMap.getOrElse(endId, null);
-    if (endNode == null)
-      return null;
     
-    val path = startNode.findPath(endNode);
-    if (path == null)
+    val path = Graph.findPath(startId, endId, tileGrid.navMap);
+    if (path == null) {
+      println("No path: failed to find path.");
       return null;
+    }
     return path.map(_.id);
   }
   

@@ -4,6 +4,8 @@ import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.ArrayStack
 import scala.collection.immutable.Queue
 import scala.collection.mutable.PriorityQueue
+import scala.collection.mutable.ImmutableMapAdaptor
+import scala.collection.mutable.HashMap
 
 /**
  * A node in a graph.
@@ -46,42 +48,6 @@ class Graph[K, V](
     }
   }
   
-  /**
-   * Returns a path from this node to the given node, or null if no path exists.
-   */
-  def findPath(end : Graph[K, V]) : Path = {
-    val paths = new PathQueue[K, V];
-    paths.enqueue(Queue(this), 0);
-    
-    while(paths.getPriorityAt(0) < Int.MaxValue) {
-      val pair = paths.dequeue;
-      val path = pair._1;
-      val pathLength = pair._2;
-      val last = path.last;
-      val nextIndex = last.indexOfLightestConnection;
-      val next = last.connections(nextIndex);
-      if (next == end) {
-        return path :+ next;
-      }
-      
-      val otherPathIndex = paths.indexOf(next);
-      if (otherPathIndex != -1) {
-        val otherPath = paths.getValueAt(otherPathIndex);
-        val otherPathLength = paths.getPriorityAt(otherPathIndex);
-        if (pathLength < otherPathLength) {
-          paths.removeFrom(otherPathIndex);
-          paths.enqueue(otherPath, Int.MaxValue);
-        }
-        else
-          paths.enqueue(path :+ next, Int.MaxValue);
-      }
-      else
-        paths.enqueue(path :+ next, pathLength + last.weights(nextIndex));
-    }
-    
-    return null;
-  }
-  
   def indexOfLightestConnection() : Int = {
     var minIndex = 0;
     for (i <- minIndex + 1 until weights.length) {
@@ -116,6 +82,60 @@ object Graph {
     val gMap = rawData.map((entry : (K, V)) => (entry._1, new Graph[K, V](entry._1, entry._2)));
     connect(gMap, rawCons);
     return gMap;
+  }
+  
+  /**
+   * Find the shortest path through a graph.
+   * Adapted from pseudocode courtesy of Wikipedia.
+   */
+  def findPath[K, V](startId : K, endId : K, nodes : Map[K, Graph[K, V]]) : Queue[Graph[K, V]] = {
+    val startNode = nodes.getOrElse(startId, null);
+    if (startNode == null) {
+      println("No path: failed to get start node.");
+      return null;
+    }
+    
+    val endNode = nodes.getOrElse(endId, null);
+    if (endNode == null) {
+      println("No path: failed to get end node.");
+      return null;
+    }
+    
+    var pq = new PQueue[Graph[K, V]];
+    val dist = new HashMap[Graph[K, V], Int];
+    val previous = new HashMap[Graph[K, V], Graph[K, V]];
+    
+    nodes.foreach((e : (K, Graph[K, V])) => dist.put(e._2, Int.MaxValue));
+    dist.update(startNode, 0);
+    dist.foreach((e : (Graph[K, V], Int)) => pq.enqueue(e._1, e._2));
+    
+    while (pq.nonEmpty) {
+      val uPair = pq.dequeue;
+      val u = uPair._1;
+      val uDist = uPair._2;
+      if (u == endNode) {
+        var outPath = Queue[Graph[K, V]]();
+        var outU = u;
+        while (previous.contains(outU)) {
+          outPath = outU +: outPath;
+          outU = previous(outU);
+        }
+        return outPath;
+      }
+      
+      for (i <- 0 until u.connections.length) {
+        val v = u.connections(i);
+        val alt = uDist + u.weights(i);
+        if (alt < dist(v)) {
+          dist.update(v, alt);
+          previous.update(v, u);
+          pq.remove(v);
+          pq.enqueue(v, alt);
+        }
+      }
+    }
+    
+    return null;
   }
   
   private def connect[K, V](gMap : Map[K, Graph[K, V]], rawCons : Map[K, Array[(K, Int)]]) = {
