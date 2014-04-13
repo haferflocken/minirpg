@@ -2,6 +2,7 @@ package minirpg.model
 
 import scala.collection.mutable.LinkedHashMap
 import scala.collection.immutable.Queue
+import minirpg.entities.Corpse
 
 abstract class Actor(val id : String, val name : String, val slotNames : Array[String], defaultPowers : Vector[Power]) extends Entity {
 
@@ -24,7 +25,13 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
     // Die if any vitals are <= 0.
     for (e <- vitals) {
       if (e._2 <= 0) {
-        // TODO Die.
+        val corpse = new Corpse(world.makeEntityId) {
+          gear = equipped.toList;
+          x = this.x;
+          y = this.y;
+        };
+        world.addEntity(corpse);
+        world.removeEntity(this);
       }
     }
     
