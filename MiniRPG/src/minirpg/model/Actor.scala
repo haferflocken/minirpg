@@ -5,9 +5,10 @@ import scala.collection.immutable.Queue
 
 abstract class Actor(val id : String, val name : String, val slotNames : Array[String], defaultPowers : List[Power]) extends Entity {
 
-  val slotContents = new LinkedHashMap[String, Gear] ++ slotNames.map(s => (s, null));
+  val slotContents = new LinkedHashMap[String, Gear] ++= slotNames.map((_, null)); 
   var equipped : Set[Gear] = Set();
   var powers : Array[Power] = defaultPowers.toArray;
+  val skills = Skills.makeZeroMap;
   var path : Queue[(Int, Int)] = null;
   
   /* * * * * * * * * * * * * *
@@ -41,6 +42,7 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
     
     initPowers;
     initEquipped;
+    initSkills;
     
     return out;
   }
@@ -51,6 +53,7 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
     unequipNoUpdate(g);
     initPowers;
     initEquipped;
+    initSkills;
   }
   
   // Tell the actor to move to a coordinate.
@@ -62,6 +65,7 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
   /* * * * * * * * * * * * * *
    * Helper methods.
    * * * * * * * * * * * * * */
+  
   private def unequipNoUpdate(g : Gear) = {
     g.slots.foreach(s => {
       slotContents(s) = null;
@@ -79,5 +83,16 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
   
   private def initEquipped = {
     equipped = slotContents.values.toSet;
+  }
+  
+  private def initSkills : Unit = {
+    skills ++= Skills.zeroTuples;
+    for (g <- equipped) {
+      for (b <- g.skillBonuses) {
+        val level = skills.get(b._1);
+        if (level.nonEmpty)
+          skills.update(b._1, b._2 + level.get);
+      }
+    }
   }
 }

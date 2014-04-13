@@ -6,6 +6,7 @@ object Longsword extends Gear {
 
   val slots = Array("Main Hand");
   val powers = Array[Power](LongswordAttack);
+  val skillBonuses = Map.empty[String, Int];
     
 }
 
