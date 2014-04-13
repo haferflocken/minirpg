@@ -10,5 +10,7 @@ object Move extends Power {
   override def apply(user : Actor, targets : List[Actor], region : Region) = {
     user.setMoveTarget(region.centerX, region.centerY);
   }
+  
+  override def canUse(user : Actor) = true;
 
 }

@@ -19,4 +19,6 @@ private object LongswordAttack extends Power {
     // TODO
   }
   
+  override def canUse(user : Actor) = true;
+  
 }
