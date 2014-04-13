@@ -69,6 +69,12 @@ class TileGrid(
   
   def isSolid(x : Int, y : Int) : Boolean = collisionGrid(x)(y);
   
+  def screenToTileCoords(screenX : Double, screenY : Double) : (Int, Int) = (screenXToTileX(screenX), screenYToTileY(screenY));
+  
+  def screenXToTileX(screenX : Double) : Int = (screenX / tileWidth).intValue;
+  
+  def screenYToTileY(screenY : Double) : Int = (screenY / tileHeight).intValue;
+  
   def toJsonString() = null;
   
   override def toString() = s"gridDim: $width x $height\ntileDim: $tileWidth x $tileHeight\ngrid: " + _grid.toPrettyString;

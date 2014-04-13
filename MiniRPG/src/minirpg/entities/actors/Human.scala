@@ -9,7 +9,7 @@ import scala.collection.mutable.LinkedHashMap
 class Human(id : String, name : String) extends Actor(
     id, name, Array("Head", "Torso", "Legs", "Hands", "Feet", "Main Hand", "Off Hand"), Vector(Move)) {
   
-  val vitals = new LinkedHashMap[String, Int] ++= Map("Blood" -> 100);
+  val vitals = new LinkedHashMap[String, Int] ++= Map("Blood" -> 100, "Oxygen" -> 100, "Energy" -> 100);
   
   val node = new Rectangle() {
     fill = Color.RED;

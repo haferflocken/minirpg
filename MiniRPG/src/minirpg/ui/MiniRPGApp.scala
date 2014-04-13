@@ -9,10 +9,10 @@ import scalafx.scene.control.Button
 import scalafx.scene.control.Label
 import scalafx.scene.Node
 import scalafx.scene.image.Image
-
 import minirpg.entities.actors._
 import minirpg.model._
 import minirpg.loaders.WorldLoader
+import scalafx.scene.input.MouseEvent
 
 object MiniRPGApp extends JFXApp {
   
@@ -23,9 +23,6 @@ object MiniRPGApp extends JFXApp {
   println("NavMap: ");
   println(world.tileGrid.navMap.mkString("\n"));
   
-  player.setMoveTarget(2, 2);
-  println(player.path);
-  
   stage = new JFXApp.PrimaryStage {
     title = "MiniRPG";
     width = 800;
@@ -34,6 +31,15 @@ object MiniRPGApp extends JFXApp {
       fill = Color.BLACK;
       content = world.nodes ++ world.debugPathNodes;
     };
+    handleMouse(scene());
+  }
+  
+  private def handleMouse(scene : Scene) {
+    scene.onMouseClicked = (me : MouseEvent) => {
+      val tileCoords = world.tileGrid.screenToTileCoords(me.x, me.y);
+      player.setMoveTarget(tileCoords._1, tileCoords._2);
+      scene.content = world.nodes ++ world.debugPathNodes;
+    }
   }
   
 }

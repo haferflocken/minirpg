@@ -60,6 +60,7 @@ class World(
     val path = Graph.findPath(startId, endId, tileGrid.navMap);
     if (path == null) {
       println("No path: failed to find path.");
+      _debugPathNodes = Nil;
       return null;
     }
     val out = path.map(_.id);
@@ -90,7 +91,7 @@ class World(
           centerX = point._1 * tileGrid.tileWidth + tileGrid.tileWidth / 2;
           centerY = point._2 * tileGrid.tileHeight + tileGrid.tileHeight / 2;
           radius = (tileGrid.tileWidth / 4) min (tileGrid.tileHeight / 4);
-          fill = Color.rgb(255 * (length - i) / length, 255 * i / length, 0);
+          fill = Color.rgb(255 * (length - i - 1) / length, 255 * (i + 1) / length, 0);
         } :: _debugPathNodes;
         i = i + 1;
       }

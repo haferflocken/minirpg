@@ -17,7 +17,9 @@ class GearEntity(val id : String, val gear : Gear) extends Entity {
   def beUsed(user : Entity) : Unit = {
     if (user.isInstanceOf[Actor]) {
       val actor = user.asInstanceOf[Actor];
-      // TODO give actor the option to equip the gear.
+      // TODO give actor the option to equip the gear or just examine it.
+      actor.equip(gear);
+      world.removeEntity(this);
     }
   }
   
