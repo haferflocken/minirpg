@@ -3,6 +3,9 @@ package minirpg.model
 import scala.collection.mutable.ArraySeq
 import scala.collection.immutable.Queue
 import minirpg.util.Graph
+import scalafx.scene.Node
+import scalafx.scene.shape.Circle
+import scalafx.scene.paint.Color
 
 class World(
     val name : String,
@@ -17,6 +20,7 @@ class World(
     updateEntityNodeCoords(e)
   });
   private var _nodes = tileGrid.node +: _entities.map(_.node).filter(_ != null);
+  private var _debugPathNodes : List[Node] = Nil;
   
   def addEntity(e : Entity) : Unit = {
     _entities = _entities :+ e;
@@ -43,6 +47,7 @@ class World(
   
   def entites = _entities;
   def nodes = _nodes;
+  def debugPathNodes = _debugPathNodes;
 
   val width = tileGrid.width;
   val height = tileGrid.height;
@@ -57,7 +62,9 @@ class World(
       println("No path: failed to find path.");
       return null;
     }
-    return path.map(_.id);
+    val out = path.map(_.id);
+    debugDisplayPath(out);
+    return out;
   }
   
   def update : Unit = {
@@ -73,4 +80,20 @@ class World(
     e.node.layoutY = e.y * tileGrid.tileHeight;
   }
   
+  private def debugDisplayPath(path : Queue[(Int, Int)]) = {
+    if (minirpg.global_debugPaths) {
+      _debugPathNodes = Nil;
+      var i = 0;
+      val length = path.length;
+      for (point <- path) {
+        _debugPathNodes = new Circle() {
+          centerX = point._1 * tileGrid.tileWidth + tileGrid.tileWidth / 2;
+          centerY = point._2 * tileGrid.tileHeight + tileGrid.tileHeight / 2;
+          radius = (tileGrid.tileWidth / 4) min (tileGrid.tileHeight / 4);
+          fill = Color.rgb(255 * (length - i) / length, 255 * i / length, 0);
+        } :: _debugPathNodes;
+        i = i + 1;
+      }
+    }
+  }
 }

@@ -1,6 +1,16 @@
 
 package object minirpg {
   
+  /*
+   * Global variables.
+   */
+  var global_debugPaths : Boolean = true;
+  // TODO add more over time
+  
+  /*
+   * Implicit class definitions.
+   */
+  
   implicit class OpsForString(val str : java.lang.String) {
     import scala.util.control.Exception.catching
     

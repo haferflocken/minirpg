@@ -23,7 +23,7 @@ object MiniRPGApp extends JFXApp {
   println("NavMap: ");
   println(world.tileGrid.navMap.mkString("\n"));
   
-  player.setMoveTarget(5, 7);
+  player.setMoveTarget(5, 8);
   println(player.path);
   
   stage = new JFXApp.PrimaryStage {
@@ -32,7 +32,7 @@ object MiniRPGApp extends JFXApp {
     height = 600;
     scene = new Scene {
       fill = Color.BLACK;
-      content = world.nodes;
+      content = world.nodes ++ world.debugPathNodes;
     };
   }
   
