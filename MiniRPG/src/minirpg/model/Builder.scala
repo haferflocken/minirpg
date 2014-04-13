@@ -1,6 +1,7 @@
 package minirpg.model
 
 import scala.collection.mutable.HashMap
+import minirpg.entities.actors.HumanBuilder
 
 trait Builder[E] {
 
@@ -12,9 +13,11 @@ trait Builder[E] {
 
 final object Builder {
   
-  private val builders : HashMap[String, Builder[_]] = new HashMap[String, Builder[_]]();
-  
-  def register(b : Builder[_]) : Unit = builders.put(b.buildName, b);
+  private val builders =
+    Vector[Builder[_]](
+      GearEntityBuilder,
+      HumanBuilder
+    ).map((e) => (e.buildName, e)).toMap[String, Builder[_]];
   
   def build(name : String, id : String, args : Map[String, Any]) : Any = {
     val bldr = builders.getOrElse(name, null);
@@ -29,7 +32,5 @@ final object Builder {
       return null;
     return bldr.buildClass;
   }
-  
-  register(minirpg.actors.HumanBuilder)
   
 }

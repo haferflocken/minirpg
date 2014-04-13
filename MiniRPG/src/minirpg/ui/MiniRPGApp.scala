@@ -10,7 +10,7 @@ import scalafx.scene.control.Label
 import scalafx.scene.Node
 import scalafx.scene.image.Image
 
-import minirpg.actors._
+import minirpg.entities.actors._
 import minirpg.model._
 import minirpg.loaders.WorldLoader
 
@@ -23,7 +23,7 @@ object MiniRPGApp extends JFXApp {
   println("NavMap: ");
   println(world.tileGrid.navMap.mkString("\n"));
   
-  player.setMoveTarget(5, 8);
+  player.setMoveTarget(2, 2);
   println(player.path);
   
   stage = new JFXApp.PrimaryStage {

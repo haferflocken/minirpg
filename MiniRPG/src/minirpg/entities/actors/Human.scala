@@ -1,4 +1,4 @@
-package minirpg.actors
+package minirpg.entities.actors
 
 import minirpg.model._
 import minirpg.powers._
@@ -18,20 +18,20 @@ class Human(id : String, name : String) extends Actor(
 object HumanBuilder extends Builder[Human] {
   
   def build(id : String, args : Map[String, Any]) : Human = {
-    val rawName = args.getOrElse("name", "-no name-");
-    if (!rawName.isInstanceOf[String]) {
+    val rawName = args.getOrElse("name", null);
+    if (rawName == null || !rawName.isInstanceOf[String]) {
       println("Argument \"name\" of class \"Human\" must be a string.");
       return null;
     }
     val pName = rawName.asInstanceOf[String];
     val rawX = args.getOrElse("x", null);
-    if (!rawX.isInstanceOf[Double]) {
+    if (rawX == null || !rawX.isInstanceOf[Double]) {
       println("Argument \"x\" of class \"Human\" must be a number.");
       return null;
     }
     val pX = rawX.asInstanceOf[Double].intValue;
     val rawY = args.getOrElse("y", null);
-    if (!rawY.isInstanceOf[Double]) {
+    if (rawY == null || !rawY.isInstanceOf[Double]) {
       println("Argument \"y\" of class \"Human\" must be a number.");
       return null;
     }

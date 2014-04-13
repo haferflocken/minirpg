@@ -11,6 +11,8 @@ trait Entity {
   var world : World = null;
   
   val node : Node;
+  
+  def beUsed(user : Entity) : Unit;
 
   override def toString() : String = s"$id ($x, $y)";
 }

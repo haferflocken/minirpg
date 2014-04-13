@@ -2,15 +2,18 @@ package minirpg.gear
 
 import minirpg.model._
 
-object Longsword extends Gear {
+object Shortsword extends Gear {
 
+  val name = "Shortsword";
   val slots = Array("Main Hand");
-  val powers = Array[Power](LongswordAttack);
+  val powers = Array[Power](ShortswordAttack);
   val skillBonuses = Map.empty[String, Int];
+  
+  def makeEntity = null;
     
 }
 
-private object LongswordAttack extends Power {
+private object ShortswordAttack extends Power {
   
   val name = "Attack";
   val range = 1;
