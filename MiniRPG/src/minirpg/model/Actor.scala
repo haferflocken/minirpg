@@ -16,11 +16,11 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
    * Methods.
    * * * * * * * * * * * * * */
   
-  def beUsed(user : Entity) : Unit = {
+  override def beUsed(user : Entity) : Unit = {
     // TODO
   }
   
-  def tick : Unit = {
+  override def tick : Unit = {
     // Die if any vitals are <= 0.
     for (e <- vitals) {
       if (e._2 <= 0) {
