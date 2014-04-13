@@ -1,6 +1,6 @@
 package minirpg.model
 
-abstract class Gear {
+trait Gear {
   
   val slots : Array[String];
   val powers : Array[Power];
