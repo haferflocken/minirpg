@@ -5,11 +5,10 @@ import minirpg.model._
 object Shortsword extends Gear {
 
   val name = "Shortsword";
-  val slots = Array("Main Hand");
-  val powers = Array[Power](ShortswordAttack);
+  val description = "Sharp enough to be effective.";
+  val slots = Vector("Main Hand");
+  val powers = Vector[Power](ShortswordAttack);
   val skillBonuses = Map.empty[String, Int];
-  
-  def makeEntity = null;
     
 }
 

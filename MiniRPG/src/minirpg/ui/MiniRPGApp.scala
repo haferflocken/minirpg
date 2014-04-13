@@ -17,7 +17,7 @@ import scalafx.scene.input.MouseEvent
 object MiniRPGApp extends JFXApp {
   
   val world = WorldLoader.loadJsonFile("res\\ex\\world1.json");
-  val player = world.getEntityById("player").asInstanceOf[Actor];
+  val player = world.getEntitiesById("player")(0).asInstanceOf[Actor];
   
   println(world);
   

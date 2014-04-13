@@ -10,8 +10,10 @@ object Skills {
   val melee = "Melee";
   val pointing = "Pointing";
   val style = "Style";
+  
+  val impactRes = "Impact Resistance";
 
-  val all = Vector(agility, archery, blocking, melee, pointing, style);
+  val all = Vector(agility, archery, blocking, melee, pointing, style, impactRes);
   val zeroTuples = all.map((_, 0));
   
   def makeZeroMap = new LinkedHashMap[String, Int] ++= zeroTuples;

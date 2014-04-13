@@ -6,6 +6,7 @@ import minirpg.util.Graph
 import scalafx.scene.Node
 import scalafx.scene.shape.Circle
 import scalafx.scene.paint.Color
+import scala.util.Random
 
 class World(
     val name : String,
@@ -38,12 +39,11 @@ class World(
       _nodes = _nodes.filter(_ != e.node);
   }
   
-  def getEntityById(id : String) : Entity = {
-    val potential = _entities.filter(_.id == id);
-    if (potential.nonEmpty)
-      return potential(0);
-    return null;
+  def getEntitiesById(id : String) : Vector[Entity] = {
+    return _entities.filter(_.id == id);
   }
+  
+  def makeEntityId : String = Random.alphanumeric.mkString;
   
   def entites = _entities;
   def nodes = _nodes;

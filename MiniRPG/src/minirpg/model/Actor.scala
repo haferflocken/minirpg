@@ -8,7 +8,7 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
   val vitals : LinkedHashMap[String, Int];
   val slotContents = new LinkedHashMap[String, Gear] ++= slotNames.map((_, null)); 
   var equipped : Set[Gear] = Set();
-  var powers : Vector[Power] = defaultPowers.toVector;
+  var powers : Vector[Power] = defaultPowers;
   val skills = Skills.makeZeroMap;
   var path : Queue[(Int, Int)] = null;
   
@@ -52,8 +52,8 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
       slotContents(s) = g;
     });
     
-    initPowers;
     initEquipped;
+    initPowers;
     initSkills;
     
     return out;
@@ -63,8 +63,8 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
   // If called with a piece of gear the actor isn't wearing, it'll mess things up.
   def unequip(g : Gear) = {
     unequipNoUpdate(g);
-    initPowers;
     initEquipped;
+    initPowers;
     initSkills;
   }
   
@@ -84,15 +84,15 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
     });
   }
   
-  private def initPowers = {
-    powers = slotContents.foldLeft(defaultPowers)((z : Vector[Power], p : (String, Gear)) => {
-      if (p._2 == null) z
-      else z ++ p._2.powers
-    });
-  }
-  
   private def initEquipped = {
     equipped = slotContents.values.toSet;
+  }
+  
+  private def initPowers = {
+    powers = defaultPowers;
+    for (g <- equipped if g.powers != null) {
+      powers = powers ++ g.powers;
+    }
   }
   
   private def initSkills : Unit = {
