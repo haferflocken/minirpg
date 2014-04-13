@@ -5,6 +5,7 @@ import scala.collection.immutable.Queue
 
 abstract class Actor(val id : String, val name : String, val slotNames : Array[String], defaultPowers : Vector[Power]) extends Entity {
 
+  val vitals : LinkedHashMap[String, Int];
   val slotContents = new LinkedHashMap[String, Gear] ++= slotNames.map((_, null)); 
   var equipped : Set[Gear] = Set();
   var powers : Vector[Power] = defaultPowers.toVector;
@@ -20,6 +21,13 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
   }
   
   def tick : Unit = {
+    // Die if any vitals are <= 0.
+    for (e <- vitals) {
+      if (e._2 <= 0) {
+        // TODO Die.
+      }
+    }
+    
     // Move along the path.
     if (path != null) {
       val next = path.dequeue;

@@ -4,9 +4,12 @@ import minirpg.model._
 import minirpg.powers._
 import scalafx.scene.shape.Rectangle
 import scalafx.scene.paint.Color
+import scala.collection.mutable.LinkedHashMap
 
 class Human(id : String, name : String) extends Actor(
     id, name, Array("Head", "Torso", "Legs", "Hands", "Feet", "Main Hand", "Off Hand"), Vector(Move)) {
+  
+  val vitals = new LinkedHashMap[String, Int] ++= Map("Blood" -> 100);
   
   val node = new Rectangle() {
     fill = Color.RED;
