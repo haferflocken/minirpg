@@ -68,8 +68,11 @@ class World(
     return out;
   }
   
-  def update : Unit = {
-    _entities.foreach(updateEntityNodeCoords(_));
+  def tick : Unit = {
+    for (e <- _entities) {
+      e.tick;
+      updateEntityNodeCoords(e);
+    }
   }
   
   def toJsonString = null;

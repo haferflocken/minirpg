@@ -13,6 +13,7 @@ import minirpg.entities.actors._
 import minirpg.model._
 import minirpg.loaders.WorldLoader
 import scalafx.scene.input.MouseEvent
+import scalafx.scene.input.KeyEvent
 
 object MiniRPGApp extends JFXApp {
   
@@ -30,6 +31,7 @@ object MiniRPGApp extends JFXApp {
     };
     setupContent(scene());
     handleMouse(scene());
+    handleKeys(scene());
   }
   
   private def setupContent(scene : Scene) : Unit = {
@@ -41,6 +43,12 @@ object MiniRPGApp extends JFXApp {
       val tileCoords = world.tileGrid.screenToTileCoords(me.x, me.y);
       player.setMoveTarget(tileCoords._1, tileCoords._2);
       setupContent(scene);
+    }
+  }
+  
+  private def handleKeys(scene : Scene) : Unit = {
+    scene.onKeyPressed = (ke : KeyEvent) => {
+      world.tick;
     }
   }
   

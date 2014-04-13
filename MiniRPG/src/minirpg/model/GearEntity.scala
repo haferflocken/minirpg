@@ -14,6 +14,8 @@ class GearEntity(val id : String, val gear : Gear) extends Entity {
     height = 32;
   };
   
+  def tick : Unit = {}
+  
   def beUsed(user : Entity) : Unit = {
     if (user.isInstanceOf[Actor]) {
       val actor = user.asInstanceOf[Actor];
