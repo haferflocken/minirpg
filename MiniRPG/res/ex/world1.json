@@ -5,7 +5,7 @@
 			{
 				"id" : "player",
 				"class" : "Human",
-				"args" : { "name" : "Player", "x" : 3, "y" : 1 }
+				"args" : { "name" : "Player", "x" : 11, "y" : 12 }
 			}
 		]
 }

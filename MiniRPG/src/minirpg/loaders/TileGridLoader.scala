@@ -61,7 +61,7 @@ object TileGridLoader extends Loader[TileGrid] {
         return null;
       buff = col +: buff;
     });
-    return buff.reverse.toArray;
+    return buff.toArray;
   }
   
   private def makeCol(filePath : String, raw : List[Any]) : Array[Int] = {
