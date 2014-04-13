@@ -7,7 +7,7 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
 
   val slotContents = new LinkedHashMap[String, Gear] ++= slotNames.map((_, null)); 
   var equipped : Set[Gear] = Set();
-  var powers : Array[Power] = defaultPowers.toArray;
+  var powers : Vector[Power] = defaultPowers.toVector;
   val skills = Skills.makeZeroMap;
   var path : Queue[(Int, Int)] = null;
   
@@ -82,7 +82,7 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
         z;
       else
         z ++ p._2.powers;
-    }).toArray;
+    }).toVector;
   }
   
   private def initEquipped = {
