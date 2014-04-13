@@ -1,6 +1,6 @@
 package minirpg.model
 
-abstract class Power {
+trait Power {
 
   val name : String;
   val range : Int;
