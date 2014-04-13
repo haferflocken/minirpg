@@ -6,7 +6,7 @@ import scalafx.scene.shape.Rectangle
 import scalafx.scene.paint.Color
 
 class Human(id : String, name : String) extends Actor(
-    id, name, Array("Head", "Torso", "Legs", "Hands", "Feet", "Main Hand", "Off Hand"), List(Move)) {
+    id, name, Array("Head", "Torso", "Legs", "Hands", "Feet", "Main Hand", "Off Hand"), Vector(Move)) {
   
   val node = new Rectangle() {
     fill = Color.RED;

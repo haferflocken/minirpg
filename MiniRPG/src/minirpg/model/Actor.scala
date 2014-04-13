@@ -3,7 +3,7 @@ package minirpg.model
 import scala.collection.mutable.LinkedHashMap
 import scala.collection.immutable.Queue
 
-abstract class Actor(val id : String, val name : String, val slotNames : Array[String], defaultPowers : List[Power]) extends Entity {
+abstract class Actor(val id : String, val name : String, val slotNames : Array[String], defaultPowers : Vector[Power]) extends Entity {
 
   val slotContents = new LinkedHashMap[String, Gear] ++= slotNames.map((_, null)); 
   var equipped : Set[Gear] = Set();
@@ -77,12 +77,10 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
   }
   
   private def initPowers = {
-    powers = slotContents.foldLeft(defaultPowers)((z : List[Power], p : (String, Gear)) => {
-      if (p._2 == null)
-        z;
-      else
-        z ++ p._2.powers;
-    }).toVector;
+    powers = slotContents.foldLeft(defaultPowers)((z : Vector[Power], p : (String, Gear)) => {
+      if (p._2 == null) z
+      else z ++ p._2.powers
+    });
   }
   
   private def initEquipped = {
