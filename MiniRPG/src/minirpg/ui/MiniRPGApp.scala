@@ -20,8 +20,6 @@ object MiniRPGApp extends JFXApp {
   val player = world.getEntityById("player").asInstanceOf[Actor];
   
   println(world);
-  println("NavMap: ");
-  println(world.tileGrid.navMap.mkString("\n"));
   
   stage = new JFXApp.PrimaryStage {
     title = "MiniRPG";
@@ -29,16 +27,20 @@ object MiniRPGApp extends JFXApp {
     height = 600;
     scene = new Scene {
       fill = Color.BLACK;
-      content = world.nodes ++ world.debugPathNodes;
     };
+    setupContent(scene());
     handleMouse(scene());
   }
   
-  private def handleMouse(scene : Scene) {
+  private def setupContent(scene : Scene) : Unit = {
+    scene.content = world.nodes ++ world.debugPathNodes;
+  }
+  
+  private def handleMouse(scene : Scene) : Unit = {
     scene.onMouseClicked = (me : MouseEvent) => {
       val tileCoords = world.tileGrid.screenToTileCoords(me.x, me.y);
       player.setMoveTarget(tileCoords._1, tileCoords._2);
-      scene.content = world.nodes ++ world.debugPathNodes;
+      setupContent(scene);
     }
   }
   
