@@ -32,6 +32,7 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
         };
         world.addEntity(corpse);
         world.removeEntity(this);
+        return;
       }
     }
     
