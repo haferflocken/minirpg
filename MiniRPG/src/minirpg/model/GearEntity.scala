@@ -1,17 +1,20 @@
 package minirpg.model
 
+import scalafx.Includes.handle
 import scalafx.scene.Node
 import scalafx.scene.shape.Rectangle
 import scalafx.scene.paint.Color
 import scala.collection.mutable.HashMap
 import minirpg.gearMap
 import minirpg.gear._
-import scalafx.scene.image.ImageView
-import scalafx.scene.image.Image
+import scalafx.scene.image.{ ImageView, Image }
+import minirpg.ui.MiniRPGApp
+import scalafx.scene.control.Tooltip
 
 class GearEntity(val id : String, val gear : Gear) extends Entity {
   
   val node : Node = new ImageView(GearEntity.image);
+  Tooltip.install(node, gear.name);
   
   override def beUsedBy(user : Entity) : Unit = {
     if (user.isInstanceOf[Actor]) {

@@ -1,6 +1,7 @@
 package minirpg.model
 
 import scala.collection.immutable.Map;
+import scalafx.scene.image.Image
 
 trait Gear {
   
@@ -9,6 +10,8 @@ trait Gear {
   val slots : Vector[String];
   val powers : Vector[Power];
   val skillBonuses : Map[String, Int];
+  
+  lazy val equippedImages : Vector[Image] = null; // 0 is south, 1 is east, 2 is north, 3 is west
   
   def makeEntity(id : String) : Entity = new GearEntity(id, this);
   
