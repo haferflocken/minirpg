@@ -18,3 +18,15 @@ trait Entity {
 
   override def toString() : String = s"$id ($x, $y)";
 }
+
+abstract class EntityBuilder[E <: Entity] extends Builder[Entity] {
+  
+  def extractCoords(args : Map[String, Any]) : (Int, Int) = {
+    val pX = extract[Double]("x", args, Double.MinValue);
+    val pY = extract[Double]("y", args, Double.MinValue);
+    if (pX == Double.MinValue || pY == Double.MinValue)
+      return null;
+    return (pX.intValue, pY.intValue);
+  }
+  
+}

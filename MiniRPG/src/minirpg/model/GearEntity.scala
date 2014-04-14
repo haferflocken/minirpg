@@ -4,6 +4,7 @@ import scalafx.scene.Node
 import scalafx.scene.shape.Rectangle
 import scalafx.scene.paint.Color
 import scala.collection.mutable.HashMap
+import minirpg.gearMap
 import minirpg.gear._
 
 class GearEntity(val id : String, val gear : Gear) extends Entity {
@@ -26,11 +27,6 @@ class GearEntity(val id : String, val gear : Gear) extends Entity {
 }
 
 object GearEntityBuilder extends Builder[GearEntity] {
-  
-  private val gearMap =
-    Vector[Gear](
-        Shortsword
-    ).map((e) => (e.name, e)).toMap[String, Gear];
   
   def build(id : String, args : Map[String, Any]) : GearEntity = {
     val rawType = args.getOrElse("type", null);

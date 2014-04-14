@@ -4,9 +4,12 @@
 	"entities" : [
 			{	"id" : "player",
 				"class" : "Human",
-				"args" : { "name" : "Player", "x" : 11, "y" : 12 } },
+				"args" : {	"name" : "Player",
+							"x" : 11, "y" : 12,
+							"gear" : [ "Shortsword" ] } },
 			{	"id" : "sword1",
 				"class" : "Gear",
-				"args" : { "type" : "Shortsword", "x" : 11, "y" : 10 } }
+				"args" : {	"type" : "Shortsword",
+							"x" : 11, "y" : 10 } }
 		]
 }

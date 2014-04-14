@@ -1,8 +1,23 @@
 
+import minirpg.model._
+import minirpg.gear._
+import minirpg.entities.actors._
+
 package object minirpg {
   
   val TENTOTHE9 : Long = 1000000000;
   val TENTOTHE11 : Long = TENTOTHE9 * 100;
+  
+  val gearMap =
+    Vector[Gear](
+        Shortsword
+    ).map((e) => (e.name, e)).toMap[String, Gear];
+  
+  val builderMap =
+    Vector[Builder[_]](
+      GearEntityBuilder,
+      HumanBuilder
+    ).map((e) => (e.buildName, e)).toMap[String, Builder[_]];
   
   /*
    * Global variables.

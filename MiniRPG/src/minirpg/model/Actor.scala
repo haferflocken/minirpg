@@ -3,6 +3,8 @@ package minirpg.model
 import scala.collection.mutable.LinkedHashMap
 import scala.collection.immutable.Queue
 import minirpg.entities.Corpse
+import scala.util.parsing.json.JSONArray
+import minirpg.gearMap
 
 abstract class Actor(
     val id : String,
@@ -125,4 +127,33 @@ abstract class Actor(
       }
     }
   }
+}
+
+abstract class ActorBuilder[A <: Actor] extends EntityBuilder[A] {
+  
+  def extractName(args : Map[String, Any]) : String = extract[String]("name", args, null);
+  
+  def extractGear(args : Map[String, Any]) : List[Gear] = {
+    val jsonGear = extract[JSONArray]("gear", args, null);
+    if (jsonGear == null)
+      return null;
+    var out : List[Gear] = Nil;
+    for (v <- jsonGear.list) {
+      if (v == null)
+        println("Gear in an actor cannot be null.");
+      else if (!v.isInstanceOf[String])
+        println("Gear names must be strings.");
+      else {
+        val gString = v.asInstanceOf[String];
+        val g = gearMap.getOrElse(gString, null);
+        if (g == null)
+          println("Failed to find gear of type \"" + gString + "\".");
+        else {
+          out = g :: out;
+        }
+      }
+    }
+    return out;
+  }
+  
 }

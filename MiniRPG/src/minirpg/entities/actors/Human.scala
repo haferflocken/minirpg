@@ -11,7 +11,7 @@ class Human(id : String, name : String) extends Actor(
     name,
     Array("Head", "Torso", "Legs", "Hands", "Feet", "Main Hand", "Off Hand"),
     Vector(Move),
-    Skills.zeroMap ++ Map(Skills.speed -> 100)) {
+    Skills.zeroMap ++ Map(Skills.speed -> 200)) {
   
   val vitals = new LinkedHashMap[String, Int] ++= Map("Blood" -> 100, "Oxygen" -> 100, "Energy" -> 100);
   
@@ -22,30 +22,18 @@ class Human(id : String, name : String) extends Actor(
   };
 }
 
-object HumanBuilder extends Builder[Human] {
+object HumanBuilder extends ActorBuilder[Human] {
   
   def build(id : String, args : Map[String, Any]) : Human = {
-    val rawName = args.getOrElse("name", null);
-    if (rawName == null || !rawName.isInstanceOf[String]) {
-      println("Argument \"name\" of class \"Human\" must be a string.");
+    val name = extractName(args);
+    val pCoords = extractCoords(args);
+    val gear = extractGear(args);
+    if (name == null || pCoords == null || gear == null)
       return null;
-    }
-    val pName = rawName.asInstanceOf[String];
-    val rawX = args.getOrElse("x", null);
-    if (rawX == null || !rawX.isInstanceOf[Double]) {
-      println("Argument \"x\" of class \"Human\" must be a number.");
-      return null;
-    }
-    val pX = rawX.asInstanceOf[Double].intValue;
-    val rawY = args.getOrElse("y", null);
-    if (rawY == null || !rawY.isInstanceOf[Double]) {
-      println("Argument \"y\" of class \"Human\" must be a number.");
-      return null;
-    }
-    val pY = rawY.asInstanceOf[Double].intValue;
-    return new Human(id, pName) {
-      x = pX;
-      y = pY;
+    return new Human(id, name) {
+      x = pCoords._1;
+      y = pCoords._2;
+      for (g <- gear) equip(g);
     };
   }
   
