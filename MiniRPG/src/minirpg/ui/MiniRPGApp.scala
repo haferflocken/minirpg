@@ -16,6 +16,7 @@ import scalafx.scene.input.MouseEvent
 import scalafx.scene.input.KeyEvent
 import scalafx.scene.input.MouseButton
 import minirpg.util.DeltaTicker
+import scalafx.scene.layout.Pane
 
 object MiniRPGApp extends JFXApp {
   
@@ -23,6 +24,8 @@ object MiniRPGApp extends JFXApp {
   
   val world = WorldLoader.loadJsonFile("res\\ex\\world1.json");
   val player = world.getEntitiesById("player")(0).asInstanceOf[Actor];
+  
+  val guiCanvas : Pane = new Pane;
   
   println(world);
   
@@ -32,8 +35,8 @@ object MiniRPGApp extends JFXApp {
     height = 600;
     scene = new Scene {
       fill = Color.BLACK;
+      content = Vector(world.canvas, world.debugCanvas, guiCanvas);
     };
-    setupContent(scene());
     handleMouse(scene());
     handleKeys(scene());
   }
@@ -41,11 +44,6 @@ object MiniRPGApp extends JFXApp {
   
   private def tick(delta : Long) : Unit = {
     world.tick(delta);
-    setupContent(stage.scene());
-  }
-  
-  private def setupContent(scene : Scene) : Unit = {
-    scene.content = world.nodes ++ world.debugPathNodes;
   }
   
   private def handleMouse(scene : Scene) : Unit = {

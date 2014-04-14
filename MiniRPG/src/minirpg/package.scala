@@ -25,7 +25,7 @@ package object minirpg {
   /*
    * Global variables.
    */
-  var global_debugPaths : Boolean = true;
+  var global_debugPaths : Boolean = false;
   // TODO add more over time
   
   /*
