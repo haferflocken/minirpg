@@ -1,6 +1,8 @@
 
 package object minirpg {
   
+  val GIGA : Long = 1000000000;
+  
   /*
    * Global variables.
    */

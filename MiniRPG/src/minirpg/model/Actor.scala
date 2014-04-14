@@ -4,14 +4,20 @@ import scala.collection.mutable.LinkedHashMap
 import scala.collection.immutable.Queue
 import minirpg.entities.Corpse
 
-abstract class Actor(val id : String, val name : String, val slotNames : Array[String], defaultPowers : Vector[Power]) extends Entity {
+abstract class Actor(
+    val id : String,
+    val name : String,
+    val slotNames : Array[String],
+    defaultPowers : Vector[Power],
+    baseSkills : Map[String, Int]) extends Entity {
 
   val vitals : LinkedHashMap[String, Int];
   val slotContents = new LinkedHashMap[String, Gear] ++= slotNames.map((_, null)); 
   var equipped : Set[Gear] = Set();
   var powers : Vector[Power] = defaultPowers;
-  val skills = Skills.makeZeroMap;
+  val skills = new LinkedHashMap[String, Int] ++= baseSkills;
   var path : Queue[(Int, Int)] = null;
+  var moveProgress : Long = 0;
   
   /* * * * * * * * * * * * * *
    * Methods.
@@ -38,12 +44,17 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
     
     // Move along the path.
     if (path != null) {
-      val next = path.dequeue;
-      x = next._1._1;
-      y = next._1._2;
-      path = next._2;
-      if (path.length == 0)
-        path = null;
+      val speed = skills(Skills.speed);
+      moveProgress += (speed * delta).longValue;
+      if (moveProgress >= minirpg.GIGA) {
+        val next = path.dequeue;
+        x = next._1._1;
+        y = next._1._2;
+        path = next._2;
+        if (path.length == 0)
+          path = null;
+        moveProgress = 0;
+      }
     }
   }
   
@@ -105,7 +116,7 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
   }
   
   private def initSkills : Unit = {
-    skills ++= Skills.zeroTuples;
+    skills ++= baseSkills;
     for (g <- equipped) {
       for (b <- g.skillBonuses) {
         val level = skills.get(b._1);
