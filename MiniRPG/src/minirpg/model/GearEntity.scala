@@ -14,7 +14,7 @@ class GearEntity(val id : String, val gear : Gear) extends Entity {
     height = 32;
   };
   
-  override def beUsed(user : Entity) : Unit = {
+  override def beUsedBy(user : Entity) : Unit = {
     if (user.isInstanceOf[Actor]) {
       val actor = user.asInstanceOf[Actor];
       // TODO give actor the option to equip the gear or just examine it.

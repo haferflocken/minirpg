@@ -12,9 +12,9 @@ trait Entity {
   
   val node : Node;
   
-  def tick : Unit = {};
+  def tick(delta : Long) : Unit = {};
   
-  def beUsed(user : Entity) : Unit = {};
+  def beUsedBy(user : Entity) : Unit = {};
 
   override def toString() : String = s"$id ($x, $y)";
 }

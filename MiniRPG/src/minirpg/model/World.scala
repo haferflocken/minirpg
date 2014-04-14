@@ -39,6 +39,10 @@ class World(
       _nodes = _nodes.filter(_ != e.node);
   }
   
+  def getEntitiesAt(x : Int, y : Int) : Vector[Entity] = {
+    return _entities.filter((e) => {e.x == x && e.y == y});
+  }
+  
   def getEntitiesById(id : String) : Vector[Entity] = {
     return _entities.filter(_.id == id);
   }
@@ -68,9 +72,9 @@ class World(
     return out;
   }
   
-  def tick : Unit = {
+  def tick(delta : Long) : Unit = {
     for (e <- _entities) {
-      e.tick;
+      e.tick(delta);
       updateEntityNodeCoords(e);
     }
   }

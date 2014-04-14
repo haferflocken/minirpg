@@ -17,11 +17,11 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
    * Methods.
    * * * * * * * * * * * * * */
   
-  override def beUsed(user : Entity) : Unit = {
+  override def beUsedBy(user : Entity) : Unit = {
     // TODO
   }
   
-  override def tick : Unit = {
+  override def tick(delta : Long) : Unit = {
     // Die if any vitals are <= 0.
     for (e <- vitals) {
       if (e._2 <= 0) {
@@ -54,9 +54,10 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
     
     g.slots.foreach(s => {
       val equippedG = slotContents(s);
-      if (equippedG != null)
+      if (equippedG != null) {
         out = equippedG :: out;
-      unequipNoUpdate(equippedG);
+        unequipNoUpdate(equippedG);
+      }
       slotContents(s) = g;
     });
     
@@ -87,13 +88,13 @@ abstract class Actor(val id : String, val name : String, val slotNames : Array[S
    * * * * * * * * * * * * * */
   
   private def unequipNoUpdate(g : Gear) = {
-    g.slots.foreach(s => {
+    for (s <- g.slots) {
       slotContents(s) = null;
-    });
+    }
   }
   
   private def initEquipped = {
-    equipped = slotContents.values.toSet;
+    equipped = slotContents.values.toSet.filter(_ != null);
   }
   
   private def initPowers = {

@@ -14,8 +14,12 @@ import minirpg.model._
 import minirpg.loaders.WorldLoader
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.input.KeyEvent
+import scalafx.scene.input.MouseButton
+import minirpg.util.DeltaTicker
 
 object MiniRPGApp extends JFXApp {
+  
+  val ticker = new DeltaTicker(tick);
   
   val world = WorldLoader.loadJsonFile("res\\ex\\world1.json");
   val player = world.getEntitiesById("player")(0).asInstanceOf[Actor];
@@ -33,6 +37,12 @@ object MiniRPGApp extends JFXApp {
     handleMouse(scene());
     handleKeys(scene());
   }
+  ticker.start;
+  
+  private def tick(delta : Long) : Unit = {
+    world.tick(delta);
+    setupContent(stage.scene());
+  }
   
   private def setupContent(scene : Scene) : Unit = {
     scene.content = world.nodes ++ world.debugPathNodes;
@@ -41,14 +51,24 @@ object MiniRPGApp extends JFXApp {
   private def handleMouse(scene : Scene) : Unit = {
     scene.onMouseClicked = (me : MouseEvent) => {
       val tileCoords = world.tileGrid.screenToTileCoords(me.x, me.y);
-      player.setMoveTarget(tileCoords._1, tileCoords._2);
-      setupContent(scene);
+      // Left click is use.
+      if (me.button == MouseButton.PRIMARY) {
+        val useTargets = world.getEntitiesAt(tileCoords._1, tileCoords._2);
+        if (useTargets.nonEmpty) {
+          val useTarget = useTargets(0);
+          useTarget.beUsedBy(player);
+        }
+      }
+      // Right click is move.
+      else if (me.button == MouseButton.SECONDARY) {
+        player.setMoveTarget(tileCoords._1, tileCoords._2);
+      }
     }
   }
   
   private def handleKeys(scene : Scene) : Unit = {
     scene.onKeyPressed = (ke : KeyEvent) => {
-      world.tick;
+      // TODO
     }
   }
   
