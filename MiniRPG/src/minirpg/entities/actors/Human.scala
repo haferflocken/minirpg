@@ -11,7 +11,7 @@ class Human(id : String, name : String) extends Actor(
     name,
     Array("Head", "Torso", "Legs", "Hands", "Feet", "Main Hand", "Off Hand"),
     Vector(Move),
-    Skills.zeroMap ++ Map(Skills.speed -> 5)) {
+    Skills.zeroMap ++ Map(Skills.speed -> 100)) {
   
   val vitals = new LinkedHashMap[String, Int] ++= Map("Blood" -> 100, "Oxygen" -> 100, "Energy" -> 100);
   

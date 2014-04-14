@@ -46,7 +46,7 @@ abstract class Actor(
     if (path != null) {
       val speed = skills(Skills.speed);
       moveProgress += (speed * delta).longValue;
-      if (moveProgress >= minirpg.GIGA) {
+      if (moveProgress >= minirpg.TENTOTHE11) {
         val next = path.dequeue;
         x = next._1._1;
         y = next._1._2;
