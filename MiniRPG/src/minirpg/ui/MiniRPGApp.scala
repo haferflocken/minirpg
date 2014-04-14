@@ -55,8 +55,10 @@ object MiniRPGApp extends JFXApp {
       if (me.button == MouseButton.PRIMARY) {
         val useTargets = world.getEntitiesAt(tileCoords._1, tileCoords._2);
         if (useTargets.nonEmpty) {
-          val useTarget = useTargets(0);
-          useTarget.beUsedBy(player);
+          if ((tileCoords._1 - player.x).abs + (tileCoords._2 - player.y).abs <= 1 ) {
+            val useTarget = useTargets(0);
+            useTarget.beUsedBy(player);
+          }
         }
       }
       // Right click is move.

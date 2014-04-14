@@ -7,10 +7,11 @@ import scala.collection.mutable.HashMap
 import minirpg.gearMap
 import minirpg.gear._
 import scalafx.scene.image.ImageView
+import scalafx.scene.image.Image
 
 class GearEntity(val id : String, val gear : Gear) extends Entity {
   
-  val node : Node = new ImageView("file:res\\sprites\\box.png");
+  val node : Node = new ImageView(GearEntity.image);
   
   override def beUsedBy(user : Entity) : Unit = {
     if (user.isInstanceOf[Actor]) {
@@ -21,6 +22,10 @@ class GearEntity(val id : String, val gear : Gear) extends Entity {
     }
   }
   
+}
+
+object GearEntity {
+  val image = new Image("file:res\\sprites\\box.png");
 }
 
 object GearEntityBuilder extends Builder[GearEntity] {

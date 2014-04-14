@@ -100,10 +100,15 @@ abstract class Actor(
    * Helper methods.
    * * * * * * * * * * * * * */
   
-  private def unequipNoUpdate(g : Gear) = {
+  private def unequipNoUpdate(g : Gear) : Unit = {
     for (s <- g.slots) {
       slotContents(s) = null;
     }
+    val p = world.getSpotNextTo(x, y);
+    world.addEntity(new GearEntity(world.makeEntityId, g) {
+      x = p._1;
+      y = p._2;
+    });
   }
   
   private def initEquipped = {

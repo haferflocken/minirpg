@@ -47,7 +47,7 @@ class World(
     return _entities.filter(_.id == id);
   }
   
-  def makeEntityId : String = Random.alphanumeric.mkString;
+  def makeEntityId : String = Random.nextLong.toString;
   
   def entites = _entities;
   def nodes = _nodes;
@@ -70,6 +70,16 @@ class World(
     val out = path.map(_.id);
     debugDisplayPath(out);
     return out;
+  }
+  
+  def getSpotNextTo(x : Int, y : Int) : (Int, Int) = {
+    val connections = tileGrid.getConnections(x, y);
+    if (connections.isEmpty)
+      return (x, y);
+    for ((p, c) <- connections) {
+      if (getEntitiesAt(p._1, p._2).isEmpty) return p;
+    }
+    return (x, y);
   }
   
   def tick(delta : Long) : Unit = {
