@@ -6,7 +6,7 @@
 				"class" : "Human",
 				"args" : {	"name" : "Player",
 							"x" : 11, "y" : 12,
-							"gear" : [ "Shortsword" ] } },
+							"gear" : [ "Shortsword", "Frog's Helmet", "Frog's Cuirass", "Frog's Greaves", "Frog's Gauntlets", "Frog's Boots" ] } },
 			{	"id" : "sword1",
 				"class" : "Gear",
 				"args" : {	"type" : "Shortsword",

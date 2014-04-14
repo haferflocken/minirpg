@@ -10,7 +10,10 @@ package object minirpg {
   
   val gearMap =
     Vector[Gear](
-        Shortsword
+        Shortsword,
+        CyclopsGoggles, CyclopsJacket, CyclopsPants, CyclopsGloves, CyclopsBoots,
+        FrogHelmet, FrogCuirass, FrogGreaves, FrogGauntlets, FrogBoots,
+        RedOrb, YellowOrb, GreenOrb, BlueOrb, PurpleOrb
     ).map((e) => (e.name, e)).toMap[String, Gear];
   
   val builderMap =

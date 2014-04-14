@@ -6,14 +6,11 @@ import scalafx.scene.paint.Color
 import scala.collection.mutable.HashMap
 import minirpg.gearMap
 import minirpg.gear._
+import scalafx.scene.image.ImageView
 
 class GearEntity(val id : String, val gear : Gear) extends Entity {
   
-  val node : Node = new Rectangle() {
-    fill = Color.YELLOW;
-    width = 32;
-    height = 32;
-  };
+  val node : Node = new ImageView("file:res\\sprites\\box.png");
   
   override def beUsedBy(user : Entity) : Unit = {
     if (user.isInstanceOf[Actor]) {
