@@ -8,7 +8,7 @@ import minirpg.model.Gear
 import scalafx.scene.image.ImageView
 import scalafx.scene.image.Image
 
-class Corpse(val id : String) extends Entity {
+class Corpse(val id : String, val name : String) extends Entity {
   
   val node : Node = new ImageView(Corpse.image);
   

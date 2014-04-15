@@ -12,6 +12,8 @@ abstract class Actor(
     val slotNames : Array[String],
     defaultPowers : Vector[Power],
     baseSkills : Map[String, Int]) extends Entity {
+  
+  override val useable = true;
 
   val vitals : LinkedHashMap[String, Int];
   val slotContents = new LinkedHashMap[String, Gear] ++= slotNames.map((_, null)); 
@@ -33,7 +35,7 @@ abstract class Actor(
     // Die if any vitals are <= 0.
     for (e <- vitals) {
       if (e._2 <= 0) {
-        val corpse = new Corpse(world.makeEntityId) {
+        val corpse = new Corpse(world.makeEntityId, "Corpse of " + name) {
           gear = equipped.toList;
           x = this.x;
           y = this.y;

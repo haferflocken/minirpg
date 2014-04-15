@@ -17,6 +17,11 @@ import scalafx.scene.input.KeyEvent
 import scalafx.scene.input.MouseButton
 import minirpg.util.DeltaTicker
 import scalafx.scene.layout.Pane
+import scala.collection.mutable.ArrayBuffer
+import scalafx.scene.control.MenuItem
+import scalafx.scene.control.ContextMenu
+import scalafx.scene.control.Menu
+import scalafx.geometry.Side
 
 object MiniRPGApp extends JFXApp {
   
@@ -49,13 +54,39 @@ object MiniRPGApp extends JFXApp {
   private def handleMouse(scene : Scene) : Unit = {
     scene.onMouseClicked = (me : MouseEvent) => {
       val tileCoords = world.tileGrid.screenToTileCoords(me.x, me.y);
-      // Left click is use.
+      // Left click should pull up a context menu titled with the entity name
+      // and followed by options (if there are any).
+      // Options: Use, Examine
+      // If multiple entities on same tile, they should be listed vertically.
       if (me.button == MouseButton.PRIMARY) {
-        val useTargets = world.getEntitiesAt(tileCoords._1, tileCoords._2);
+        val useTargets = world.getEntitiesAt(tileCoords._1, tileCoords._2).filter(_.node != null);
         if (useTargets.nonEmpty) {
           if ((tileCoords._1 - player.x).abs + (tileCoords._2 - player.y).abs <= 1 ) {
-            val useTarget = useTargets(0);
-            useTarget.beUsedBy(player);
+            val menus = new ArrayBuffer[MenuItem];
+            for (t <- useTargets if (t.useable || t.description != null)) {
+              val menu = new Menu(t.name);
+              val subItems = new ArrayBuffer[MenuItem];
+              if (t.useable) {
+                subItems.append(new MenuItem("Use") {
+                  onAction = handle {
+                    t.beUsedBy(player);
+                  }
+                });
+              }
+              if (t.description != null) {
+                subItems.append(new MenuItem("Examine") {
+                  onAction = handle {
+                    // TODO
+                  }
+                });
+              }
+              menu.items = subItems;
+              menus.append(menu);
+            }
+            val cm = new ContextMenu {
+              for (m <- menus) items.append(m);
+            }
+            cm.show(useTargets(0).node, Side.RIGHT, 0, 0);
           }
         }
       }

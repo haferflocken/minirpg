@@ -13,8 +13,11 @@ import scalafx.scene.control.Tooltip
 
 class GearEntity(val id : String, val gear : Gear) extends Entity {
   
+  val name = gear.name;
+  override val description = gear.description;
+  override val useable = true;
   val node : Node = new ImageView(GearEntity.image);
-  Tooltip.install(node, gear.name);
+  //Tooltip.install(node, gear.name);
   
   override def beUsedBy(user : Entity) : Unit = {
     if (user.isInstanceOf[Actor]) {

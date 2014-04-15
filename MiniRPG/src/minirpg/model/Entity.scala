@@ -5,6 +5,9 @@ import scalafx.scene.Node
 trait Entity {
   
   val id : String;
+  val name : String;
+  val description : String = null;
+  val useable : Boolean = false;
   
   var x : Int = 0;
   var y : Int = 0;
