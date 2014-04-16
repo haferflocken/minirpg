@@ -17,7 +17,6 @@ class GearEntity(val id : String, val gear : Gear) extends Entity {
   override val description = gear.description;
   override val useable = true;
   val node : Node = new ImageView(GearEntity.image);
-  //Tooltip.install(node, gear.name);
   
   override def beUsedBy(user : Entity) : Unit = {
     if (user.isInstanceOf[Actor]) {

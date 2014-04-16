@@ -7,7 +7,8 @@ trait Gear {
   
   val name : String;
   val description : String;
-  val slots : Vector[String];
+  val equipSlots : Vector[String];
+  val wieldSlots : Vector[String]; // The slots this gear occupies when wielded by an Actor. If null, this gear cannot be wielded.
   val powers : Vector[Power];
   val skillBonuses : Map[String, Int];
   
@@ -20,5 +21,7 @@ trait Gear {
     world.addEntity(e);
     return e;
   }
+  
+  override def toString = name;
   
 }

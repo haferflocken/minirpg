@@ -1,22 +1,26 @@
 package minirpg.model
 
 import scala.collection.mutable.LinkedHashMap
+import scala.collection.mutable.Buffer
 import scala.collection.immutable.Queue
 import minirpg.entities.Corpse
 import scala.util.parsing.json.JSONArray
 import minirpg.gearMap
+import scala.collection.mutable.ArrayBuffer
 
 abstract class Actor(
     val id : String,
     val name : String,
-    val slotNames : Array[String],
+    val equipSlots : Map[String, Int],
+    val wieldSlots : Vector[String],
     defaultPowers : Vector[Power],
     baseSkills : Map[String, Int]) extends Entity {
   
   override val useable = true;
 
   val vitals : LinkedHashMap[String, Int];
-  val slotContents = new LinkedHashMap[String, Gear] ++= slotNames.map((_, null)); 
+  val equipSlotContents = new LinkedHashMap[String, Buffer[Gear]] ++= equipSlots.map((e) => (e._1, new ArrayBuffer[Gear])); 
+  val wieldSlotContents = new LinkedHashMap[String, Gear] ++= wieldSlots.map((_, null));
   var equipped : Set[Gear] = Set();
   var powers : Vector[Power] = defaultPowers;
   val skills = new LinkedHashMap[String, Int] ++= baseSkills;
@@ -62,19 +66,28 @@ abstract class Actor(
     }
   }
   
+  // Returns true if the actor has the required slots to equip some gear, or false otherwise.
+  def canEquip(g : Gear) : Boolean = g.equipSlots.forall(equipSlotContents.contains(_));
+  
+  def canWield(g : Gear) : Boolean = g.wieldSlots.forall(wieldSlotContents.contains(_));
+  
   // Equip a piece of gear to this actor.
-  // Returns a list of the gear that was unequipped to equip the given gear.
+  // Returns a list of the gear that was unequipped to equip the given gear,
+  // or null if the gear could not be equipped.
   def equip(g : Gear) : List[Gear] = {
     var out = List[Gear]();
     
-    g.slots.foreach(s => {
-      val equippedG = slotContents(s);
-      if (equippedG != null) {
-        out = equippedG :: out;
-        unequipNoUpdate(equippedG);
+    if (!canEquip(g))
+      return null;
+    
+    for (s <- g.equipSlots) {
+      val equippedG = equipSlotContents(s);
+      if (equippedG.size >= equipSlots(s)) {
+        out = equippedG(0) :: out;
+        unequipNoUpdate(equippedG(0));
       }
-      slotContents(s) = g;
-    });
+      equipSlotContents(s).append(g);
+    };
     
     initEquipped;
     initPowers;
@@ -105,8 +118,8 @@ abstract class Actor(
    * * * * * * * * * * * * * */
   
   private def unequipNoUpdate(g : Gear) : Unit = {
-    for (s <- g.slots) {
-      slotContents(s) = null;
+    for (s <- g.equipSlots) {
+      equipSlotContents(s) -= g;
     }
     val p = world.getSpotNextTo(x, y);
     world.addEntity(new GearEntity(world.makeEntityId, g) {
@@ -116,7 +129,11 @@ abstract class Actor(
   }
   
   private def initEquipped = {
-    equipped = slotContents.values.toSet.filter(_ != null);
+    val equippedBuffer = new ArrayBuffer[Gear];
+    for (b <- equipSlotContents.values) {
+      equippedBuffer.appendAll(b);
+    }
+    equipped = equippedBuffer.toSet;
   }
   
   private def initPowers = {

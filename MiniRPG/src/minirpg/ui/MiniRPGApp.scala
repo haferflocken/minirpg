@@ -74,7 +74,7 @@ object MiniRPGApp extends JFXApp {
   
   private def handleKeys(scene : Scene) : Unit = {
     scene.onKeyPressed = (ke : KeyEvent) => {
-      // TODO
+      println(player.equipSlotContents.mkString("\n"));
     }
   }
   

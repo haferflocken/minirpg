@@ -10,6 +10,10 @@
 			{	"id" : "sword1",
 				"class" : "Gear",
 				"args" : {	"type" : "Shortsword",
-							"x" : 11, "y" : 10 } }
+							"x" : 11, "y" : 10 } },
+			{	"id" : "sword2",
+				"class" : "Gear",
+				"args" : {	"type" : "Red Orb",
+							"x" : 12, "y" : 10 } }
 		]
 }

@@ -3,7 +3,8 @@ package minirpg.gear
 import minirpg.model._
 
 abstract class Orb extends Gear {
-  val slots = Vector("Off Hand");
+  val equipSlots = Vector("Hip");
+  val wieldSlots = null;
   val powers = null;
   val skillBonuses = Map.empty[String, Int];
 }
