@@ -7,6 +7,7 @@ import minirpg.entities.Corpse
 import scala.util.parsing.json.JSONArray
 import minirpg.gearMap
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.Publisher
 
 abstract class Actor(
     val id : String,
@@ -14,8 +15,9 @@ abstract class Actor(
     val equipSlots : Map[String, Int],
     val wieldSlots : Vector[String],
     defaultPowers : Vector[Power],
-    baseSkills : Map[String, Int]) extends Entity {
+    baseSkills : Map[String, Int]) extends Entity with Publisher[ActorEvent] {
   
+  type Pub = Actor;
   override val useable = true;
 
   val vitals : LinkedHashMap[String, Int];
@@ -26,13 +28,14 @@ abstract class Actor(
   val skills = new LinkedHashMap[String, Int] ++= baseSkills;
   var path : Queue[(Int, Int)] = null;
   var moveProgress : Long = 0;
-  
+ 
   /* * * * * * * * * * * * * *
    * Methods.
    * * * * * * * * * * * * * */
   
   override def beUsedBy(user : Entity) : Unit = {
     // TODO
+    publish(ActorEvent(this, ActorEvent.BE_USED));
   }
   
   override def tick(delta : Long) : Unit = {
@@ -46,6 +49,7 @@ abstract class Actor(
         };
         world.addEntity(corpse);
         world.removeEntity(this);
+        publish(ActorEvent(this, ActorEvent.DIE));
         return;
       }
     }
@@ -69,16 +73,21 @@ abstract class Actor(
   // Returns true if the actor has the required slots to equip some gear, or false otherwise.
   def canEquip(g : Gear) : Boolean = g.equipSlots.forall(equipSlotContents.contains(_));
   
-  def canWield(g : Gear) : Boolean = g.wieldSlots.forall(wieldSlotContents.contains(_));
+  // Returns true if the actor has a given gear equipped, false otherwise.
+  def isEquipped(g : Gear) : Boolean = {
+    for (s <- equipSlotContents if s._2.contains(g))
+       return true;
+    return false;
+  }
   
   // Equip a piece of gear to this actor.
   // Returns a list of the gear that was unequipped to equip the given gear,
   // or null if the gear could not be equipped.
   def equip(g : Gear) : List[Gear] = {
-    var out = List[Gear]();
-    
     if (!canEquip(g))
       return null;
+    
+    var out = List[Gear]();
     
     for (s <- g.equipSlots) {
       val equippedG = equipSlotContents(s);
@@ -92,17 +101,58 @@ abstract class Actor(
     initEquipped;
     initPowers;
     initSkills;
+    publish(ActorEvent(this, ActorEvent.EQUIP));
     
     return out;
   }
   
   // Unequip a piece of gear from this actor.
   // If called with a piece of gear the actor isn't wearing, it'll mess things up.
-  def unequip(g : Gear) = {
+  def unequip(g : Gear) : Unit = {
+    if (!isEquipped(g))
+      return;
+    
     unequipNoUpdate(g);
     initEquipped;
     initPowers;
     initSkills;
+    publish(ActorEvent(this, ActorEvent.UNEQUIP));
+  }
+  
+  // Returns true if the actor has the wield slots to wield a gear, false otherwise.
+  def canWield(g : Gear) : Boolean = g.wieldSlots.forall(wieldSlotContents.contains(_));
+  
+  // Returns true if the actor is wielding a gear.
+  def isWielding(g : Gear) : Boolean = {
+    for (s <- wieldSlotContents if s._2 == g)
+      return true;
+    return false;
+  }
+  
+  // Have this actor wield a piece of gear.
+  def wield(g : Gear) : Unit = {
+    if (!equipped.contains(g) || !canWield(g))
+      return;
+    
+    for (s <- g.wieldSlots) {
+      val wieldedG = wieldSlotContents(s);
+      if (wieldedG != null)
+        unwieldNoUpdate(wieldedG);
+      wieldSlotContents(s) = g;
+    }
+    
+    initPowers;
+    publish(ActorEvent(this, ActorEvent.WIELD));
+  }
+  
+  // Have this actor unwield a piece of gear.
+  def unwield(g : Gear) : Unit = {
+    if (!isWielding(g))
+      return;
+    
+    unwieldNoUpdate(g);
+    initPowers;
+    publish(ActorEvent(this, ActorEvent.UNWIELD));
   }
   
   // Tell the actor to move to a coordinate.
@@ -110,6 +160,7 @@ abstract class Actor(
     path = world.findPath(x, y, targetX, targetY);
     if (path != null && path.length == 0)
       path = null;
+    publish(ActorEvent(this, ActorEvent.MOVE_TARGET_SET));
   }
   
   
@@ -128,6 +179,12 @@ abstract class Actor(
     });
   }
   
+  private def unwieldNoUpdate(g : Gear) : Unit = {
+    for (s <- g.wieldSlots) {
+      wieldSlotContents(s) = null;
+    }
+  }
+  
   private def initEquipped = {
     val equippedBuffer = new ArrayBuffer[Gear];
     for (b <- equipSlotContents.values) {
@@ -141,7 +198,7 @@ abstract class Actor(
     for (g <- equipped if g.powers != null if g.wieldSlots == null) {
       powers = powers ++ g.powers;
     }
-    for (g <- wieldSlotContents.values) {
+    for (g <- wieldSlotContents.values if g != null) {
       powers = powers ++ g.powers;
     }
   }
@@ -154,6 +211,28 @@ abstract class Actor(
         if (level.nonEmpty)
           skills.update(b._1, b._2 + level.get);
       }
+    }
+  }
+}
+
+trait ActorEvent {
+  val actor : Actor;
+  val event : String;
+}
+
+object ActorEvent {
+  val BE_USED = "be used";
+  val EQUIP = "equip";
+  val UNEQUIP = "unequip";
+  val WIELD = "wield";
+  val UNWIELD = "unwield";
+  val MOVE_TARGET_SET = "move target set";
+  val DIE = "die";
+  
+  def apply(a : Actor, e : String) : ActorEvent = {
+    return new ActorEvent {
+      val actor = a;
+      val event = e;
     }
   }
 }

@@ -10,7 +10,7 @@ class Human(id : String, name : String) extends Actor(
     id,
     name,
     Map(("Head", 1), ("Torso", 1), ("Legs", 1), ("Hands", 1), ("Feet", 1), ("Hip", 2), ("Back", 2)),
-    Vector("Main Hand, Off Hand"),
+    Vector("Main Hand", "Off Hand"),
     Vector(Move),
     Skills.zeroMap ++ Map(Skills.speed -> 200)) {
   

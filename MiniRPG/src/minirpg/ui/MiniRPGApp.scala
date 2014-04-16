@@ -22,6 +22,7 @@ import scalafx.scene.control.MenuItem
 import scalafx.scene.control.ContextMenu
 import scalafx.scene.control.Menu
 import scalafx.geometry.Side
+import scalafx.scene.input.KeyCode
 
 object MiniRPGApp extends JFXApp {
   
@@ -30,7 +31,7 @@ object MiniRPGApp extends JFXApp {
   val world = WorldLoader.loadJsonFile("res\\ex\\world1.json");
   val player = world.getEntitiesById("player")(0).asInstanceOf[Actor];
   
-  val gui : MiniRPGGui = new MiniRPGGui;
+  val gui : MiniRPGGui = new MiniRPGGui(player);
   
   println(world);
   
@@ -52,6 +53,10 @@ object MiniRPGApp extends JFXApp {
   }
   
   private def handleMouse(scene : Scene) : Unit = {
+    scene.onMouseMoved = (me : MouseEvent) => {
+      gui.mouseX = me.x;
+      gui.mouseY = me.y;
+    }
     scene.onMouseClicked = (me : MouseEvent) => {
       val tileCoords = world.tileGrid.screenToTileCoords(me.x, me.y);
       
@@ -74,7 +79,10 @@ object MiniRPGApp extends JFXApp {
   
   private def handleKeys(scene : Scene) : Unit = {
     scene.onKeyPressed = (ke : KeyEvent) => {
-      println(player.equipSlotContents.mkString("\n"));
+      
+    }
+    scene.onKeyReleased = (ke : KeyEvent) => {
+      
     }
   }
   

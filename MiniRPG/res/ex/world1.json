@@ -6,14 +6,6 @@
 				"class" : "Human",
 				"args" : {	"name" : "Player",
 							"x" : 11, "y" : 12,
-							"gear" : [ "Shortsword", "Frog's Helmet", "Frog's Cuirass", "Frog's Greaves", "Frog's Gauntlets", "Frog's Boots" ] } },
-			{	"id" : "sword1",
-				"class" : "Gear",
-				"args" : {	"type" : "Shortsword",
-							"x" : 11, "y" : 10 } },
-			{	"id" : "sword2",
-				"class" : "Gear",
-				"args" : {	"type" : "Red Orb",
-							"x" : 12, "y" : 10 } }
+							"gear" : [ "Shortsword", "Focused Conduit", "Red Orb", "Frog's Helmet", "Frog's Cuirass", "Frog's Greaves", "Frog's Gauntlets", "Frog's Boots" ] } }
 		]
 }

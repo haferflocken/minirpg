@@ -13,8 +13,34 @@ import scalafx.scene.control.MenuItem
 import scalafx.scene.control.Menu
 import scalafx.scene.control.ContextMenu
 import scalafx.geometry.Side
+import minirpg.model._
+import scala.collection.mutable.Subscriber
 
-class MiniRPGGui extends Pane {
+class MiniRPGGui(player : Actor) extends Pane with Subscriber[ActorEvent, Actor] {
+  
+  player.subscribe(this);
+  
+  var mouseX : Double = 0;
+  var mouseY : Double = 0;
+  
+  /**
+   * A menu which allows the player to equip gear.
+   */
+  val wieldMenu : WieldMenu = new WieldMenu(player) {
+    setMaxWidth(100);
+    setMaxHeight(100);
+  };
+  children.add(wieldMenu);
+  
+  /**
+   * Called when the player publishes an event.
+   */
+  def notify(pub : Actor, event : ActorEvent) : Unit = {
+    if (event.event == ActorEvent.EQUIP || event.event == ActorEvent.UNEQUIP
+        || event.event == ActorEvent.WIELD | event.event == ActorEvent.UNWIELD) {
+      wieldMenu.refresh;
+    }
+  }
   
   /**
    * Pop up a text string.
@@ -50,7 +76,7 @@ class MiniRPGGui extends Pane {
       if (t.useable) {
         subItems.append(new MenuItem("Use") {
           onAction = handle {
-            t.beUsedBy(MiniRPGApp.player);
+            t.beUsedBy(player);
           }
         });
       }
