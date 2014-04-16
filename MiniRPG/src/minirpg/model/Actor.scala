@@ -138,7 +138,10 @@ abstract class Actor(
   
   private def initPowers = {
     powers = defaultPowers;
-    for (g <- equipped if g.powers != null) {
+    for (g <- equipped if g.powers != null if g.wieldSlots == null) {
+      powers = powers ++ g.powers;
+    }
+    for (g <- wieldSlotContents.values) {
       powers = powers ++ g.powers;
     }
   }

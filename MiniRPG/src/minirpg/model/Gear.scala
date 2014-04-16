@@ -9,7 +9,9 @@ trait Gear {
   val description : String;
   val equipSlots : Vector[String];
   val wieldSlots : Vector[String]; // The slots this gear occupies when wielded by an Actor. If null, this gear cannot be wielded.
-  val powers : Vector[Power];
+  val powers : Vector[Power]; // The powers this gear grants an actor.
+                              // If wieldSlots != null, the powers are only granted when the actor is wielding this gear.
+                              // Additionally, if wieldSlots != null, powers cannot be null.
   val skillBonuses : Map[String, Int];
   
   lazy val equippedImages : Vector[Image] = null; // 0 is south, 1 is east, 2 is north, 3 is west
