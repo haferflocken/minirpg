@@ -13,7 +13,6 @@ import javafx.event.EventHandler
 import javafx.geometry.Insets
 import minirpg.model.Actor
 import minirpg.gearMap
-import minirpg.util.FXUtils
 import scalafx.scene.shape.Arc
 import scalafx.scene.paint.Color
 import scalafx.scene.text.Text

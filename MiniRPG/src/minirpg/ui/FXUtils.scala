@@ -1,4 +1,4 @@
-package minirpg.util
+package minirpg.ui
 
 import javafx.scene.paint.Paint
 import javafx.scene.layout.BorderStroke
