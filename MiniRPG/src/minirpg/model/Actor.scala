@@ -70,6 +70,12 @@ abstract class Actor(
     }
   }
   
+  // Change the value of a vital.
+  def modVital(vital : String, amount : Int) : Unit = {
+    val current = vitals(vital);
+    vitals(vital) = current + amount;
+  }
+  
   // Returns true if the actor has the required slots to equip some gear, or false otherwise.
   def canEquip(g : Gear) : Boolean = g.equipSlots.forall(equipSlotContents.contains(_));
   
@@ -198,7 +204,7 @@ abstract class Actor(
     for (g <- equipped if g.powers != null if g.wieldSlots == null) {
       powers = powers ++ g.powers;
     }
-    for (g <- wieldSlotContents.values if g != null) {
+    for (g <- wieldSlotContents.values.toSet if g != null) {
       powers = powers ++ g.powers;
     }
   }

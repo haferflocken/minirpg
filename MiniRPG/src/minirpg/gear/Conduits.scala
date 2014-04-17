@@ -24,5 +24,5 @@ object FocusedConduit extends Conduit {
 object TrapConduit extends Conduit {
   val name = "Trap Conduit";
   val description = "Conducts magical energy to a proximity mine.";
-  val powers = Vector[Power](FocusedConduitAttack);
+  val powers = Vector[Power](TrapConduitAttack);
 }

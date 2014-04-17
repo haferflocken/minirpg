@@ -38,16 +38,24 @@ class MiniRPGGui(player : Actor) extends AnchorPane {
    */
   val vitalsGraph = new VitalsGraph(player);
   children add vitalsGraph;
-  AnchorPane.setLeftAnchor(vitalsGraph, 8.0);
-  AnchorPane.setTopAnchor(vitalsGraph, 8.0);
+  AnchorPane.setLeftAnchor(vitalsGraph, 0.0);
+  AnchorPane.setTopAnchor(vitalsGraph, 0.0);
   
   /**
    * A menu which allows the player to equip gear.
    */
   val wieldMenu = new WieldMenu(player);
   children add wieldMenu;
-  AnchorPane.setLeftAnchor(wieldMenu, 8.0);
-  AnchorPane.setBottomAnchor(wieldMenu, 8.0);
+  AnchorPane.setLeftAnchor(wieldMenu, 0.0);
+  AnchorPane.setBottomAnchor(wieldMenu, 16.0);
+  
+  /**
+   * A list of buttons for using powers.
+   */
+  val powerBar = new PowerBar(player);
+  children add powerBar;
+  AnchorPane.setRightAnchor(powerBar, 0.0);
+  AnchorPane.setBottomAnchor(powerBar, 16.0);
   
   /**
    * Pop up a text string.

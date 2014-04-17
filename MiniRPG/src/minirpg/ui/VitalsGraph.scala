@@ -7,6 +7,7 @@ import scalafx.scene.chart.CategoryAxis
 import scala.collection.mutable.Subscriber
 import scalafx.scene.chart.XYChart
 import scalafx.collections.ObservableBuffer
+import scalafx.geometry.Insets
 
 class VitalsGraph(actor : Actor) extends BarChart(new NumberAxis, new CategoryAxis) with Subscriber[ActorEvent, Actor] {
   
@@ -17,6 +18,10 @@ class VitalsGraph(actor : Actor) extends BarChart(new NumberAxis, new CategoryAx
   data = vitalSeries;
   YAxis.animated = false;
   legendVisible = false;
+  categoryGap = 4;
+  barGap = 4;
+  maxWidth = 256;
+  maxHeight = 64;
   
   notify(null, null);
   
