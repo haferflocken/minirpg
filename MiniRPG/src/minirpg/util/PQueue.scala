@@ -1,6 +1,7 @@
 package minirpg.util
 
 import scala.collection.mutable.ArrayBuffer
+import scala.annotation.tailrec
 
 class PQueue[E] {
   
@@ -53,7 +54,7 @@ class PQueue[E] {
   /**
    * A binary search to find where to put a priority.
    */
-  protected def indexFor(priority : Int, start : Int = 0, end : Int = queue.length - 1) : Int = {
+  @tailrec protected final def indexFor(priority : Int, start : Int = 0, end : Int = queue.length - 1) : Int = {
     if (end < start)
       return start;
     

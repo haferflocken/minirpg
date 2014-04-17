@@ -26,10 +26,7 @@ class MiniRPGGui(player : Actor) extends Pane with Subscriber[ActorEvent, Actor]
   /**
    * A menu which allows the player to equip gear.
    */
-  val wieldMenu : WieldMenu = new WieldMenu(player) {
-    setMaxWidth(100);
-    setMaxHeight(100);
-  };
+  val wieldMenu : WieldMenu = new WieldMenu(player);
   children.add(wieldMenu);
   
   /**

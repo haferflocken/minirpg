@@ -1,50 +1,52 @@
 package minirpg.ui
 
-import scalafx.scene.Group
+import scalafx.Includes.handle
+import scalafx.scene.layout.HBox
 import minirpg.model.Gear
 import scalafx.scene.Node
-import scalafx.scene.chart.PieChart
-import scalafx.collections.ObservableBuffer
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.BorderStroke
+import javafx.scene.layout.BorderStrokeStyle
+import javafx.scene.layout.CornerRadii
+import javafx.scene.layout.BackgroundFill
 import javafx.event.EventHandler
+import javafx.geometry.Insets
 import minirpg.model.Actor
 import minirpg.gearMap
+import minirpg.util.FXUtils
+import scalafx.scene.shape.Arc
+import scalafx.scene.paint.Color
+import scalafx.scene.text.Text
+import scalafx.scene.layout.StackPane
+import scalafx.scene.shape.Circle
+import scalafx.scene.control.Button
+import scalafx.scene.layout.Border
+import scalafx.scene.layout.Background
 
-class WieldMenu(val player : Actor) extends Group {
+class WieldMenu(val player : Actor) extends HBox {
   
-  val gearPie : PieChart = new PieChart() {
-    labelsVisible = false;
-    legendVisible = true;
-    labelLineLength = 10;
-  };
   refresh;
-  children.add(gearPie);
   
   def refresh : Unit = {
-    gearPie.data = toData(player.equipped.filter(_.wieldSlots != null));
-    for (d <- new ObservableBuffer(gearPie.data.get())) {
-      val wieldGear = gearMap(d.getName);
-      
-      if (!player.isWielding(wieldGear)) {
-        d.getNode.setOpacity(0.5);
-        d.getNode.addEventHandler(MouseEvent.MOUSE_PRESSED,
-            new EventHandler[MouseEvent] {
-              override def handle(me : MouseEvent) : Unit = player.wield(wieldGear);
-            });
-      }
-      else {
-        d.getNode.addEventHandler(MouseEvent.MOUSE_PRESSED,
-            new EventHandler[MouseEvent] {
-              override def handle(me : MouseEvent) : Unit = player.unwield(wieldGear);
-            });
-      }
+    children.clear;
+    val wieldable = player.equipped.filter(player canWield _);
+    for (g <- wieldable) {
+      val button = new Button(g.name) {
+        if (player.isWielding(g)) {
+          onAction = handle { player.unwield(g) };
+          border = FXUtils.makeSFXBorder(paint = Color.WHITE, strokeWidths = BorderStroke.MEDIUM);
+          background = FXUtils.makeSFXBackground(Color.DARKGRAY);
+          textFill = Color.WHITE;
+        }
+        else {
+          onAction = handle { player.wield(g) };
+          border = FXUtils.makeSFXBorder(Color.WHITE);
+          background = FXUtils.makeSFXBackground(Color.BLACK);
+          textFill = Color.WHITE;
+        }
+      };
+      children.add(button);
     }
   }
-  
-  def setMaxWidth(w : Double) = gearPie.setMaxWidth(w);
-  def setMaxHeight(h : Double) = gearPie.setMaxHeight(h);
-  
-  private def toData(g : Iterable[Gear]) : ObservableBuffer[javafx.scene.chart.PieChart.Data] =
-    ObservableBuffer(g.map((g) => PieChart.Data(g.name, 1)).toSeq)
   
 }

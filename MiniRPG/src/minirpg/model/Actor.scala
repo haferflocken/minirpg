@@ -120,7 +120,7 @@ abstract class Actor(
   }
   
   // Returns true if the actor has the wield slots to wield a gear, false otherwise.
-  def canWield(g : Gear) : Boolean = g.wieldSlots.forall(wieldSlotContents.contains(_));
+  def canWield(g : Gear) : Boolean = g.wieldSlots != null && g.wieldSlots.forall(wieldSlotContents.contains(_));
   
   // Returns true if the actor is wielding a gear.
   def isWielding(g : Gear) : Boolean = {
