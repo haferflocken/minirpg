@@ -23,6 +23,7 @@ import scalafx.scene.control.ContextMenu
 import scalafx.scene.control.Menu
 import scalafx.geometry.Side
 import scalafx.scene.input.KeyCode
+import scalafx.scene.layout.StackPane
 
 object MiniRPGApp extends JFXApp {
   
@@ -41,7 +42,9 @@ object MiniRPGApp extends JFXApp {
     height = 600;
     scene = new Scene {
       fill = Color.BLACK;
-      content = Vector(world.canvas, world.debugCanvas, gui);
+      content = new StackPane() {
+        children.addAll(world.canvas, world.debugCanvas, gui);
+      };
     };
     handleMouse(scene());
     handleKeys(scene());

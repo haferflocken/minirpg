@@ -228,7 +228,8 @@ object ActorEvent {
   val UNWIELD = "unwield";
   val MOVE_TARGET_SET = "move target set";
   val DIE = "die";
-  
+  val VITALS_CHANGED = "vitals changed";
+    
   def apply(a : Actor, e : String) : ActorEvent = {
     return new ActorEvent {
       val actor = a;

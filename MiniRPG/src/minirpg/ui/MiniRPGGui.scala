@@ -1,7 +1,7 @@
 package minirpg.ui
 
 import scalafx.Includes.handle
-import scalafx.scene.layout.Pane
+import scalafx.scene.layout.AnchorPane
 import scalafx.scene.text.Text
 import scalafx.animation.FadeTransition
 import scalafx.util.Duration
@@ -15,29 +15,39 @@ import scalafx.scene.control.ContextMenu
 import scalafx.geometry.Side
 import minirpg.model._
 import scala.collection.mutable.Subscriber
+import scalafx.scene.chart.BarChart
+import scalafx.scene.chart.NumberAxis
+import scalafx.scene.chart.CategoryAxis
 
-class MiniRPGGui(player : Actor) extends Pane with Subscriber[ActorEvent, Actor] {
-  
-  player.subscribe(this);
+/**
+ * Creates a GUI for the game.
+ * 
+ * Layout is:
+ *      Vitals at top left
+ *      Equipment at top right
+ *      Wield Menu at bottom left
+ *      Power Bar at bottom right
+ */
+class MiniRPGGui(player : Actor) extends AnchorPane {
   
   var mouseX : Double = 0;
   var mouseY : Double = 0;
   
   /**
-   * A menu which allows the player to equip gear.
+   * A graph that shows the player's vitals.
    */
-  val wieldMenu : WieldMenu = new WieldMenu(player);
-  children.add(wieldMenu);
+  val vitalsGraph = new VitalsGraph(player);
+  children add vitalsGraph;
+  AnchorPane.setLeftAnchor(vitalsGraph, 8.0);
+  AnchorPane.setTopAnchor(vitalsGraph, 8.0);
   
   /**
-   * Called when the player publishes an event.
+   * A menu which allows the player to equip gear.
    */
-  def notify(pub : Actor, event : ActorEvent) : Unit = {
-    if (event.event == ActorEvent.EQUIP || event.event == ActorEvent.UNEQUIP
-        || event.event == ActorEvent.WIELD | event.event == ActorEvent.UNWIELD) {
-      wieldMenu.refresh;
-    }
-  }
+  val wieldMenu = new WieldMenu(player);
+  children add wieldMenu;
+  AnchorPane.setLeftAnchor(wieldMenu, 8.0);
+  AnchorPane.setBottomAnchor(wieldMenu, 8.0);
   
   /**
    * Pop up a text string.
