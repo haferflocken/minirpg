@@ -58,6 +58,7 @@ object MiniRPGApp extends JFXApp {
   
   private def tick(delta : Long) : Unit = {
     world.tick(delta);
+    gui tick delta;
   }
   
   private def handleMouse(scene : Scene) : Unit = {

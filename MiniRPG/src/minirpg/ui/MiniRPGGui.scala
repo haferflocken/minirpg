@@ -17,6 +17,10 @@ import minirpg.model._
 import scala.collection.mutable.Subscriber
 import scalafx.geometry.Insets
 import scalafx.scene.paint.Color
+import scalafx.scene.layout.HBox
+import scalafx.geometry.Pos
+import javafx.event.EventHandler
+import javafx.scene.input.MouseEvent
 
 /**
  * Creates a GUI for the game.
@@ -37,33 +41,44 @@ class MiniRPGGui(player : Actor) extends AnchorPane with Initializable {
   
   val bottomOffset = 30.0;
   
-  var windowInsets : Insets = Insets.Empty;
   var mouseX : Double = 0;
   var mouseY : Double = 0;
+  onMouseMoved = new EventHandler[MouseEvent] {
+    def handle(me : MouseEvent) : Unit = {
+      mouseX = me.getSceneX;
+      mouseY = me.getSceneY;
+    }
+  }
+  onMouseDragged = onMouseMoved.get;
   
-  /**
-   * A graph that shows the player's vitals.
-   */
+  private var _powerReticle : PowerReticle = null;
+  def powerReticle = _powerReticle;
+  def powerReticle_=(pR : PowerReticle) = {
+    if (_powerReticle != null)
+      children.remove(_powerReticle);
+    _powerReticle = pR;
+    if (_powerReticle != null)
+      children add _powerReticle;
+  }
+  
   val vitalsGraph = new VitalsGraph(player);
-  children add vitalsGraph;
-  AnchorPane.setLeftAnchor(vitalsGraph, 0.0);
-  AnchorPane.setTopAnchor(vitalsGraph, 0.0);
-  
-  /**
-   * A menu which allows the player to equip gear.
-   */
   val wieldMenu = new WieldMenu(player);
-  children add wieldMenu;
-  AnchorPane.setLeftAnchor(wieldMenu, 0.0);
-  AnchorPane.setBottomAnchor(wieldMenu, bottomOffset);
+  val powerBar = new PowerBar(this, player);
+  
+  val bottomBar = new HBox {
+    children.addAll(vitalsGraph, wieldMenu, powerBar);
+  }
+  children add bottomBar;
+  AnchorPane.setLeftAnchor(bottomBar, 0.0);
+  AnchorPane.setBottomAnchor(bottomBar, bottomOffset);
   
   /**
-   * A list of buttons for using powers.
+   * Tick the gui, because that might be useful.
    */
-  val powerBar = new PowerBar(player);
-  children add powerBar;
-  AnchorPane.setRightAnchor(powerBar, 0.0);
-  AnchorPane.setBottomAnchor(powerBar, bottomOffset);
+  def tick(delta : Long) : Unit = {
+    if (_powerReticle != null)
+      _powerReticle tick delta;
+  }
   
   /**
    * Pop up a text string.

@@ -7,10 +7,12 @@ object ShortswordAttack extends Power {
   val name = "Attack";
   val range = 1;
   
-  override def apply(user : Actor, targets : List[Actor], region : Region) = {
+  def apply(user : Actor, targets : Vector[Entity], region : Region) = {
     // TODO
   }
   
-  override def canUse(user : Actor) = true;
+  def canUse(user : Actor) = true;
+  
+  def mkRegion(cX : Int, cY : Int) = Region.tile(cX, cY);
   
 }

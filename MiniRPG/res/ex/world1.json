@@ -6,7 +6,7 @@
 				"class" : "Human",
 				"args" : {	"name" : "Player",
 							"x" : 11, "y" : 12,
-							"gear" : [ "Shortsword", "Focused Conduit", "Red Orb", "Frog's Helmet", "Frog's Cuirass", "Frog's Greaves", "Frog's Gauntlets", "Frog's Boots" ] } },
+							"gear" : [ "Shortsword", "Explosive Conduit", "Red Orb", "Frog's Helmet", "Frog's Cuirass", "Frog's Greaves", "Frog's Gauntlets", "Frog's Boots" ] } },
 			{	"id" : "sword",
 				"class" : "Gear",
 				"args" : {	"type" : "Trap Conduit", "x" : 11, "y" : 11 }}

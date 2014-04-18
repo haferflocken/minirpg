@@ -5,14 +5,14 @@ import minirpg.model._
 import minirpg.model.ActorEvent._
 import scalafx.scene.layout.TilePane
 import scala.collection.mutable.Subscriber
-import scalafx.scene.control.ToggleButton
+import scalafx.scene.control.Button
 import scalafx.Includes.handle
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCode
 import scalafx.scene.paint.Color
 import scalafx.scene.control.ToggleGroup
 
-class PowerBar(actor : Actor) extends TilePane with Subscriber[ActorEvent, Actor] with Initializable {
+class PowerBar(gui : MiniRPGGui, actor : Actor) extends TilePane with Subscriber[ActorEvent, Actor] with Initializable {
   
   private val toggleGroup = new ToggleGroup;
   
@@ -22,15 +22,19 @@ class PowerBar(actor : Actor) extends TilePane with Subscriber[ActorEvent, Actor
     var i = 0;
     for (p <- powers) {
       i += 1;
-      val button = new ToggleButton(i + ") " + p.name) {
+      val button = new Button(i + ") " + p.name) {
         maxWidth = Double.MaxValue;
         maxHeight = Double.MaxValue;
-        onMouseClicked = handle {};
+        onAction = handle {
+          //if (selected()) {
+            gui.powerReticle = new PowerReticle(gui, actor, p);
+          //}
+        };
         //border = FXUtils.makeSFXBorder(Color.BLACK);
         //background = FXUtils.makeSFXBackground(Color.LIGHTGRAY);
         //textFill = Color.BLACK;
       }
-      button.toggleGroup = toggleGroup;
+      //button.toggleGroup = toggleGroup;
       children.add(button);
       val accelKey = numsToDigitKeys.getOrElse(i, null);
       if (accelKey != null) {

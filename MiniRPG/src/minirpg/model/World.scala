@@ -49,6 +49,10 @@ class World(
     return _entities.filter((e) => {e.x == x && e.y == y});
   }
   
+  def getEntitiesIn(region : Region) : Vector[Entity] = {
+    return _entities.filter(e => region.contains(e.x, e.y));
+  }
+  
   def getEntitiesById(id : String) : Vector[Entity] = {
     return _entities.filter(_.id == id);
   }
