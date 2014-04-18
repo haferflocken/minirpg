@@ -14,10 +14,9 @@ import scalafx.scene.control.ToggleGroup
 
 class PowerBar(gui : MiniRPGGui, actor : Actor) extends TilePane with Subscriber[ActorEvent, Actor] with Initializable {
   
-  private val toggleGroup = new ToggleGroup;
-  
   def notify(pub : Actor, event : ActorEvent) : Unit = {
     children.clear;
+    gui.powerReticle = null;
     val powers = actor.powers;
     var i = 0;
     for (p <- powers) {
@@ -26,15 +25,14 @@ class PowerBar(gui : MiniRPGGui, actor : Actor) extends TilePane with Subscriber
         maxWidth = Double.MaxValue;
         maxHeight = Double.MaxValue;
         onAction = handle {
-          //if (selected()) {
-            gui.powerReticle = new PowerReticle(gui, actor, p);
-          //}
+          gui.powerReticle = new PowerReticle(gui, this, actor, p);
+          border = FXUtils.DefaultActionBorder;
+          background = FXUtils.DefaultActionBackground;
         };
-        //border = FXUtils.makeSFXBorder(Color.BLACK);
-        //background = FXUtils.makeSFXBackground(Color.LIGHTGRAY);
-        //textFill = Color.BLACK;
+        border = FXUtils.DefaultBorder;
+        background = FXUtils.DefaultBackground;
+        textFill = Color.BLACK;
       }
-      //button.toggleGroup = toggleGroup;
       children.add(button);
       val accelKey = numsToDigitKeys.getOrElse(i, null);
       if (accelKey != null) {

@@ -54,8 +54,10 @@ class MiniRPGGui(player : Actor) extends AnchorPane with Initializable {
   private var _powerReticle : PowerReticle = null;
   def powerReticle = _powerReticle;
   def powerReticle_=(pR : PowerReticle) = {
-    if (_powerReticle != null)
+    if (_powerReticle != null) {
       children.remove(_powerReticle);
+      _powerReticle.resetCreatorAppearance;
+    }
     _powerReticle = pR;
     if (_powerReticle != null)
       children add _powerReticle;

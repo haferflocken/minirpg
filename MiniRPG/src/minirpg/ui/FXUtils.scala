@@ -11,9 +11,16 @@ import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCode
 import scalafx.scene.layout.Background
 import scalafx.scene.layout.Border
+import scalafx.scene.paint.Color
 
 
 object FXUtils {
+  
+  val DefaultBackground = makeSFXBackground(Color.LIGHTGRAY);
+  val DefaultActionBackground = makeSFXBackground(Color.WHITE);
+  
+  val DefaultBorder = makeSFXBorder(Color.BLACK);
+  val DefaultActionBorder = makeSFXBorder(Color.GRAY);
   
   def makeSFXBackground(paint : Paint, corners : CornerRadii = CornerRadii.EMPTY, insets : Insets = Insets.EMPTY)
     = new Background(makeJFXBackground(paint, corners, insets));
