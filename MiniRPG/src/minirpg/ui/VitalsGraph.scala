@@ -8,11 +8,15 @@ import scalafx.scene.layout.StackPane
 import scalafx.scene.shape.Rectangle
 import scalafx.scene.paint.Color
 import scalafx.geometry.Pos
+import scalafx.geometry.Insets
 
 class VitalsGraph(actor : Actor) extends GridPane
   with Subscriber[ActorEvent, Actor] with Initializable {
   hgap = 8;
-  vgap = 4;
+  vgap = 2;
+  padding = Insets(2, 4, 2, 4);
+  background = FXUtils.makeSFXBackground(Color.LIGHTGRAY);
+  border = FXUtils.makeSFXBorder(Color.BLACK);
   
   val vitalNames = actor.vitals.keySet.toVector
   

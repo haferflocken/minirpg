@@ -2,7 +2,7 @@ package minirpg.ui
 
 import scalafx.Includes.handle
 import scalafx.scene.layout.AnchorPane
-import scalafx.scene.text.Text
+import scalafx.scene.control.Label
 import scalafx.animation.FadeTransition
 import scalafx.util.Duration
 import scalafx.animation.PauseTransition
@@ -15,10 +15,8 @@ import scalafx.scene.control.ContextMenu
 import scalafx.geometry.Side
 import minirpg.model._
 import scala.collection.mutable.Subscriber
-import scalafx.scene.chart.BarChart
-import scalafx.scene.chart.NumberAxis
-import scalafx.scene.chart.CategoryAxis
 import scalafx.geometry.Insets
+import scalafx.scene.paint.Color
 
 /**
  * Creates a GUI for the game.
@@ -71,12 +69,18 @@ class MiniRPGGui(player : Actor) extends AnchorPane with Initializable {
    * Pop up a text string.
    */
   def showPopup(text : String, x : Double, y : Double) : Unit = {
-    val popup = new Text(x, y, text);
+    val popup = new Label(text) {
+      layoutX = x;
+      layoutY = y;
+      background = FXUtils.makeSFXBackground(Color.LIGHTGRAY);
+      border = FXUtils.makeSFXBorder(Color.BLACK);
+      padding = Insets(4, 4, 4, 4)
+    };
     val fadeIn = new FadeTransition(new Duration(Duration(150))) {
       fromValue = 0.0f;
       toValue = 1.0f;
     };
-    val wait = new PauseTransition(new Duration(Duration(3000)));
+    val wait = new PauseTransition(new Duration(Duration(3500)));
     val fadeOut = new FadeTransition(new Duration(Duration(150))) {
       fromValue = 1.0f;
       toValue = 0.0f;

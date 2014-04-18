@@ -20,7 +20,7 @@ abstract class Actor(
   type Pub = Actor;
   override val useable = true;
 
-  val vitals : LinkedHashMap[String, (Int, Int)];
+  val vitals : LinkedHashMap[String, (Int, Int)]; // A map of names to (current, max)
   val equipSlotContents = new LinkedHashMap[String, Buffer[Gear]] ++= equipSlots.map((e) => (e._1, new ArrayBuffer[Gear])); 
   val wieldSlotContents = new LinkedHashMap[String, Gear] ++= wieldSlots.map((_, null));
   val equipped : Buffer[Gear] = new ArrayBuffer;
