@@ -24,6 +24,7 @@ import scalafx.scene.control.Menu
 import scalafx.geometry.Side
 import scalafx.scene.input.KeyCode
 import scalafx.scene.layout.StackPane
+import scalafx.scene.layout.BorderPane
 
 object MiniRPGApp extends JFXApp {
   
@@ -40,15 +41,19 @@ object MiniRPGApp extends JFXApp {
     title = "MiniRPG";
     width = 800;
     height = 600;
+    resizable = false;
     scene = new Scene {
       fill = Color.BLACK;
-      content = new StackPane() {
+      content = new StackPane {
         children.addAll(world.canvas, world.debugCanvas, gui);
+        minWidth = 800;
+        minHeight = 600;
       };
     };
     handleMouse(scene());
     handleKeys(scene());
   }
+  gui.init;
   ticker.start;
   
   private def tick(delta : Long) : Unit = {
@@ -65,17 +70,12 @@ object MiniRPGApp extends JFXApp {
       
       // Left click should pull up an action menu of what can be done
       // to the entities on the tile.
-      if (me.button == MouseButton.PRIMARY) {
+      if (me.button == MouseButton.SECONDARY) {
         if ((tileCoords._1 - player.x).abs + (tileCoords._2 - player.y).abs <= 1 ) {
           val useTargets = world.getEntitiesAt(tileCoords._1, tileCoords._2).filter(_.node != null);
           if (useTargets.nonEmpty)
             gui.showActionMenu(useTargets);
         }
-      }
-      
-      // Right click is move.
-      else if (me.button == MouseButton.SECONDARY) {
-        player.setMoveTarget(tileCoords._1, tileCoords._2);
       }
     }
   }

@@ -20,10 +20,10 @@ abstract class Actor(
   type Pub = Actor;
   override val useable = true;
 
-  val vitals : LinkedHashMap[String, Int];
+  val vitals : LinkedHashMap[String, (Int, Int)];
   val equipSlotContents = new LinkedHashMap[String, Buffer[Gear]] ++= equipSlots.map((e) => (e._1, new ArrayBuffer[Gear])); 
   val wieldSlotContents = new LinkedHashMap[String, Gear] ++= wieldSlots.map((_, null));
-  var equipped : Set[Gear] = Set();
+  val equipped : Buffer[Gear] = new ArrayBuffer;
   var powers : Vector[Power] = defaultPowers;
   val skills = new LinkedHashMap[String, Int] ++= baseSkills;
   var path : Queue[(Int, Int)] = null;
@@ -41,7 +41,7 @@ abstract class Actor(
   override def tick(delta : Long) : Unit = {
     // Die if any vitals are <= 0.
     for (e <- vitals) {
-      if (e._2 <= 0) {
+      if (e._2._1 <= 0) {
         val corpse = new Corpse(world.makeEntityId, "Corpse of " + name) {
           gear = equipped.toList;
           x = this.x;
@@ -73,7 +73,7 @@ abstract class Actor(
   // Change the value of a vital.
   def modVital(vital : String, amount : Int) : Unit = {
     val current = vitals(vital);
-    vitals(vital) = current + amount;
+    vitals(vital) = (current._1 + amount, current._2);
   }
   
   // Returns true if the actor has the required slots to equip some gear, or false otherwise.
@@ -81,9 +81,7 @@ abstract class Actor(
   
   // Returns true if the actor has a given gear equipped, false otherwise.
   def isEquipped(g : Gear) : Boolean = {
-    for (s <- equipSlotContents if s._2.contains(g))
-       return true;
-    return false;
+    return equipped contains g;
   }
   
   // Equip a piece of gear to this actor.
@@ -102,9 +100,10 @@ abstract class Actor(
         unequipNoUpdate(equippedG(0));
       }
       equipSlotContents(s).append(g);
+      equipped += g;
     };
     
-    initEquipped;
+    //initEquipped;
     initPowers;
     initSkills;
     publish(ActorEvent(this, ActorEvent.EQUIP));
@@ -119,7 +118,7 @@ abstract class Actor(
       return;
     
     unequipNoUpdate(g);
-    initEquipped;
+    //initEquipped;
     initPowers;
     initSkills;
     publish(ActorEvent(this, ActorEvent.UNEQUIP));
@@ -178,6 +177,7 @@ abstract class Actor(
     for (s <- g.equipSlots) {
       equipSlotContents(s) -= g;
     }
+    equipped -= g;
     val p = world.getSpotNextTo(x, y);
     world.addEntity(new GearEntity(world.makeEntityId, g) {
       x = p._1;
@@ -191,13 +191,13 @@ abstract class Actor(
     }
   }
   
-  private def initEquipped = {
+  /*private def initEquipped = {
     val equippedBuffer = new ArrayBuffer[Gear];
     for (b <- equipSlotContents.values) {
       equippedBuffer.appendAll(b);
     }
-    equipped = equippedBuffer.toSet;
-  }
+    equipped = equippedBuffer.toVector;
+  }*/
   
   private def initPowers = {
     powers = defaultPowers;

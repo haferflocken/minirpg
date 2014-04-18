@@ -18,6 +18,7 @@ import scala.collection.mutable.Subscriber
 import scalafx.scene.chart.BarChart
 import scalafx.scene.chart.NumberAxis
 import scalafx.scene.chart.CategoryAxis
+import scalafx.geometry.Insets
 
 /**
  * Creates a GUI for the game.
@@ -28,8 +29,17 @@ import scalafx.scene.chart.CategoryAxis
  *      Wield Menu at bottom left
  *      Power Bar at bottom right
  */
-class MiniRPGGui(player : Actor) extends AnchorPane {
+class MiniRPGGui(player : Actor) extends AnchorPane with Initializable {
   
+  def init = {
+    vitalsGraph.init;
+    wieldMenu.init;
+    powerBar.init;
+  }
+  
+  val bottomOffset = 30.0;
+  
+  var windowInsets : Insets = Insets.Empty;
   var mouseX : Double = 0;
   var mouseY : Double = 0;
   
@@ -47,7 +57,7 @@ class MiniRPGGui(player : Actor) extends AnchorPane {
   val wieldMenu = new WieldMenu(player);
   children add wieldMenu;
   AnchorPane.setLeftAnchor(wieldMenu, 0.0);
-  AnchorPane.setBottomAnchor(wieldMenu, 16.0);
+  AnchorPane.setBottomAnchor(wieldMenu, bottomOffset);
   
   /**
    * A list of buttons for using powers.
@@ -55,7 +65,7 @@ class MiniRPGGui(player : Actor) extends AnchorPane {
   val powerBar = new PowerBar(player);
   children add powerBar;
   AnchorPane.setRightAnchor(powerBar, 0.0);
-  AnchorPane.setBottomAnchor(powerBar, 16.0);
+  AnchorPane.setBottomAnchor(powerBar, bottomOffset);
   
   /**
    * Pop up a text string.

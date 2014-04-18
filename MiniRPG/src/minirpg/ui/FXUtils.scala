@@ -7,8 +7,11 @@ import javafx.scene.layout.BorderWidths
 import javafx.scene.layout.CornerRadii
 import javafx.scene.layout.BackgroundFill
 import javafx.geometry.Insets
+import javafx.scene.input.KeyCodeCombination
+import javafx.scene.input.KeyCode
 import scalafx.scene.layout.Background
 import scalafx.scene.layout.Border
+
 
 object FXUtils {
   
@@ -23,5 +26,8 @@ object FXUtils {
   
   def makeJFXBorder(paint : Paint, strokeStyle : BorderStrokeStyle = BorderStrokeStyle.SOLID, corners : CornerRadii = CornerRadii.EMPTY, strokeWidths : BorderWidths = BorderStroke.THIN)
     = new javafx.scene.layout.Border(new BorderStroke(paint, strokeStyle, corners, strokeWidths));
+  
+  def makeAccelerator(keyCode : KeyCode, action : Function0[Any]) : (KeyCodeCombination, Runnable) = 
+    (new KeyCodeCombination(keyCode), new Runnable { override def run = action() });
 
 }
