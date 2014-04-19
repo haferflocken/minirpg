@@ -3,7 +3,7 @@ package minirpg.model
 import scala.collection.mutable.ArraySeq
 import scala.collection.immutable.Queue
 import minirpg.util.Graph
-import scalafx.Includes.handle 
+import scalafx.Includes.handle
 import scalafx.scene.Node
 import scalafx.scene.shape.Circle
 import scalafx.scene.paint.Color
@@ -12,6 +12,7 @@ import scalafx.scene.layout.Pane
 import scalafx.animation.Animation
 import scalafx.animation.TranslateTransition
 import scalafx.util.Duration
+import scalafx.scene.paint.Paint
 
 class World(
     val name : String,
@@ -143,15 +144,15 @@ class ParticlePane extends Pane {
     components(speed, direction);
   }
   
-  def mkPoint(x : Double, y : Double, velocity : (Double, Double)) : Unit =
-    mkPoint(x, y, velocity._1, velocity._2);
+  def randVelocities(minSpeed : Double, maxSpeed : Double, minAngle : Double = 0.0, maxAngle : Double = Math.PI * 2.0, num : Int) = 
+    for (i <- 0 until num) yield randVelocity(minSpeed, maxSpeed, minAngle, maxAngle);
 
-  def mkPoint(x : Double, y : Double, xSpeed : Double, ySpeed : Double) : Unit = {
+  def mkCircle(x : Double, y : Double, r : Double, f : Paint, xSpeed : Double, ySpeed : Double) : Unit = {
     val particle = new Circle {
-      radius = 2;
+      radius = r;
       centerX = x;
       centerY = y;
-      fill = Color.AQUA;
+      fill = f;
     }
     val duration = new Duration(Duration(500));
     val translate = new TranslateTransition(duration, particle) {
@@ -161,6 +162,12 @@ class ParticlePane extends Pane {
     };
     children.add(particle);
     translate.play;
+  }
+  
+  def mkCircles(x : Double, y : Double, r : Double, f : Paint, speeds : IndexedSeq[(Double, Double)]) : Unit = {
+    for (i <- 0 until speeds.length) {
+      mkCircle(x, y, r, f, speeds(i)._1, speeds(i)._2);
+    }
   }
   
 }
