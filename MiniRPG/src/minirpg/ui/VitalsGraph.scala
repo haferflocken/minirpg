@@ -15,8 +15,8 @@ class VitalsGraph(actor : Actor) extends GridPane
   hgap = 8;
   vgap = 2;
   padding = Insets(2, 4, 2, 4);
-  background = FXUtils.makeSFXBackground(Color.LIGHTGRAY);
-  border = FXUtils.makeSFXBorder(Color.BLACK);
+  background = FXUtils.DefaultBackground;
+  border = FXUtils.DefaultBorder;
   
   val vitalNames = actor.vitals.keySet.toVector
   

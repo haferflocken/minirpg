@@ -39,13 +39,13 @@ class WieldMenu(actor : Actor) extends TilePane with Subscriber[ActorEvent, Acto
         maxWidth = Double.MaxValue;
         if (actor.isWielding(g)) {
           onAction = handle { actor.unwield(g) };
-          border = FXUtils.makeSFXBorder(paint = Color.GRAY, strokeWidths = BorderStroke.THIN);
-          background = FXUtils.makeSFXBackground(Color.WHITE);
+          border = FXUtils.DefaultActionBorder;
+          background = FXUtils.DefaultActionBackground;
           textFill = Color.BLACK;
         } else {
           onAction = handle { actor.wield(g) };
-          border = FXUtils.makeSFXBorder(Color.BLACK);
-          background = FXUtils.makeSFXBackground(Color.LIGHTGRAY);
+          border = FXUtils.DefaultBorder;
+          background = FXUtils.DefaultBackground;
           textFill = Color.BLACK;
         }
       };
