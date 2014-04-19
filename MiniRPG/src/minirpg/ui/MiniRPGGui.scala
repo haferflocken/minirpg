@@ -23,15 +23,9 @@ import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
 
 /**
- * Creates a GUI for the game.
- * 
- * Layout is:
- *      Vitals at top left
- *      Equipment at top right
- *      Wield Menu at bottom left
- *      Power Bar at bottom right
- */
-class MiniRPGGui(player : Actor) extends AnchorPane with Initializable {
+ * Creates a GUI to control an Actor.
+*/
+class MiniRPGGui(actor : Actor) extends AnchorPane with Initializable {
   
   def init = {
     vitalsGraph.init;
@@ -63,9 +57,9 @@ class MiniRPGGui(player : Actor) extends AnchorPane with Initializable {
       children add _powerReticle;
   }
   
-  val vitalsGraph = new VitalsGraph(player);
-  val wieldMenu = new WieldMenu(player);
-  val powerBar = new PowerBar(this, player);
+  val vitalsGraph = new VitalsGraph(actor);
+  val wieldMenu = new WieldMenu(actor);
+  val powerBar = new PowerBar(this, actor);
   
   val bottomBar = new HBox {
     children.addAll(vitalsGraph, wieldMenu, powerBar);
@@ -124,7 +118,7 @@ class MiniRPGGui(player : Actor) extends AnchorPane with Initializable {
       if (t.useable) {
         subItems.append(new MenuItem("Use") {
           onAction = handle {
-            t.beUsedBy(player);
+            t.beUsedBy(actor);
           }
         });
       }

@@ -45,7 +45,7 @@ object MiniRPGApp extends JFXApp {
     scene = new Scene {
       fill = Color.BLACK;
       content = new StackPane {
-        children.addAll(world.canvas, world.debugCanvas, gui);
+        children.addAll(world.canvas, world.particleCanvas, world.debugCanvas, gui);
         minWidth = 800;
         minHeight = 600;
       };
