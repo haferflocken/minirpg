@@ -27,10 +27,16 @@ class VitalsGraph(actor : Actor) extends GridPane
       val vital = actor.vitals(v);
       val level = vital._1;
       val maxLevel = vital._2;
+      val perc = 100 * level / maxLevel;
+      val color = VitalsGraph.getPercColor(perc);
       
       val label = new Text(v);
       val barStack = new StackPane {
-        content.addAll(Rectangle(256, 10, Color.DARKGRAY), Rectangle(256 * level / maxLevel, 10, Color.GREEN));
+        val bgRect = Rectangle(256, 10, Color.DIMGRAY);
+        bgRect.stroke = Color.BLACK;
+        val fgRect = Rectangle(256 * level / maxLevel, 10, color);
+        fgRect.stroke = Color.BLACK;
+        content.addAll(bgRect, fgRect);
         alignment = Pos.CENTER_LEFT;
       };
       add(label, 0, i);
@@ -44,4 +50,21 @@ class VitalsGraph(actor : Actor) extends GridPane
     notify(null, null);
   }
   
+}
+
+object VitalsGraph {
+  
+  val percColors =
+    Vector(
+      (80, Color.GREEN),
+      (60, Color.LIMEGREEN),
+      (40, Color.YELLOW),
+      (20, Color.ORANGE),
+      (0, Color.RED)
+    );
+  
+  def getPercColor(perc : Int) : Color = {
+    for (c <- percColors if perc > c._1) return c._2;
+    return null;
+  }
 }

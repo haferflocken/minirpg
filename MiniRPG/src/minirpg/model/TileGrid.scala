@@ -39,6 +39,7 @@ class TileGrid(
   for(x <- 0 to width - 1) {
     for (y <- 0 to height - 1) {
       val im = tileMap(tileGrid(x)(y));
+      println("tileGrid(" + s"$x)($y) -> " + im);
       if (im != null) {
         val pRMaybe = im.pixelReader;
         if (!pRMaybe.isEmpty) {

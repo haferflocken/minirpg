@@ -1,7 +1,8 @@
 package minirpg.model
 
-import scala.collection.immutable.Map;
+import scala.collection.immutable.Map
 import scalafx.scene.image.Image
+import minirpg.entities.GearEntity
 
 trait Gear {
   

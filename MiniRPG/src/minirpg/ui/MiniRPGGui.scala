@@ -69,6 +69,8 @@ class MiniRPGGui(player : Actor) extends AnchorPane with Initializable {
   
   val bottomBar = new HBox {
     children.addAll(vitalsGraph, wieldMenu, powerBar);
+    alignment = Pos.BOTTOM_LEFT;
+    fillHeight = false;
   }
   children add bottomBar;
   AnchorPane.setLeftAnchor(bottomBar, 0.0);

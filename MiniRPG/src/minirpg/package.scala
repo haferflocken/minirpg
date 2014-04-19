@@ -3,6 +3,7 @@ import minirpg.model._
 import minirpg.gear._
 import minirpg.entities.actors._
 import javafx.scene.input.KeyCode
+import minirpg.entities.GearEntityBuilder
 
 package object minirpg {
   

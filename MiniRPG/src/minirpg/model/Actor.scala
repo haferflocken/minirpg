@@ -8,6 +8,7 @@ import scala.util.parsing.json.JSONArray
 import minirpg.gearMap
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Publisher
+import minirpg.entities.GearEntity
 
 abstract class Actor(
     val id : String,

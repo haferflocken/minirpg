@@ -1,15 +1,9 @@
-package minirpg.model
+package minirpg.entities
 
-import scalafx.Includes.handle
 import scalafx.scene.Node
-import scalafx.scene.shape.Rectangle
-import scalafx.scene.paint.Color
-import scala.collection.mutable.HashMap
-import minirpg.gearMap
-import minirpg.gear._
 import scalafx.scene.image.{ ImageView, Image }
-import minirpg.ui.MiniRPGApp
-import scalafx.scene.control.Tooltip
+import minirpg.model._
+import minirpg.gearMap;
 
 class GearEntity(val id : String, val gear : Gear) extends Entity {
   
@@ -30,7 +24,7 @@ class GearEntity(val id : String, val gear : Gear) extends Entity {
 }
 
 object GearEntity {
-  val image = new Image("file:res\\sprites\\box.png");
+  val image = new Image("file:res\\sprites\\entities\\box.png");
 }
 
 object GearEntityBuilder extends Builder[GearEntity] {
