@@ -12,17 +12,17 @@ abstract class Conduit extends Gear {
 object ExplosiveConduit extends Conduit {
   val name = "Explosive Conduit";
   val description = "Conducts magical energy into an explosion.";
-  val powers = Vector[Power](ExplosiveConduitAttack);
+  val powers = Vector[Power](RedExplosiveConduitAttack);
 }
 
 object FocusedConduit extends Conduit {
   val name = "Focused Conduit";
   val description = "Conducts magical energy to a single point.";
-  val powers = Vector[Power](FocusedConduitAttack);
+  val powers = Vector[Power](RedFocusedConduitAttack);
 }
 
 object TrapConduit extends Conduit {
   val name = "Trap Conduit";
   val description = "Conducts magical energy to create a proximity mine.";
-  val powers = Vector[Power](TrapConduitAttack);
+  val powers = Vector[Power](RedTrapConduitAttack);
 }
