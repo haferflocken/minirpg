@@ -26,6 +26,7 @@ abstract class Actor(
   val wieldSlotContents = new LinkedHashMap[String, Gear] ++= wieldSlots.map((_, null));
   val equipped : Buffer[Gear] = new ArrayBuffer;
   var powers : Vector[Power] = defaultPowers;
+  val powerCooldowns = new LinkedHashMap[Power, Long] ++= powers.map((_, 0.longValue));
   val skills = new LinkedHashMap[String, Int] ++= baseSkills;
   var path : Queue[(Int, Int)] = null;
   var moveProgress : Long = 0;
@@ -53,6 +54,11 @@ abstract class Actor(
         publish(ActorEvent(this, ActorEvent.DIE));
         return;
       }
+    }
+    
+    // Cool powers off.
+    for ((p, c) <- powerCooldowns if c > 0) {
+      powerCooldowns(p) = c - delta max 0
     }
     
     // Move along the path.
@@ -201,6 +207,7 @@ abstract class Actor(
   }*/
   
   private def initPowers = {
+    // Make the powers vector.
     powers = defaultPowers;
     for (g <- equipped if g.powers != null if g.wieldSlots == null) {
       powers = powers ++ g.powers;
@@ -208,6 +215,13 @@ abstract class Actor(
     for (g <- wieldSlotContents.values.toSet if g != null) {
       powers = powers ++ g.powers;
     }
+    
+    // Update the cooldowns map.
+    for ((p, c) <- powerCooldowns) {
+      if (!powers.contains(p))
+        powerCooldowns -= p;
+    }
+    powerCooldowns ++= powers.filter(!powerCooldowns.contains(_)).map(p => (p, p.cooldown));
   }
   
   private def initSkills : Unit = {

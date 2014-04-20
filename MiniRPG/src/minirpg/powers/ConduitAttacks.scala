@@ -1,5 +1,6 @@
 package minirpg.powers
 
+import minirpg.TENTOTHE9
 import minirpg.model._
 import scalafx.scene.paint.Color
 import minirpg.entities.ProximityMine
@@ -8,9 +9,11 @@ object ExplosiveConduitAttack extends Power {
   
   val name = "Attack";
   val range = 1;
+  val cooldown : Long = TENTOTHE9;
   
   def apply(user : Actor, targets : Vector[Entity], region : Region) = {
     // TODO
+    addCooldown(user);
     val world = user.world;
     for (c <- region.coords) {
       val rX = world.tileGrid.tileWidth * (region.centerX + c._1) + world.tileGrid.tileWidth / 2;
@@ -30,9 +33,11 @@ object FocusedConduitAttack extends Power {
   
   val name = "Attack";
   val range = 1;
+  val cooldown : Long = TENTOTHE9 / 2;
   
   def apply(user : Actor, targets : Vector[Entity], region : Region) = {
     // TODO
+    addCooldown(user);
     val world = user.world;
     val rX = world.tileGrid.tileWidth * region.centerX + world.tileGrid.tileWidth / 2;
     val rY = world.tileGrid.tileHeight * region.centerY + world.tileGrid.tileHeight / 2;
@@ -50,9 +55,11 @@ object TrapConduitAttack extends Power {
   
   val name = "Attack";
   val range = 1;
+  val cooldown : Long = TENTOTHE9 * 3 / 2;
   
   def apply(user : Actor, targets : Vector[Entity], region : Region) = {
     // TODO
+    addCooldown(user);
     val world = user.world;
     world.addEntity(new ProximityMine(world.makeEntityId) {
       x = region.centerX;

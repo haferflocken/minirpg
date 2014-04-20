@@ -76,6 +76,7 @@ class MiniRPGGui(actor : Actor) extends AnchorPane with Initializable {
   def tick(delta : Long) : Unit = {
     if (_powerReticle != null)
       _powerReticle tick delta;
+    powerBar tick delta;
   }
   
   /**

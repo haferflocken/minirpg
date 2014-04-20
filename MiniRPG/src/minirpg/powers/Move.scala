@@ -6,6 +6,7 @@ object Move extends Power {
   
   val name = "Move";
   val range = 64;
+  val cooldown : Long = 0;
   
   def apply(user : Actor, targets : Vector[Entity], region : Region) = {
     user.setMoveTarget(region.centerX, region.centerY);
