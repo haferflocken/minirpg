@@ -9,7 +9,7 @@ import javafx.scene.input.MouseEvent
 import scalafx.scene.paint.Color
 import scalafx.scene.control.Button
 
-class PowerReticle(gui : MiniRPGGui, creator : Button, val actor : Actor, val power : Power) extends GridPane {
+class PowerReticle(gui : MiniRPGGui, creator : PowerBar, val actor : Actor, val power : Power) extends GridPane {
   
   val world = actor.world;
   val region = power.mkRegion(0, 0);
@@ -22,8 +22,7 @@ class PowerReticle(gui : MiniRPGGui, creator : Button, val actor : Actor, val po
   }
   
   def resetCreatorAppearance : Unit = {
-    creator.background = FXUtils.DefaultBackground;
-    creator.border = FXUtils.DefaultBorder;
+    creator.refreshBackground(power);
   }
   
   def tick(delta : Long) : Unit = {

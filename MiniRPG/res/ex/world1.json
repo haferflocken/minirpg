@@ -6,9 +6,21 @@
 				"class" : "Human",
 				"args" : {	"name" : "Player",
 							"x" : 11, "y" : 12,
-							"gear" : [ "Shortsword", "Explosive Conduit", "Red Orb", "Frog's Helmet", "Frog's Cuirass", "Frog's Greaves", "Frog's Gauntlets", "Frog's Boots" ] } },
-			{	"id" : "sword",
+							"gear" : [ "Shortsword", "Explosive Conduit", "Frog's Helmet", "Frog's Cuirass", "Frog's Greaves", "Frog's Gauntlets", "Frog's Boots" ] } },
+			{	"id" : "rOrb",
 				"class" : "Gear",
-				"args" : {	"type" : "Trap Conduit", "x" : 11, "y" : 11 }}
+				"args" : {	"type" : "Red Orb", "x" : 9, "y" : 11 }},
+			{	"id" : "yOrb",
+				"class" : "Gear",
+				"args" : {	"type" : "Yellow Orb", "x" : 10, "y" : 11 }},
+			{	"id" : "gOrb",
+				"class" : "Gear",
+				"args" : {	"type" : "Green Orb", "x" : 11, "y" : 11 }},
+			{	"id" : "bOrb",
+				"class" : "Gear",
+				"args" : {	"type" : "Blue Orb", "x" : 12, "y" : 11 }},
+			{	"id" : "pOrb",
+				"class" : "Gear",
+				"args" : {	"type" : "Purple Orb", "x" : 13, "y" : 11 }}
 		]
 }

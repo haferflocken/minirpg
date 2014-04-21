@@ -18,9 +18,11 @@ object FXUtils {
   
   val DefaultBackground = makeSFXBackground(Color.LIGHTGRAY);
   val DefaultActionBackground = makeSFXBackground(Color.PALEGREEN);
+  val DefaultDisabledBackground = makeSFXBackground(Color.GRAY);
   
   val DefaultBorder = makeSFXBorder(Color.BLACK);
   val DefaultActionBorder = makeSFXBorder(Color.BLACK);
+  val DefaultDisabledBorder = makeSFXBorder(Color.BLACK);
   
   def makeSFXBackground(paint : Paint, corners : CornerRadii = CornerRadii.EMPTY, insets : Insets = Insets.EMPTY)
     = new Background(makeJFXBackground(paint, corners, insets));

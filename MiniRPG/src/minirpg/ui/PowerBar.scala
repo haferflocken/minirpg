@@ -16,14 +16,25 @@ import scalafx.scene.shape.Circle
 import scalafx.scene.layout.StackPane
 import scalafx.scene.shape.Rectangle
 import scalafx.geometry.Pos
+import scalafx.scene.layout.Background
+import scalafx.scene.layout.Border
 
 class PowerBar(gui : MiniRPGGui, actor : Actor) extends TilePane with Subscriber[ActorEvent, Actor] with Initializable {
   
   private var cooldownRects : List[(Power, Rectangle)] = Nil;
+  private var buttons : List[(Power, Button)] = Nil;
   
-  def notify(pub : Actor, event : ActorEvent) : Unit = {
+  def notify(pub : Actor, e : ActorEvent) : Unit = {
+    if (e.event == EQUIP || e.event == UNEQUIP || e.event == WIELD || e.event == UNWIELD)
+      refreshButtons;
+    else if (e.event == POWER_NOW_USEABLE || e.event == POWER_NO_LONGER_USEABLE)
+      refreshBackgrounds;
+  }
+  
+  def refreshButtons : Unit = {
     children.clear;
     cooldownRects = Nil;
+    buttons = Nil;
     gui.powerReticle = null;
     val powers = actor.powers;
     var i = 0;
@@ -44,20 +55,22 @@ class PowerBar(gui : MiniRPGGui, actor : Actor) extends TilePane with Subscriber
           }
         }
       }
+      val (bdr, bg) = borderAndBackground(p.canUse(actor));
       val button = new Button(i + ") " + p.name, graphic) {
         maxWidth = Double.MaxValue;
         maxHeight = Double.MaxValue;
         onAction = handle {
-          if (actor.powerCooldowns(p) <= 0) {
-            gui.powerReticle = new PowerReticle(gui, this, actor, p);
+          if (actor.powerCooldowns(p) <= 0 && p.canUse(actor)) {
+            gui.powerReticle = new PowerReticle(gui, PowerBar.this, actor, p);
             border = FXUtils.DefaultActionBorder;
             background = FXUtils.DefaultActionBackground;
           }
         };
-        border = FXUtils.DefaultBorder;
-        background = FXUtils.DefaultBackground;
+        border = bdr;
+        background = bg;
         textFill = Color.BLACK;
       }
+      buttons = (p, button) +: buttons;
       children.add(button);
       val accelKey = numsToDigitKeys.getOrElse(i, null);
       if (accelKey != null) {
@@ -68,15 +81,45 @@ class PowerBar(gui : MiniRPGGui, actor : Actor) extends TilePane with Subscriber
     prefColumns = powers.length;
   }
   
+  def refreshBackgrounds : Unit = {
+    for ((p, b) <- buttons) {
+      val (bdr, bg) = borderAndBackground(p.canUse(actor));
+      b.border = bdr;
+      b.background = bg;
+    }
+  }
+  
+  def refreshBackground(power : Power) : Unit = {
+    for ((p, b) <- buttons if p == power) {
+      val (bdr, bg) = borderAndBackground(power.canUse(actor));
+      b.border = bdr;
+      b.background = bg;
+      return;
+    }
+  }
+  
   def init = {
-    actor.subscribe(this, e => e.event == EQUIP || e.event == UNEQUIP || e.event == WIELD || e.event == UNWIELD);
-    notify(null, null);
+    actor.subscribe(
+        this,
+        e => e.event == EQUIP ||
+             e.event == UNEQUIP ||
+             e.event == WIELD || 
+             e.event == UNWIELD ||
+             e.event == POWER_NOW_USEABLE || 
+             e.event == POWER_NO_LONGER_USEABLE);
+    refreshButtons;
   }
   
   def tick(delta : Long) : Unit = {
     for ((p, r) <- cooldownRects) {
       r.height = 16 * (p.cooldown - actor.powerCooldowns(p)) / p.cooldown;
     }
+  }
+  
+  private def borderAndBackground(canUse : Boolean) : (Border, Background) = {
+    if (canUse)
+      return (FXUtils.DefaultBorder, FXUtils.DefaultBackground);
+    return (FXUtils.DefaultDisabledBorder, FXUtils.DefaultDisabledBackground);
   }
   
 }
