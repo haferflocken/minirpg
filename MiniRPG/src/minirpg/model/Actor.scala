@@ -68,8 +68,11 @@ abstract class Actor(
     }
     
     // Cool powers off.
-    for ((p, c) <- powerCooldowns if c > 0) {
-      powerCooldowns(p) = c - delta max 0
+    for ((p, c) <- powerCooldowns) {
+      if (powerUseables(p)) {
+        if (c > 0) powerCooldowns(p) = c - delta max 0;
+      }
+      else if (c != p.cooldown) powerCooldowns(p) = p.cooldown;
     }
     
     // Move along the path.
