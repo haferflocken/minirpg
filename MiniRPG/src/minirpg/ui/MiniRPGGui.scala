@@ -21,11 +21,14 @@ import scalafx.scene.layout.HBox
 import scalafx.geometry.Pos
 import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
+import scalafx.stage.Stage
+import javafx.stage.StageStyle
+import minirpg.util.Tickable
 
 /**
  * Creates a GUI to control an Actor.
 */
-class MiniRPGGui(actor : Actor) extends AnchorPane with Initializable {
+class MiniRPGGui(actor : Actor) extends AnchorPane with Initializable with Tickable {
   
   def init = {
     vitalsGraph.init;

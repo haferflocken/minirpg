@@ -25,15 +25,15 @@ import scalafx.geometry.Side
 import scalafx.scene.input.KeyCode
 import scalafx.scene.layout.StackPane
 import scalafx.scene.layout.BorderPane
+import minirpg.ui.scenes.WorldScene
+import minirpg.util.Tickable
 
 object MiniRPGApp extends JFXApp {
   
   val ticker = new DeltaTicker(tick);
   
   val world = WorldLoader.loadJsonFile("res\\ex\\world1.json");
-  val player = world.getEntitiesById("player")(0).asInstanceOf[Actor];
-  
-  val gui : MiniRPGGui = new MiniRPGGui(player);
+  val worldScene : Scene with Tickable with Initializable = new WorldScene(world);
   
   println(world);
   
@@ -42,52 +42,13 @@ object MiniRPGApp extends JFXApp {
     width = 800;
     height = 600;
     resizable = false;
-    scene = new Scene {
-      fill = Color.BLACK;
-      content = new StackPane {
-        children.addAll(world.canvas, world.particleCanvas, world.debugCanvas, gui);
-        minWidth = 800;
-        minHeight = 600;
-      };
-    };
-    handleMouse(scene());
-    handleKeys(scene());
+    scene = worldScene;
   }
-  gui.init;
+  worldScene.init;
   ticker.start;
   
   private def tick(delta : Long) : Unit = {
-    world.tick(delta);
-    gui tick delta;
-  }
-  
-  private def handleMouse(scene : Scene) : Unit = {
-    scene.onMouseMoved = (me : MouseEvent) => {
-      gui.mouseX = me.x;
-      gui.mouseY = me.y;
-    }
-    scene.onMouseClicked = (me : MouseEvent) => {
-      val tileCoords = world.tileGrid.screenToTileCoords(me.x, me.y);
-      
-      // Left click should pull up an action menu of what can be done
-      // to the entities on the tile.
-      if (me.button == MouseButton.SECONDARY) {
-        if ((tileCoords._1 - player.x).abs + (tileCoords._2 - player.y).abs <= 1 ) {
-          val useTargets = world.getEntitiesAt(tileCoords._1, tileCoords._2).filter(_.node != null);
-          if (useTargets.nonEmpty)
-            gui.showActionMenu(useTargets);
-        }
-      }
-    }
-  }
-  
-  private def handleKeys(scene : Scene) : Unit = {
-    scene.onKeyPressed = (ke : KeyEvent) => {
-      
-    }
-    scene.onKeyReleased = (ke : KeyEvent) => {
-      
-    }
+    worldScene tick delta;
   }
   
 }

@@ -18,8 +18,9 @@ import scalafx.scene.shape.Rectangle
 import scalafx.geometry.Pos
 import scalafx.scene.layout.Background
 import scalafx.scene.layout.Border
+import minirpg.util.Tickable
 
-class PowerBar(gui : MiniRPGGui, actor : Actor) extends TilePane with Subscriber[ActorEvent, Actor] with Initializable {
+class PowerBar(gui : MiniRPGGui, actor : Actor) extends TilePane with Subscriber[ActorEvent, Actor] with Initializable with Tickable {
   
   private var cooldownRects : List[(Power, Rectangle)] = Nil;
   private var buttons : List[(Power, Button)] = Nil;

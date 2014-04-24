@@ -17,3 +17,7 @@ class DeltaTicker(handler : (Long) => Unit) extends AnimationTimer {
   }
   
 }
+
+trait Tickable {
+  def tick(delta : Long) : Unit;
+}
