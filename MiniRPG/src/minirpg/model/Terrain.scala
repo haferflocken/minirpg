@@ -35,7 +35,7 @@ class Terrain(
         g.fill = Terrain.cartoColor(percHeight, percGrad);
       }
       else {
-        g.fill = Terrain.waterColor;
+        g.fill = Terrain.cartoWaterColor;
       }
       val x = i * tileWidth;
       val y = j * tileHeight;
@@ -44,11 +44,16 @@ class Terrain(
     return canvas.snapshot(new SnapshotParameters, new WritableImage(imageWidth, imageHeight));
   }
   
+  def crop(rX : Int, rY : Int, rWidth : Int, rHeight : Int) : Terrain = {
+    val cGrid = grid.slice(rX, rX + rWidth).map(v => v.slice(rY, rY + rHeight));
+    val cGrad = gradient.slice(rX, rX + rWidth).map(v => v.slice(rY, rY + rHeight));
+    return new Terrain(cGrid, cGrad, waterLevel);
+  }
 }
 
 object Terrain {
   
-  val waterColor = Color.CORNFLOWERBLUE;
+  val cartoWaterColor = Color.LIGHTGRAY;
   
   val cartoColors = Vector[(Double, Color)](
       (0.9, Color.gray(1.0)),
