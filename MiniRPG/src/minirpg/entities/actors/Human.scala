@@ -5,6 +5,8 @@ import minirpg.powers._
 import scalafx.scene.shape.Rectangle
 import scalafx.scene.paint.Color
 import scala.collection.mutable.LinkedHashMap
+import minirpg.model.world.ActorBuilder
+import minirpg.model.world.Actor
 
 class Human(id : String, name : String) extends Actor(
     id,

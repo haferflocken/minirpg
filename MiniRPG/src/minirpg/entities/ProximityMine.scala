@@ -1,6 +1,6 @@
 package minirpg.entities
 
-import minirpg.model.Entity
+import minirpg.model.world.Entity
 import scalafx.scene.shape.Circle
 import scalafx.scene.paint.Color
 import scalafx.scene.image.Image

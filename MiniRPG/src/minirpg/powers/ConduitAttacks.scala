@@ -4,7 +4,8 @@ import minirpg.TENTOTHE9
 import minirpg.model._
 import minirpg.gear._
 import scalafx.scene.paint.Color
-import minirpg.entities.ProximityMine
+import minirpg.entities._
+import minirpg.model.world._
 
 trait ConduitAttack extends Power {
   

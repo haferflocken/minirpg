@@ -1,11 +1,12 @@
-package minirpg.model
+package minirpg.model.world
 
 import minirpg._
 import scalafx.scene.image.Image
 import scalafx.scene.image.WritableImage
 import scalafx.scene.image.ImageView
 import minirpg.util.Graph
-import scala.collection.mutable.ArrayBuffer
+import minirpg.model._
+import scala.Array.canBuildFrom
 
 class TileGrid(
     _grid : Array[Array[Int]],

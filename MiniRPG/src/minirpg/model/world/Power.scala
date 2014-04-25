@@ -1,4 +1,6 @@
-package minirpg.model
+package minirpg.model.world
+
+import minirpg.model._
 
 trait Power {
 

@@ -1,6 +1,7 @@
 package minirpg.gear
 
 import minirpg.model._
+import minirpg.model.world.Gear
 
 object CyclopsGoggles extends Gear {
 

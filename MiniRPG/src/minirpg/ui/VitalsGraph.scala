@@ -9,6 +9,7 @@ import scalafx.scene.shape.Rectangle
 import scalafx.scene.paint.Color
 import scalafx.geometry.Pos
 import scalafx.geometry.Insets
+import minirpg.model.world._
 
 class VitalsGraph(actor : Actor) extends GridPane
   with Subscriber[ActorEvent, Actor] with Initializable {

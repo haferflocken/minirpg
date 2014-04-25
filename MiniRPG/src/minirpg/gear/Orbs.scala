@@ -1,6 +1,7 @@
 package minirpg.gear
 
 import minirpg.model._
+import minirpg.model.world.Gear
 
 abstract class Orb extends Gear {
   val equipSlots = Vector("Hip");

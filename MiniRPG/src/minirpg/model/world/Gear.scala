@@ -1,8 +1,9 @@
-package minirpg.model
+package minirpg.model.world
 
 import scala.collection.immutable.Map
 import scalafx.scene.image.Image
-import minirpg.entities.GearEntity
+import minirpg.model.world._
+import minirpg.entities._
 
 trait Gear {
   

@@ -1,6 +1,7 @@
 package minirpg.powers
 
 import minirpg.model._
+import minirpg.model.world._
 
 object Move extends Power {
   

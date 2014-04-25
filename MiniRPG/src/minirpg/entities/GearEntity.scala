@@ -2,8 +2,10 @@ package minirpg.entities
 
 import scalafx.scene.Node
 import scalafx.scene.image.{ ImageView, Image }
+import minirpg.gearMap
 import minirpg.model._
-import minirpg.gearMap;
+import minirpg.model.world._
+import minirpg.model.world.Gear
 
 class GearEntity(val id : String, val gear : Gear) extends Entity {
   

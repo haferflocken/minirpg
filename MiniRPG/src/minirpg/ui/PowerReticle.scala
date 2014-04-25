@@ -9,6 +9,7 @@ import javafx.scene.input.MouseEvent
 import scalafx.scene.paint.Color
 import scalafx.scene.control.Button
 import minirpg.util.Tickable
+import minirpg.model.world._
 
 class PowerReticle(gui : MiniRPGGui, creator : PowerBar, val actor : Actor, val power : Power) extends GridPane with Tickable {
   

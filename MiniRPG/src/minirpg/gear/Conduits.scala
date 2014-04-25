@@ -2,6 +2,8 @@ package minirpg.gear
 
 import minirpg.model._
 import minirpg.powers._
+import minirpg.model.world.Power
+import minirpg.model.world.Gear
 
 abstract class Conduit extends Gear {
   val equipSlots = Vector("Back");

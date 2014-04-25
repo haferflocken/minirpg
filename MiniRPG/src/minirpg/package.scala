@@ -1,9 +1,11 @@
 
 import minirpg.model._
+import minirpg.model.world._
 import minirpg.gear._
 import minirpg.entities.actors._
 import javafx.scene.input.KeyCode
 import minirpg.entities.GearEntityBuilder
+import minirpg.model.world.Gear
 
 package object minirpg {
   

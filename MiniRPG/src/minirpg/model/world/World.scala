@@ -1,18 +1,22 @@
-package minirpg.model
+package minirpg.model.world
 
-import scala.collection.mutable.ArraySeq
-import scala.collection.immutable.Queue
-import minirpg.util.Graph
 import scalafx.Includes.handle
-import scalafx.scene.Node
-import scalafx.scene.shape.Circle
-import scalafx.scene.paint.Color
-import scala.util.Random
-import scalafx.scene.layout.Pane
-import scalafx.animation.Animation
 import scalafx.animation.TranslateTransition
-import scalafx.util.Duration
+import scalafx.scene.shape.Circle
+import scalafx.scene.shape.Circle.sfxCircle2jfx
+import scalafx.scene.paint.Color
 import scalafx.scene.paint.Paint
+import scalafx.scene.layout.Pane
+import scalafx.scene.image.ImageView.sfxImageView2jfx
+import scalafx.scene.Node.sfxNode2jfx
+import scalafx.util.Duration
+
+import minirpg.model._
+import minirpg.model.world._
+import minirpg.util.Graph
+
+import scala.collection.immutable.Queue
+import scala.util.Random
 
 class World(
     val name : String,

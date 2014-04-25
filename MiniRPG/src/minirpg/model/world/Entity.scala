@@ -1,6 +1,8 @@
-package minirpg.model
+package minirpg.model.world
 
 import scalafx.scene.Node
+import minirpg.model._
+import minirpg.model.world._
 
 trait Entity {
   

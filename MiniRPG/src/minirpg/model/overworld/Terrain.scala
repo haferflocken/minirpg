@@ -1,4 +1,4 @@
-package minirpg.model
+package minirpg.model.overworld
 
 import scalafx.scene.paint.Color
 import scalafx.scene.image.Image

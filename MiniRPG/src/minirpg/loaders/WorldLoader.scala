@@ -5,6 +5,8 @@ import java.io.InputStream
 import scala.collection.Map
 import scala.util.parsing.json.JSONObject
 import scala.util.parsing.json.JSONArray
+import minirpg.model.world.Entity
+import minirpg.model.world.World
 
 object WorldLoader extends Loader[World] {
 

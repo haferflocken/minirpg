@@ -3,7 +3,7 @@ package minirpg.ui
 import scalafx.Includes.handle
 import scalafx.scene.layout.TilePane
 import minirpg.numsToFKeys
-import minirpg.model.Gear
+import minirpg.model.world.Gear
 import scalafx.scene.Node
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderStroke
@@ -13,7 +13,6 @@ import javafx.scene.layout.BackgroundFill
 import javafx.event.EventHandler
 import javafx.geometry.Insets
 import minirpg.model._
-import minirpg.model.ActorEvent._
 import minirpg.gearMap
 import scalafx.scene.shape.Arc
 import scalafx.scene.paint.Color
@@ -25,6 +24,8 @@ import scalafx.scene.layout.Border
 import scalafx.scene.layout.Background
 import scala.collection.mutable.Subscriber
 import scalafx.geometry.Orientation
+import minirpg.model.world.ActorEvent._
+import minirpg.model.world._
 
 class WieldMenu(actor : Actor) extends TilePane with Subscriber[ActorEvent, Actor] with Initializable {
   orientation = Orientation.VERTICAL;

@@ -2,6 +2,7 @@ package minirpg.powers
 
 import minirpg.TENTOTHE9
 import minirpg.model._
+import minirpg.model.world._
 
 object ShortswordAttack extends Power {
   

@@ -5,6 +5,7 @@ import java.io.InputStream
 import scalafx.scene.image.Image
 import scala.util.parsing.json.JSONArray
 import scala.util.parsing.json.JSONObject
+import minirpg.model.world.TileGrid
 
 object TileGridLoader extends Loader[TileGrid] {
 

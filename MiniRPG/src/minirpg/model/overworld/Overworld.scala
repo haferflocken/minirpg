@@ -1,4 +1,4 @@
-package minirpg.model
+package minirpg.model.overworld
 
 class Overworld {
 

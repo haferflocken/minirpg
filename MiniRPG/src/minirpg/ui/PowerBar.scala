@@ -2,7 +2,7 @@ package minirpg.ui
 
 import minirpg.numsToDigitKeys
 import minirpg.model._
-import minirpg.model.ActorEvent._
+import minirpg.model.world.ActorEvent._
 import scalafx.Includes._
 import scalafx.scene.layout.TilePane
 import scala.collection.mutable.Subscriber
@@ -19,6 +19,7 @@ import scalafx.geometry.Pos
 import scalafx.scene.layout.Background
 import scalafx.scene.layout.Border
 import minirpg.util.Tickable
+import minirpg.model.world._
 
 class PowerBar(gui : MiniRPGGui, actor : Actor) extends TilePane with Subscriber[ActorEvent, Actor] with Initializable with Tickable {
   

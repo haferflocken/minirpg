@@ -7,7 +7,7 @@ import scalafx.animation.FadeTransition
 import scalafx.util.Duration
 import scalafx.animation.PauseTransition
 import scalafx.animation.SequentialTransition
-import minirpg.model.Entity
+import minirpg.model.world.Entity
 import scala.collection.mutable.ArrayBuffer
 import scalafx.scene.control.MenuItem
 import scalafx.scene.control.Menu
@@ -24,6 +24,7 @@ import javafx.scene.input.MouseEvent
 import scalafx.stage.Stage
 import javafx.stage.StageStyle
 import minirpg.util.Tickable
+import minirpg.model.world._
 
 /**
  * Creates a GUI to control an Actor.

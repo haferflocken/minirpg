@@ -1,14 +1,15 @@
-package minirpg.model
+package minirpg.model.world
 
 import scala.collection.mutable.LinkedHashMap
 import scala.collection.mutable.Buffer
 import scala.collection.immutable.Queue
-import minirpg.entities.Corpse
 import scala.util.parsing.json.JSONArray
-import minirpg.gearMap
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Publisher
-import minirpg.entities.GearEntity
+import minirpg.gearMap
+import minirpg.model._
+import minirpg.model.world._
+import minirpg.entities._
 
 abstract class Actor(
     val id : String,

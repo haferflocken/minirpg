@@ -9,7 +9,7 @@ import scalafx.scene.text.Text
 import scalafx.scene.control.Button
 import minirpg.ui.MiniRPGApp
 import minirpg.util.Tickable
-import minirpg.model.Terrain
+import minirpg.model.overworld.Terrain
 import scalafx.scene.image.ImageView
 
 class MainMenuScene extends Scene with Tickable with Initializable {
