@@ -22,7 +22,7 @@ class Terrain(
   val maxSlope = gradient.foldLeft(gradient(0)(0)._1)((b1, l) => (b1 max l.foldLeft(l(0)._1)((b2, n) => b2 max n._1 max n._2)));
   val slopeRange = maxSlope - minSlope;
   
-  def mkImage(imageWidth : Int, imageHeight : Int) : Image = {
+  def mkCanvas(imageWidth : Int, imageHeight : Int) : Canvas = {
     val canvas = new Canvas(imageWidth, imageHeight);
     val g = canvas.graphicsContext2D;
     val tileWidth = imageWidth.toDouble / width;
@@ -41,6 +41,11 @@ class Terrain(
       val y = j * tileHeight;
       g.fillRect(x, y, tileWidth, tileHeight);
     }
+    return canvas;
+  }
+  
+  def mkImage(imageWidth : Int, imageHeight : Int) : Image = {
+    val canvas = mkCanvas(imageWidth, imageHeight)
     return canvas.snapshot(new SnapshotParameters, new WritableImage(imageWidth, imageHeight));
   }
   
