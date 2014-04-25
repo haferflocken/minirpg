@@ -72,11 +72,11 @@ object Terrain {
     // Diamond-square it.
     var sampleSize = featureSize;
     var scale = maxHeight;
-    while (sampleSize > 1) {
+    do {
       diamondSquareStep(gridBuff, gridSize, sampleSize, scale);
       sampleSize /= 2;
       scale /= 2.0;
-    }
+    } while (sampleSize > 1);
     
     val unrolled = gridBuff.toVector;
     val grid = unrolled.grouped(gridSize).toVector;
@@ -86,13 +86,21 @@ object Terrain {
   private def diamondSquareStep(gridBuff : Array[Double], gridSize : Int, sideLength : Int, scale : Double) : Unit = {
     val halfLength = sideLength / 2;
     
-    for (j <- Range(halfLength, gridSize + halfLength, sideLength); i <- Range(halfLength, gridSize + halfLength, sideLength)) {
-      sampleSquare(gridBuff, gridSize, i, j, halfLength, rand * scale);
+    // Square step.
+    for (j <- Range(0, gridSize, sideLength); i <- Range(0, gridSize, sideLength)) {
+      val a = sample(gridBuff, gridSize, i, j);
+      val b = sample(gridBuff, gridSize, i + sideLength, j);
+      val c = sample(gridBuff, gridSize, i, j + sideLength);
+      val d = sample(gridBuff, gridSize, i + sideLength, j + sideLength);
+      
+      val e = (a + b + c + d) / 4.0 + rand * scale * sideLength;
+      setSample(gridBuff, gridSize, i + halfLength, j + halfLength, e);
     }
     
+    // Diamond step.
     for (j <- Range(0, gridSize, sideLength); i <- Range(0, gridSize, sideLength)) {
-      sampleDiamond(gridBuff, gridSize, i + halfLength, j, halfLength, rand * scale);
-      sampleDiamond(gridBuff, gridSize, i, j + halfLength, halfLength, rand * scale);
+      sampleDiamond(gridBuff, gridSize, i + halfLength, j, halfLength, rand * scale * sideLength);
+      sampleDiamond(gridBuff, gridSize, i, j + halfLength, halfLength, rand * scale * sideLength);
     }
   }
   
@@ -102,14 +110,6 @@ object Terrain {
   private def setSample(gridBuff : Array[Double], gridSize : Int, x : Int, y : Int, value : Double) = 
     gridBuff((x & (gridSize - 1)) + (y & (gridSize - 1)) * gridSize) = value;
   
-  private def sampleSquare(gridBuff : Array[Double], gridSize : Int, x : Int, y : Int, halfLength : Int, value : Double) : Unit = {
-    val a = sample(gridBuff, gridSize, x - halfLength, y - halfLength);
-    val b = sample(gridBuff, gridSize, x + halfLength, y - halfLength);
-    val c = sample(gridBuff, gridSize, x - halfLength, y + halfLength);
-    val d = sample(gridBuff, gridSize, x + halfLength, y + halfLength);
-    setSample(gridBuff, gridSize, x, y, value);
-  }
-  
   private def sampleDiamond(gridBuff : Array[Double], gridSize : Int, x : Int, y : Int, halfLength : Int, value : Double) : Unit = {
     val a = sample(gridBuff, gridSize, x - halfLength, y);
     val b = sample(gridBuff, gridSize, x + halfLength, y);
@@ -118,7 +118,7 @@ object Terrain {
     setSample(gridBuff, gridSize, x, y, (a + b + c + d) / 4.0 + value);
   }
   
-  private def rand : Double = Math.random - 0.5;
+  private def rand : Double = Math.random * 2.0 - 1.0;
 }
 
 object TerrainTester extends App {
