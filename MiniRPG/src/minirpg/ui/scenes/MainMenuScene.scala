@@ -13,7 +13,7 @@ import minirpg.model.Terrain
 import scalafx.scene.image.ImageView
 
 class MainMenuScene extends Scene with Tickable with Initializable {
-  val t = Terrain.mkRandomTerrain(128, 100, Double.MinValue);
+  val t = Terrain.mkRandomTerrain(256, 100, Double.MinValue);
   
   fill = Color.BLACK;
   content = new VBox {
@@ -24,7 +24,7 @@ class MainMenuScene extends Scene with Tickable with Initializable {
         new Button("New Game") {
           onMouseClicked = handle { MiniRPGApp.scene = new WorldScene(MiniRPGApp.world) };
         },
-        new ImageView(t.mkImage(256, 256)));
+        new ImageView(t.mkImage(512, 512)));
     minWidth = 800;
     minHeight = 600;
   }
