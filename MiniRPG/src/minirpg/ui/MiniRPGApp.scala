@@ -25,7 +25,7 @@ import scalafx.geometry.Side
 import scalafx.scene.input.KeyCode
 import scalafx.scene.layout.StackPane
 import scalafx.scene.layout.BorderPane
-import minirpg.ui.scenes.WorldScene
+import minirpg.ui.scenes._
 import minirpg.util.Tickable
 
 object MiniRPGApp extends JFXApp {
@@ -33,7 +33,7 @@ object MiniRPGApp extends JFXApp {
   val ticker = new DeltaTicker(tick);
   
   val world = WorldLoader.loadJsonFile("res\\ex\\world1.json");
-  val worldScene : Scene with Tickable with Initializable = new WorldScene(world);
+  private var _scene : Scene with Tickable with Initializable = new MainMenuScene
   
   println(world);
   
@@ -42,13 +42,21 @@ object MiniRPGApp extends JFXApp {
     width = 800;
     height = 600;
     resizable = false;
-    scene = worldScene;
+    scene = _scene;
   }
-  worldScene.init;
+  _scene.init;
   ticker.start;
   
+  def scene_=(s : Scene with Tickable with Initializable) : Unit = {
+    _scene = s;
+    stage.scene = s;
+    s.init;
+  }
+  
+  def scene = _scene;
+  
   private def tick(delta : Long) : Unit = {
-    worldScene tick delta;
+    _scene tick delta;
   }
   
 }
