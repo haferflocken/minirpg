@@ -1,10 +1,13 @@
 package minirpg.model.overworld
 
+import minirpg._
+import minirpg.util.Graph
 import scalafx.scene.paint.Color
 import scalafx.scene.image.Image
 import scalafx.scene.image.WritableImage
 import scalafx.scene.canvas.Canvas
 import scalafx.scene.SnapshotParameters
+import scala.collection.mutable.HashMap
 
 class Terrain(
     val grid : Vector[Vector[Double]],
@@ -22,6 +25,35 @@ class Terrain(
   val maxSlope = gradient.foldLeft(gradient(0)(0)._1)((b1, l) => (b1 max l.foldLeft(l(0)._1)((b2, n) => b2 max n._1 max n._2)));
   val slopeRange = maxSlope - minSlope;
   
+  val navMap : NavMap = {
+    val conMap = new HashMap[(Int, Int), Array[((Int, Int), Int)]];
+    for (i <- 0 until width; j <- 0 until height if grid(i)(j) > waterLevel) {
+      var cons : List[((Int, Int), Int)] = Nil;
+      if (grid(i)(j) > waterLevel) {
+        if (isInBounds(i - 1, j) && grid(i - 1)(j) > waterLevel) {
+          val weight = Math.max(1, Math.abs(percGradientRight(i - 1, j)));
+          cons = ((i - 1, j), weight) +: cons;
+        }
+        if (isInBounds(i, j - 1) && grid(i)(j - 1) > waterLevel) {
+          val weight = Math.max(1, Math.abs(percGradientDown(i, j - 1)));
+          cons = ((i, j - 1), weight) +: cons;
+        }
+        if (isInBounds(i + 1, j) && grid(i + 1)(j) > waterLevel) {
+          val weight = Math.max(1, Math.abs(percGradientRight(i, j)));
+          cons = ((i + 1, j), weight) +: cons;
+          
+        }
+        if (isInBounds(i, j + 1) && grid(i)(j + 1) > waterLevel) {
+          val weight = Math.max(1, Math.abs(percGradientDown(i, j)));
+          cons = ((i, j + 1), weight) +: cons;
+        }
+      }
+      conMap.update((i, j), cons.toArray);
+    }
+    
+    Graph(data = null, conMap.toMap);
+  }
+  
   def mkCanvas(imageWidth : Int, imageHeight : Int) : Canvas = {
     val canvas = new Canvas(imageWidth, imageHeight);
     val g = canvas.graphicsContext2D;
@@ -32,7 +64,7 @@ class Terrain(
         val percHeight = (grid(i)(j) - minHeight) / heightRange;
         val grad = gradient(i)(j);
         val percGrad = ((grad._1 max grad._2) - minSlope) / slopeRange;
-        g.fill = Terrain.cartoColor(percHeight, percGrad);
+        g.fill = Terrain.cartoGray(percHeight);
       }
       else {
         g.fill = Terrain.cartoWaterColor;
@@ -50,15 +82,23 @@ class Terrain(
   }
   
   def crop(rX : Int, rY : Int, rWidth : Int, rHeight : Int) : Terrain = {
+    if (rX == 0 && rY == 0 && rWidth == width && rHeight == height)
+      return this;
     val cGrid = grid.slice(rX, rX + rWidth).map(v => v.slice(rY, rY + rHeight));
     val cGrad = gradient.slice(rX, rX + rWidth).map(v => v.slice(rY, rY + rHeight));
     return new Terrain(cGrid, cGrad, waterLevel);
   }
+  
+  def isInBounds(x : Int, y : Int) = x >= 0 && y >= 0 && x < width && y < height;
+  
+  def percGradientRight(x : Int, y : Int) = (gradient(x)(y)._1 * 100 / slopeRange).toInt;
+  
+  def percGradientDown(x : Int, y : Int) = (gradient(x)(y)._2 * 100 / slopeRange).toInt;
 }
 
 object Terrain {
   
-  val cartoWaterColor = Color.LIGHTGRAY;
+  val cartoWaterColor = Color.LIGHTSKYBLUE;
   
   val cartoColors = Vector[(Double, Color)](
       (0.9, Color.gray(1.0)),

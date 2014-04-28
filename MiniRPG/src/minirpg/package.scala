@@ -2,12 +2,14 @@
 import minirpg.model._
 import minirpg.model.world._
 import minirpg.gear._
+import minirpg.util._
+import minirpg.entities._
 import minirpg.entities.actors._
 import javafx.scene.input.KeyCode
-import minirpg.entities.GearEntityBuilder
-import minirpg.model.world.Gear
 
 package object minirpg {
+  
+  type NavMap = Map[(Int, Int), Graph[(Int, Int), Null]];
   
   val TENTOTHE9 : Long = 1000000000;
   val TENTOTHE11 : Long = TENTOTHE9 * 100;

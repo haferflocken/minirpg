@@ -15,8 +15,6 @@ class Graph[K, V](
     var data : V,
     val connections : ArrayBuffer[Graph[K, V]] = new ArrayBuffer[Graph[K, V]],
     val weights : ArrayBuffer[Int] = new ArrayBuffer[Int]) {
-  
-  type Path = Queue[Graph[K, V]];
 
   /**
    * Connects this node to another node with a given edge weight.
@@ -60,7 +58,7 @@ class Graph[K, V](
   override def equals(o : Any) : Boolean = {
     if (!o.isInstanceOf[Graph[K, V]])
       return false;
-    return id == o.asInstanceOf[Graph[K, V]].id;
+    return hashCode == o.asInstanceOf[Graph[K, V]].hashCode;
   }
   
   override def hashCode : Int = id.hashCode;
@@ -85,7 +83,7 @@ object Graph {
   }
   
   /**
-   * Find the shortest path through a graph.
+   * Find the shortest path through a graph using Dijkstra's Algorithm.
    * Adapted from pseudocode courtesy of Wikipedia.
    */
   def findPath[K, V](startId : K, endId : K, nodes : Map[K, Graph[K, V]]) : Queue[Graph[K, V]] = {

@@ -11,9 +11,11 @@ import minirpg.ui.MiniRPGApp
 import minirpg.util.Tickable
 import minirpg.model.overworld.Terrain
 import scalafx.scene.image.ImageView
+import minirpg.model.overworld.Overworld
 
 class MainMenuScene extends Scene with Tickable with Initializable {
-  val t = Terrain.mkRandomTerrain(256, 100, Double.MinValue);
+  //val t = Terrain.mkRandomTerrain(256, 100, Double.MinValue);
+  val o = Overworld.mkRandomOverworld(128, 128, 12);
   
   fill = Color.BLACK;
   content = new VBox {
@@ -24,7 +26,7 @@ class MainMenuScene extends Scene with Tickable with Initializable {
         new Button("New Game") {
           onMouseClicked = handle { MiniRPGApp.scene = new WorldScene(MiniRPGApp.world) };
         },
-        new ImageView(t.mkImage(512, 512)));
+        new ImageView(o.mkImage(512, 512)));
     minWidth = 800;
     minHeight = 600;
   }
