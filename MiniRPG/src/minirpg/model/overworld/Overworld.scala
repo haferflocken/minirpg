@@ -18,8 +18,8 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
   val roads : Map[(Landmark, Landmark), Vector[(Int, Int)]] = {
     // Find the as-the-crow flies distance between all of the landmarks.
     val distances = new HashMap[(Landmark, Landmark), Double];
-    for (l1 <- landmarks) {
-      for (l2 <- landmarks if l1 != l2) {
+    for (i <- 0 until landmarks.length; l1 = landmarks(i)) {
+      for (j <- i + 1 until landmarks.length; l2 = landmarks(j)) {
         val dX = l1.x - l2.x;
         val dY = l1.y - l2.y;
         val dist = Math.sqrt(dX * dX + dY * dY);

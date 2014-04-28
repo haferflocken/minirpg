@@ -116,7 +116,7 @@ object Graph {
         var outU = u;
         while (previous.contains(outU)) {
           outPath = outU +: outPath;
-          outU = previous(outU);
+          outU = previous.remove(outU).get;
         }
         return outPath;
       }
