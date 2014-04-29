@@ -174,6 +174,8 @@ object Graph {
   def findPaths[K, V](endpointIds : Map[K, Iterable[K]], nodes : Map[K, Graph[K, V]]) : Map[(K, K), Queue[Graph[K, V]]] = {
     val out = new TrieMap[(K, K), Queue[Graph[K, V]]];
     
+    val startTime = System.currentTimeMillis;
+    
     val futures = new ArrayBuffer[Future[_]];
     for ((startId, endIds) <- endpointIds) {
       val f : Future[Map[K, Queue[Graph[K, V]]]] = future {
@@ -186,6 +188,9 @@ object Graph {
     }
     
     for (f <- futures) Await.ready(f, Duration.Inf);
+    
+    val endTime = System.currentTimeMillis;
+    println("Found paths in " + (endTime - startTime) + " miliseconds.");
     
     return out.toMap;
   }
