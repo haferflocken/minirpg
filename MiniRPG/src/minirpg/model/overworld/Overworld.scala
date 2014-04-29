@@ -38,14 +38,18 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
     
     // Try to find paths to each through the terrain.
     val paths = new HashMap[(Landmark, Landmark), Queue[Graph[(Int, Int), Null]]];
-    for ((l1, ls) <- closest; l2 <- ls) {
-      val path = Graph.findPath((l1.x, l1.y), (l2.x, l2.y), terrain.navMap);
-      if (path != null) {
-        paths.update((l1, l2), path);
-        println("found path between " + l1 + " and " + l2);
-      }
-      else {
-        println("no path between " + l1 + " and " + l2);
+    for ((l1, ls) <- closest) {
+      val lPaths = Graph.findPaths((l1.x, l1.y), ls.map(l => (l.x, l.y)).toVector, terrain.navMap);
+      for (path <- lPaths) {
+        if (path isEmpty) {
+          println("Empty path between " + l1 + " and ???");
+        }
+        else {
+          val end = path.last;
+          val l2 = landmarks.filter(l => l.x == end.id._1 && l.y == end.id._2)(0);
+          paths.update((l1, l2), path);
+          println("Found path between " + l1 + " and " + l2);
+        }
       }
     }
     
@@ -101,7 +105,7 @@ object Overworld {
     for (i <- 0 until numLandmarks) {
       var x = Math.random * width toInt;
       var y = Math.random * height toInt;
-      while (terrain.grid(x)(y) <= terrain.waterLevel) {
+      while (terrain.grid(x)(y) <= terrain.waterLevel || landmarks.find(l => l.x == x && l.y == y).nonEmpty) {
         x = Math.random * width toInt;
         y = Math.random * height toInt;
       }

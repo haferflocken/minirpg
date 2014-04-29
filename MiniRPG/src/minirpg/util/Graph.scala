@@ -87,21 +87,29 @@ object Graph {
    * Adapted from pseudocode courtesy of Wikipedia.
    */
   def findPath[K, V](startId : K, endId : K, nodes : Map[K, Graph[K, V]]) : Queue[Graph[K, V]] = {
+    val paths = findPaths(startId, Vector(endId), nodes);
+    if (paths.nonEmpty)
+      return paths(0);
+    return null;
+  }
+  
+  def findPaths[K, V](startId : K, endIds : Vector[K], nodes : Map[K, Graph[K, V]]) : Vector[Queue[Graph[K, V]]] = {
     val startNode = nodes.getOrElse(startId, null);
     if (startNode == null) {
       println("No path: failed to get start node.");
-      return null;
+      return Vector();
     }
     
-    val endNode = nodes.getOrElse(endId, null);
-    if (endNode == null) {
-      println("No path: failed to get end node.");
-      return null;
+    val endNodes = endIds.map(nodes.getOrElse(_, null)).filter(_ != null).toBuffer;
+    if (endNodes.length == 0) {
+      println("No path: failed to get end nodes.");
+      return Vector();
     }
     
     var pq = new PQueue[Graph[K, V]];
     val dist = new HashMap[Graph[K, V], Int];
     val previous = new HashMap[Graph[K, V], Graph[K, V]];
+    val outPaths = new ArrayBuffer[Queue[Graph[K, V]]];
     
     nodes.foreach((e : (K, Graph[K, V])) => dist.put(e._2, Int.MaxValue));
     dist.update(startNode, 0);
@@ -111,14 +119,26 @@ object Graph {
       val uPair = pq.dequeue;
       val u = uPair._1;
       val uDist = uPair._2;
-      if (u == endNode) {
+      
+      // If we have found a path we are looking for, save it.
+      if (endNodes.contains(u)) {
         var outPath = Queue[Graph[K, V]]();
         var outU = u;
         while (previous.contains(outU)) {
+          // Detect infinite loops. TODO Prevent these from happening.
+          if (outPath contains outU) {
+            println(s"Cycle detected at $outU. Quitting while we're ahead.");
+            return outPaths.toVector;
+          }
           outPath = outU +: outPath;
-          outU = previous.remove(outU).get;
+          outU = previous(outU);
         }
-        return outPath;
+        outPaths += outPath;
+        endNodes -= u;
+        
+        // If all paths have been found, we're done.
+        if (outPaths.length == endIds.length)
+          return outPaths.toVector;
       }
       
       for (i <- 0 until u.connections.length) {
@@ -133,7 +153,7 @@ object Graph {
       }
     }
     
-    return null;
+    return outPaths.toVector;
   }
   
   private def connect[K, V](gMap : Map[K, Graph[K, V]], rawCons : Map[K, Array[(K, Int)]]) = {
