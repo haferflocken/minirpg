@@ -55,16 +55,19 @@ class Graph[K, V](
     return minIndex;
   }
   
+  def verboseToString =
+    s"id: $id, data: $data, connections: {" + connections.map(_.id).mkString(", ") + "}, weights: {" + weights.mkString(", ") + "}";
+  
+  
   override def equals(o : Any) : Boolean = {
     if (!o.isInstanceOf[Graph[K, V]])
       return false;
-    return hashCode == o.asInstanceOf[Graph[K, V]].hashCode;
+    return id == o.asInstanceOf[Graph[K, V]].id;
   }
   
   override def hashCode : Int = id.hashCode;
   
-  override def toString =
-    s"id: $id, data: $data, connections: {" + connections.map(_.id).mkString(", ") + "}, weights: {" + weights.mkString(", ") + "}";
+  override def toString = id.toString;
   
 }
 
@@ -127,7 +130,7 @@ object Graph {
         while (previous.contains(outU)) {
           // Detect infinite loops. TODO Prevent these from happening.
           if (outPath contains outU) {
-            println(s"Cycle detected at $outU. Quitting while we're ahead.");
+            println(s"Cycle detected while finding path from $startNode to $u at $outU\nin $outPath\nQuitting while we're ahead.");
             return outPaths.toVector;
           }
           outPath = outU +: outPath;
@@ -145,8 +148,8 @@ object Graph {
         val v = u.connections(i);
         val alt = uDist + u.weights(i);
         if (alt < dist(v)) {
-          dist.update(v, alt);
-          previous.update(v, u);
+          dist(v) = alt;
+          previous(v) = u;
           pq.remove(v);
           pq.enqueue(v, alt);
         }
