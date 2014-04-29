@@ -6,6 +6,10 @@ import scala.collection.immutable.Queue
 import scala.collection.mutable.PriorityQueue
 import scala.collection.mutable.ImmutableMapAdaptor
 import scala.collection.mutable.HashMap
+import scala.collection.concurrent.TrieMap
+import scala.concurrent._
+import scala.concurrent.duration._
+import ExecutionContext.Implicits.global
 
 /**
  * A node in a graph.
@@ -168,15 +172,20 @@ object Graph {
    * Returns a map of (startId, endId) -> path.
    */
   def findPaths[K, V](endpointIds : Map[K, Iterable[K]], nodes : Map[K, Graph[K, V]]) : Map[(K, K), Queue[Graph[K, V]]] = {
-    val out = new HashMap[(K, K), Queue[Graph[K, V]]];
+    val out = new TrieMap[(K, K), Queue[Graph[K, V]]];
     
+    val futures = new ArrayBuffer[Future[_]];
     for ((startId, endIds) <- endpointIds) {
-      val paths = findPaths(startId, endIds, nodes);
-      for (e <- endIds) {
-        if (paths contains e)
-          out((startId, e)) = paths(e);
+      val f : Future[Map[K, Queue[Graph[K, V]]]] = future {
+        findPaths(startId, endIds, nodes);
       }
+      f onSuccess {
+        case paths => for (e <- endIds if paths contains e) out((startId, e)) = paths(e);
+      }
+      futures += f;
     }
+    
+    for (f <- futures) Await.ready(f, Duration.Inf);
     
     return out.toMap;
   }
