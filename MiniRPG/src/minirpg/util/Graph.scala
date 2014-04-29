@@ -87,32 +87,36 @@ object Graph {
   
   /**
    * Find the shortest path through a graph using Dijkstra's Algorithm.
-   * Adapted from pseudocode courtesy of Wikipedia.
    */
   def findPath[K, V](startId : K, endId : K, nodes : Map[K, Graph[K, V]]) : Queue[Graph[K, V]] = {
     val paths = findPaths(startId, Vector(endId), nodes);
     if (paths.nonEmpty)
-      return paths(0);
+      return paths(endId);
     return null;
   }
   
-  def findPaths[K, V](startId : K, endIds : Vector[K], nodes : Map[K, Graph[K, V]]) : Vector[Queue[Graph[K, V]]] = {
+  /**
+   * Find the shortest paths from the start to the ends using Dijkstra's Algorithm.
+   * Adapted from pseudocode courtesy of Wikipedia.
+   * Returns a map of endId -> path.
+   */
+  def findPaths[K, V](startId : K, endIds : Iterable[K], nodes : Map[K, Graph[K, V]]) : Map[K, Queue[Graph[K, V]]] = {
     val startNode = nodes.getOrElse(startId, null);
     if (startNode == null) {
       println("No path: failed to get start node.");
-      return Vector();
+      return Map();
     }
     
     val endNodes = endIds.map(nodes.getOrElse(_, null)).filter(_ != null).toBuffer;
     if (endNodes.length == 0) {
       println("No path: failed to get end nodes.");
-      return Vector();
+      return Map();
     }
     
     var pq = new PQueue[Graph[K, V]];
     val dist = new HashMap[Graph[K, V], Int];
     val previous = new HashMap[Graph[K, V], Graph[K, V]];
-    val outPaths = new ArrayBuffer[Queue[Graph[K, V]]];
+    val outPaths = new HashMap[K, Queue[Graph[K, V]]];
     
     nodes.foreach((e : (K, Graph[K, V])) => dist.put(e._2, Int.MaxValue));
     dist.update(startNode, 0);
@@ -131,17 +135,17 @@ object Graph {
           // Detect infinite loops. TODO Prevent these from happening.
           if (outPath contains outU) {
             println(s"Cycle detected while finding path from $startNode to $u at $outU\nin $outPath\nQuitting while we're ahead.");
-            return outPaths.toVector;
+            return outPaths.toMap;
           }
           outPath = outU +: outPath;
           outU = previous(outU);
         }
-        outPaths += outPath;
+        outPaths.update(u.id, outPath);
         endNodes -= u;
         
         // If all paths have been found, we're done.
-        if (outPaths.length == endIds.length)
-          return outPaths.toVector;
+        if (outPaths.size == endIds.size)
+          return outPaths.toMap;
       }
       
       for (i <- 0 until u.connections.length) {
@@ -156,7 +160,25 @@ object Graph {
       }
     }
     
-    return outPaths.toVector;
+    return outPaths.toMap;
+  }
+  
+  /**
+   * Find the shortest paths from start points to end points.
+   * Returns a map of (startId, endId) -> path.
+   */
+  def findPaths[K, V](endpointIds : Map[K, Iterable[K]], nodes : Map[K, Graph[K, V]]) : Map[(K, K), Queue[Graph[K, V]]] = {
+    val out = new HashMap[(K, K), Queue[Graph[K, V]]];
+    
+    for ((startId, endIds) <- endpointIds) {
+      val paths = findPaths(startId, endIds, nodes);
+      for (e <- endIds) {
+        if (paths contains e)
+          out((startId, e)) = paths(e);
+      }
+    }
+    
+    return out.toMap;
   }
   
   private def connect[K, V](gMap : Map[K, Graph[K, V]], rawCons : Map[K, Array[(K, Int)]]) = {

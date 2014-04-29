@@ -37,16 +37,15 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
     }
     
     // Try to find paths to each through the terrain.
-    val paths = new HashMap[(Landmark, Landmark), Queue[Graph[(Int, Int), Null]]];
+    /*val paths = new HashMap[(Landmark, Landmark), Queue[Graph[(Int, Int), Null]]];
     for ((l1, ls) <- closest) {
       val lPaths = Graph.findPaths((l1.x, l1.y), ls.map(l => (l.x, l.y)).toVector, terrain.navMap);
-      for (path <- lPaths) {
+      for ((endPoint, path) <- lPaths) {
         if (path isEmpty) {
-          println("Empty path between " + l1 + " and ???");
+          println("Empty path between " + l1 + " and " + endPoint);
         }
         else {
-          val end = path.last;
-          val l2 = landmarks.filter(l => l.x == end.id._1 && l.y == end.id._2)(0);
+          val l2 = landmarks.filter(l => l.x == endPoint._1 && l.y == endPoint._2)(0);
           paths.update((l1, l2), path);
           println("Found path between " + l1 + " and " + l2);
         }
@@ -54,7 +53,14 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
     }
     
     // Output the roads.
-    paths.map(p => (p._1, p._2.map(g => (g.id._1, g.id._2)).toVector)).toMap;
+    paths.map(p => (p._1, p._2.map(g => (g.id._1, g.id._2)).toVector)).toMap;*/
+    
+    // Make the roads.
+    val paths = Graph.findPaths(closest.map(p => ((p._1.x, p._1.y), p._2.map(e => (e.x, e.y)))).toMap, terrain.navMap);
+    paths.map(p => (
+        (landmarks.find(_.isAt(p._1._1)).get, landmarks.find(_.isAt(p._1._2)).get),
+        p._2.map(_.id).toVector
+      ));
   };
   
   def mkCanvas(imageWidth : Int, imageHeight : Int) : Canvas = {
