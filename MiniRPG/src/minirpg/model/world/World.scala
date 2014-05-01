@@ -10,13 +10,12 @@ import scalafx.scene.layout.Pane
 import scalafx.scene.image.ImageView.sfxImageView2jfx
 import scalafx.scene.Node.sfxNode2jfx
 import scalafx.util.Duration
-
 import minirpg.model._
 import minirpg.model.world._
 import minirpg.util.Graph
-
 import scala.collection.immutable.Queue
 import scala.util.Random
+import java.io.File
 
 class World(
     val name : String,
@@ -135,6 +134,29 @@ class World(
       }
     }
   }
+}
+
+object World {
+  
+  val Paths : Vector[String] = {
+    val worldDir = new File("res/worlds");
+    worldDir.listFiles.map(_.getAbsolutePath).toVector;
+  }
+  
+  def nRandomPaths(n : Int) : Vector[String] = {
+    val pathPool = Paths.toBuffer;
+    while (pathPool.length < n) {
+      pathPool ++= Paths;
+    }
+    
+    var out = Vector[String]();
+    for (k <- 0 until n) {
+      val i = (Math.random * pathPool.length) toInt;
+      out = pathPool.remove(i) +: out;
+    }
+    return out;
+  }
+  
 }
 
 class ParticlePane extends Pane {

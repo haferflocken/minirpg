@@ -2,7 +2,7 @@ package minirpg.model.overworld
 
 import scala.collection.mutable.ArrayBuffer
 
-class Landmark(val name : String, val x : Int, val y : Int) {
+class Landmark(val name : String, val x : Int, val y : Int, val worldPath : String) {
   
   def isAt(point : (Int, Int)) = x == point._1 && y == point._2;
   

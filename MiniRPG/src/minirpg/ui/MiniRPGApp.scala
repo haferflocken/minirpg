@@ -11,6 +11,7 @@ import scalafx.scene.Node
 import scalafx.scene.image.Image
 import minirpg.entities.actors._
 import minirpg.model._
+import minirpg.model.overworld._
 import minirpg.loaders.WorldLoader
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.input.KeyEvent
@@ -30,17 +31,16 @@ import minirpg.util.Tickable
 
 object MiniRPGApp extends JFXApp {
   
+  val (width, height) = (800, 600);
   val ticker = new DeltaTicker(tick);
-  
-  val world = WorldLoader.loadJsonFile("res\\ex\\world1.json");
   private var _scene : Scene with Tickable with Initializable = new MainMenuScene
   
-  println(world);
+  var overworld : Overworld = null;
   
   stage = new JFXApp.PrimaryStage {
     title = "MiniRPG";
-    width = 800;
-    height = 600;
+    width = MiniRPGApp.width;
+    height = MiniRPGApp.height;
     resizable = false;
     scene = _scene;
   }

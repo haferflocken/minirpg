@@ -3,17 +3,26 @@ package minirpg.model
 import java.io.InputStream
 import scala.util.parsing.json.JSON
 import scala.util.parsing.json.JSONObject
+import scala.collection.mutable.HashMap
 
 trait Loader[E] {
+  
+  protected val loadedFiles = new HashMap[String, E];
 
   def loadJsonFile(filePath : String) : E = {
+    if (loadedFiles contains filePath)
+      return loadedFiles(filePath);
+    
     val source = io.Source.fromFile(filePath);
     val lines = source.mkString;
     source.close();
     
     println("Loading \"" + filePath + "\" produced:\n" + lines);
     
-    return loadJsonString(filePath, lines);
+    val out = loadJsonString(filePath, lines);
+    if (out != null)
+      loadedFiles(filePath) = out;
+    return out;
   }
   
   def loadJsonString(filePath : String, data : String) : E;

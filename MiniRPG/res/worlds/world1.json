@@ -1,6 +1,6 @@
 {
 	"name" : "World Test",
-	"tileGrid" : "res\ex\world1-tileGrid.json",
+	"tileGrid" : "res/tileGrids/world1-tileGrid.json",
 	"entities" : [
 			{	"id" : "player",
 				"class" : "Human",

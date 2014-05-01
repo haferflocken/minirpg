@@ -54,11 +54,16 @@ class Terrain(
     Graph(data = null, conMap.toMap);
   }
   
-  def mkCanvas(imageWidth : Int, imageHeight : Int) : Canvas = {
+  /**
+   * Make a canvas of given dimensions and return it, along with the width and
+   * height of the border surrounding it.
+   */
+  def mkCanvas(imageWidth : Int, imageHeight : Int, borderColor : Color = Color.YELLOW) : Canvas = {
     val canvas = new Canvas(imageWidth, imageHeight);
     val g = canvas.graphicsContext2D;
     val tileWidth = imageWidth.toDouble / width;
     val tileHeight = imageHeight.toDouble / height;
+    
     for (i <- 0 until width; j <- 0 until height) {
       if (grid(i)(j) > waterLevel) {
         val percHeight = (grid(i)(j) - minHeight) / heightRange;
@@ -69,10 +74,11 @@ class Terrain(
       else {
         g.fill = Terrain.cartoWaterColor;
       }
-      val x = i * tileWidth;
-      val y = j * tileHeight;
+      val x = i * imageWidth / width;
+      val y = j * imageHeight / height;
       g.fillRect(x, y, tileWidth, tileHeight);
     }
+    
     return canvas;
   }
   

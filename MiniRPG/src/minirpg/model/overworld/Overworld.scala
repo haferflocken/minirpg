@@ -9,6 +9,7 @@ import scala.collection.mutable.HashMap
 import scala.collection.immutable.Queue
 import minirpg.util.Graph
 import scalafx.scene.paint.Color
+import minirpg.model.world.World
 
 class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
   
@@ -46,6 +47,10 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
       ));
   };
   
+  /**
+   * Make a canvas of some given dimensions and return it, along with the
+   * width and height of the border surrounding it.
+   */
   def mkCanvas(imageWidth : Int, imageHeight : Int) : Canvas = {
     val canvas = terrain.mkCanvas(imageWidth, imageHeight);
     val g = canvas.graphicsContext2D;
@@ -58,16 +63,16 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
       i += 1;
       g.fill = Color.rgb(255 * i / roads.size, 0, 0);
       for (p <- path) {
-        val rX = p._1 * tileWidth;
-        val rY = p._2 * tileHeight;
+        val rX = p._1 * imageWidth / width;
+        val rY = p._2 * imageHeight / height;
         g.fillRect(rX, rY, tileWidth, tileHeight);
       }
     }
     
     g.fill = Color.LIME;
     for (l <- landmarks) {
-      val lX = l.x * tileWidth;
-      val lY = l.y * tileHeight;
+      val lX = l.x * imageWidth / width;
+      val lY = l.y * imageHeight / height;
       g.fillRect(lX, lY, tileWidth, tileHeight);
     }
     
@@ -90,6 +95,7 @@ object Overworld {
     val terrain = Terrain.mkRandomTerrain(powerOf2, 100.0, 0.0).crop((powerOf2 - width) / 2, (powerOf2 - height) / 2, width, height);
     
     val landmarkNames = Landmark.nRandomNames(numLandmarks);
+    val landmarkWorlds = World.nRandomPaths(numLandmarks);
     var landmarks = Vector[Landmark]();
     for (i <- 0 until numLandmarks) {
       var x = Math.random * width toInt;
@@ -98,7 +104,7 @@ object Overworld {
         x = Math.random * width toInt;
         y = Math.random * height toInt;
       }
-      val landmark = new Landmark(landmarkNames(i), x, y);
+      val landmark = new Landmark(landmarkNames(i), x, y, landmarkWorlds(i));
       landmarks = landmarks :+ landmark;
     }
     
