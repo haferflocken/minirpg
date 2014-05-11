@@ -24,16 +24,13 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
     center = new AnchorPane {
       content = new ImageView(overworldImage);
       
-      val tileWidth = overworld.width / oIWidth;
-      val tileHeight = overworld.height / oIHeight;
+      val tileWidth = oIWidth / overworld.width;
+      val tileHeight = oIHeight / overworld.height;
       val xOffset = (-Landmark.Image.width() + tileWidth) / 2;
       val yOffset = (-Landmark.Image.height() + tileHeight) / 2;
       
       for (l <- overworld.landmarks) {
-        val landmarkNode = new ImageView(Landmark.Image) {
-          //layoutX = l.x * oIWidth / overworld.width;
-          //layoutY = l.y * oIHeight / overworld.height;
-        };
+        val landmarkNode = new ImageView(Landmark.Image);
         AnchorPane.setLeftAnchor(landmarkNode, l.x * oIWidth / overworld.width + xOffset);
         AnchorPane.setTopAnchor(landmarkNode, l.y * oIHeight / overworld.height + yOffset);
         content add landmarkNode;
