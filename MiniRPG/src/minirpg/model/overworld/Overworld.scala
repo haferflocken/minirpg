@@ -29,7 +29,7 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
     }
     
     // Find the average distance between the landmarks.
-    val avgDist = distances.foldLeft(0.0)((b, x) => b + x._2) / distances.size;
+    val avgDist = distances.foldLeft(0.0)((b, d) => b + d._2) / distances.size;
     
     // Grab the landmarks with less than the average distance to each landmark.
     val closest = new HashMap[Landmark, List[Landmark]] ++= landmarks.map((_, Nil));
@@ -80,7 +80,7 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
   }
   
   def mkImage(imageWidth : Int, imageHeight : Int) : Image = {
-    val canvas = mkCanvas(imageWidth, imageHeight)
+    val canvas = mkCanvas(imageWidth, imageHeight);
     return canvas.snapshot(new SnapshotParameters, new WritableImage(imageWidth, imageHeight));
   }
 

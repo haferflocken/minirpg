@@ -117,19 +117,17 @@ object Graph {
       return Map();
     }
     
-    var pq = new PQueue[Graph[K, V]];
+    val pq = new PQueue[Graph[K, V]];
     val dist = new HashMap[Graph[K, V], Int];
     val previous = new HashMap[Graph[K, V], Graph[K, V]];
     val outPaths = new HashMap[K, Queue[Graph[K, V]]];
     
-    nodes.foreach((e : (K, Graph[K, V])) => dist.put(e._2, Int.MaxValue));
-    dist.update(startNode, 0);
-    dist.foreach((e : (Graph[K, V], Int)) => pq.enqueue(e._1, e._2));
+    for ((key, node) <- nodes) dist(node) = Int.MaxValue;
+    dist(startNode) = 0;
+    for ((node, distance) <- dist) pq.enqueue(node, distance);
     
     while (pq.nonEmpty) {
-      val uPair = pq.dequeue;
-      val u = uPair._1;
-      val uDist = uPair._2;
+      val (u, uDist) = pq.dequeue;
       
       // If we have found a path we are looking for, save it.
       if (endNodes.contains(u)) {

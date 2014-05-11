@@ -29,14 +29,14 @@ class World(
     e.world = this;
     updateEntityNodeCoords(e)
   });
-  val canvas = new Pane {
+  lazy val canvas = new Pane {
     children.add(tileGrid.node);
     _entities.map(_.node).filter(_ != null).foreach((n) => {
       children.add(n);
     });
   };
-  val particleCanvas = new ParticlePane;
-  val debugCanvas = new Pane;
+  lazy val particleCanvas = new ParticlePane;
+  lazy val debugCanvas = new Pane;
   
   def addEntity(e : Entity) : Unit = {
     _entities = _entities :+ e;

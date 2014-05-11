@@ -11,15 +11,34 @@ import minirpg.util.Tickable
 import minirpg.model.overworld._
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.image.ImageView
+import scalafx.scene.layout.AnchorPane
+import scalafx.geometry.Pos
 
 class OverworldScene(val overworld : Overworld) extends Scene with Initializable with Tickable {
   
   fill = Color.BLACK;
   content = new BorderPane {
     val oIWidth = MiniRPGApp.width;
-    val oIHeight = oIWidth / 2;
+    val oIHeight = oIWidth * overworld.height / overworld.width;
     val overworldImage = overworld.mkImage(oIWidth, oIHeight);
-    center = new ImageView(overworldImage);
+    center = new AnchorPane {
+      content = new ImageView(overworldImage);
+      
+      val tileWidth = overworld.width / oIWidth;
+      val tileHeight = overworld.height / oIHeight;
+      val xOffset = (-Landmark.Image.width() + tileWidth) / 2;
+      val yOffset = (-Landmark.Image.height() + tileHeight) / 2;
+      
+      for (l <- overworld.landmarks) {
+        val landmarkNode = new ImageView(Landmark.Image) {
+          //layoutX = l.x * oIWidth / overworld.width;
+          //layoutY = l.y * oIHeight / overworld.height;
+        };
+        AnchorPane.setLeftAnchor(landmarkNode, l.x * oIWidth / overworld.width + xOffset);
+        AnchorPane.setTopAnchor(landmarkNode, l.y * oIHeight / overworld.height + yOffset);
+        content add landmarkNode;
+      }
+    };
   };
   
   onMouseMoved = (me : MouseEvent) => {

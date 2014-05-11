@@ -1,6 +1,7 @@
 package minirpg.model.overworld
 
 import scala.collection.mutable.ArrayBuffer
+import scalafx.scene.image.Image
 
 class Landmark(val name : String, val x : Int, val y : Int, val worldPath : String) {
   
@@ -20,6 +21,8 @@ class Landmark(val name : String, val x : Int, val y : Int, val worldPath : Stri
 }
 
 object Landmark {
+  
+  val Image = new Image("file:res/sprites/landmark.png");
   
   val RandomNames = Vector[String](
       "Fort Ozymandias", "Majestic Necropolis", "Port Swagger", "Log Town", "Tiara Train Station");

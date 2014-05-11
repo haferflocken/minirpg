@@ -36,22 +36,23 @@ class TileGrid(
   val pixelWidth = width * tileWidth;
   val pixelHeight = height * tileHeight;
   
-  val compositeImage = new WritableImage(pixelWidth, pixelHeight);
-  for(x <- 0 to width - 1) {
-    for (y <- 0 to height - 1) {
-      val im = tileMap(tileGrid(x)(y));
-      println("tileGrid(" + s"$x)($y) -> " + im);
-      if (im != null) {
-        val pRMaybe = im.pixelReader;
-        if (!pRMaybe.isEmpty) {
-          compositeImage.pixelWrit.setPixels(
-            x * tileWidth, y * tileHeight, tileWidth, tileHeight, pRMaybe.get, 0, 0);
+  lazy val compositeImage = new WritableImage(pixelWidth, pixelHeight) {
+    println("Building composite image of TileGrid");
+    for(x <- 0 to TileGrid.this.width - 1) {
+      for (y <- 0 to TileGrid.this.height - 1) {
+        val im = tileMap(tileGrid(x)(y));
+        if (im != null) {
+          val pRMaybe = im.pixelReader;
+          if (!pRMaybe.isEmpty) {
+            pixelWrit.setPixels(
+              x * tileWidth, y * tileHeight, tileWidth, tileHeight, pRMaybe.get, 0, 0);
+          }
         }
       }
     }
   }
   
-  val node = new ImageView(compositeImage);
+  lazy val node = new ImageView(compositeImage);
   
   val navMap : NavMap = {
     val connections = for(x <- 0 until width; y <- 0 until height if !isSolid(x, y))

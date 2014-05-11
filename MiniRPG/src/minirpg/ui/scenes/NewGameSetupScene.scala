@@ -26,7 +26,6 @@ class NewGameSetupScene extends Scene with Initializable with Tickable {
   def tick(delta : Long) : Unit = {
     if (ticks > 1) {
       ticks = -1;
-      println("Loading!");
       MiniRPGApp.overworld = Overworld.mkRandomOverworld(200, 100, 12);
       for (l <- MiniRPGApp.overworld.landmarks) {
         WorldLoader.loadJsonFile(l.worldPath);
