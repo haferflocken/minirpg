@@ -77,16 +77,34 @@ class Graph[K, V](
 
 object Graph {
   
+  /**
+   * Construct a graph, giving each node the same data.
+   */
   def apply[K, V](data : V, rawCons : Map[K, Array[(K, Int)]]) : Map[K, Graph[K, V]] = {
     val gMap = rawCons.map((entry : (K, Array[(K, Int)])) => (entry._1, new Graph[K, V](entry._1, data)));
     connect(gMap, rawCons);
     return gMap;
   }
   
+  /**
+   * Construct a graph.
+   */
   def apply[K, V](rawData : Map[K, V], rawCons : Map[K, Array[(K, Int)]]) : Map[K, Graph[K, V]] = {
     val gMap = rawData.map((entry : (K, V)) => (entry._1, new Graph[K, V](entry._1, entry._2)));
     connect(gMap, rawCons);
     return gMap;
+  }
+  
+  /**
+   * Make the connections in a graph.
+   */
+  private def connect[K, V](gMap : Map[K, Graph[K, V]], rawCons : Map[K, Array[(K, Int)]]) = {
+    for (e <- rawCons) {
+      val g = e._1;
+      for (c <- e._2) {
+        gMap(g).connectTo(gMap(c._1), c._2);
+      }
+    }
   }
   
   /**
@@ -192,15 +210,6 @@ object Graph {
     println("Found paths in " + (endTime - startTime) + " miliseconds.");
     
     return out.toMap;
-  }
-  
-  private def connect[K, V](gMap : Map[K, Graph[K, V]], rawCons : Map[K, Array[(K, Int)]]) = {
-    for (e <- rawCons) {
-      val g = e._1;
-      for (c <- e._2) {
-        gMap(g).connectTo(gMap(c._1), c._2);
-      }
-    }
   }
   
 }
