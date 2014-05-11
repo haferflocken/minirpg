@@ -5,6 +5,8 @@ import scalafx.scene.image.Image
 
 class Landmark(val name : String, val x : Int, val y : Int, val worldPath : String) {
   
+  val coords = (x, y);
+  
   def isAt(point : (Int, Int)) = x == point._1 && y == point._2;
   
   override def toString = s"$name ($x, $y) -> $worldPath";
@@ -16,7 +18,7 @@ class Landmark(val name : String, val x : Int, val y : Int, val worldPath : Stri
     return hashCode == l.hashCode;
   }
   
-  override def hashCode : Int = x & (y << 4);
+  override def hashCode : Int = coords.hashCode;
 
 }
 
