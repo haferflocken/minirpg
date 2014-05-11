@@ -7,7 +7,7 @@ class Landmark(val name : String, val x : Int, val y : Int, val worldPath : Stri
   
   def isAt(point : (Int, Int)) = x == point._1 && y == point._2;
   
-  override def toString = name + s" ($x, $y)";
+  override def toString = s"$name ($x, $y) -> $worldPath";
   
   override def equals(other : Any) : Boolean = {
     if (!other.isInstanceOf[Landmark])

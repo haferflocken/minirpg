@@ -30,7 +30,11 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
       val yOffset = (-Landmark.Image.height() + tileHeight) / 2;
       
       for (l <- overworld.landmarks) {
-        val landmarkNode = new ImageView(Landmark.Image);
+        val landmarkNode = new ImageView(Landmark.Image) {
+          onMouseClicked = (me : MouseEvent) => {
+            println(l.toString);
+          };
+        };
         AnchorPane.setLeftAnchor(landmarkNode, l.x * oIWidth / overworld.width + xOffset);
         AnchorPane.setTopAnchor(landmarkNode, l.y * oIHeight / overworld.height + yOffset);
         content add landmarkNode;
