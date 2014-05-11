@@ -151,21 +151,21 @@ object Graph {
       if (endNodes.contains(u)) {
         var outPath = Queue[Graph[K, V]]();
         var outU = u;
-        while (previous.contains(outU)) {
-          // Detect infinite loops. TODO Prevent these from happening.
-          if (outPath contains outU) {
-            println(s"Cycle detected while finding path from $startNode to $u at $outU.");
-            println("End points that will be skipped: " + endNodes.mkString(", ") + ".");
-            return outPaths.toMap;
-          }
+        
+        // Build the path, with an extra clause to prevent infinite loops.
+        while (previous.contains(outU) && !outPath.contains(outU)) {
           outPath = outU +: outPath;
           outU = previous(outU);
         }
-        outPaths.update(u.id, outPath);
-        endNodes -= u;
         
-        // If all paths have been found, we're done.
-        if (outPaths.size == endIds.size)
+        // If no cycle was found, keep the path.
+        if (!outPath.contains(outU))
+          outPaths.update(u.id, outPath);
+        else
+          println(s"Cycle detected while finding path from $startNode to $u at $outU.");
+        
+        endNodes -= u;
+        if (endNodes.size <= 0)
           return outPaths.toMap;
       }
       
