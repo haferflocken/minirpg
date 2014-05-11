@@ -107,13 +107,13 @@ object Graph {
   def findPaths[K, V](startId : K, endIds : Iterable[K], nodes : Map[K, Graph[K, V]]) : Map[K, Queue[Graph[K, V]]] = {
     val startNode = nodes.getOrElse(startId, null);
     if (startNode == null) {
-      println("No path: failed to get start node.");
+      println(s"No paths from $startId: failed to get start node.");
       return Map();
     }
     
     val endNodes = endIds.map(nodes.getOrElse(_, null)).filter(_ != null).toBuffer;
     if (endNodes.length == 0) {
-      println("No path: failed to get end nodes.");
+      println(s"No paths from $startId: failed to get end nodes for " + endIds.mkString(", ") + ".");
       return Map();
     }
     
@@ -136,7 +136,8 @@ object Graph {
         while (previous.contains(outU)) {
           // Detect infinite loops. TODO Prevent these from happening.
           if (outPath contains outU) {
-            println(s"Cycle detected while finding path from $startNode to $u at $outU\nin $outPath\nQuitting while we're ahead.");
+            println(s"Cycle detected while finding path from $startNode to $u at $outU.");
+            println("End points that will be skipped: " + endNodes.mkString(", ") + ".");
             return outPaths.toMap;
           }
           outPath = outU +: outPath;
@@ -175,7 +176,7 @@ object Graph {
     val startTime = System.currentTimeMillis;
     
     val futures = new ArrayBuffer[Future[_]];
-    for ((startId, endIds) <- endpointIds) {
+    for ((startId, endIds) <- endpointIds if endIds.nonEmpty) {
       val f : Future[Map[K, Queue[Graph[K, V]]]] = future {
         findPaths(startId, endIds, nodes);
       }
