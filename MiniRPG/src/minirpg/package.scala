@@ -18,7 +18,7 @@ package object minirpg {
         CyclopsGoggles, CyclopsJacket, CyclopsPants, CyclopsGloves, CyclopsBoots,
         FrogHelmet, FrogCuirass, FrogGreaves, FrogGauntlets, FrogBoots,
         RedOrb, YellowOrb, GreenOrb, BlueOrb, PurpleOrb,
-        ExplosiveConduit, FocusedConduit, TrapConduit
+        ConduitBlaster, ConduitRifle, ConduitMineLauncher
     ).map((e) => (e.name, e)).toMap[String, Gear];
   
   val builderMap =

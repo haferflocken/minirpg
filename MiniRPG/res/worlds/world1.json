@@ -6,7 +6,7 @@
 				"class" : "Human",
 				"args" : {	"name" : "Player",
 							"x" : 11, "y" : 12,
-							"gear" : [ "Shortsword", "Explosive Conduit", "Frog's Helmet", "Frog's Cuirass", "Frog's Greaves", "Frog's Gauntlets", "Frog's Boots" ] } },
+							"gear" : [ "Shortsword", "Conduit Blaster", "Frog's Helmet", "Frog's Cuirass", "Frog's Greaves", "Frog's Gauntlets", "Frog's Boots" ] } },
 			{	"id" : "rOrb",
 				"class" : "Gear",
 				"args" : {	"type" : "Red Orb", "x" : 9, "y" : 11 }},
