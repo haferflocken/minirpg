@@ -13,9 +13,110 @@ import ExecutionContext.Implicits.global
 
 class Graph[K, V](val nodes : Map[K, GraphNode[K, V]]) {
   
-  def apply(key : K) : GraphNode[K, V] = nodes(key);
+  /**
+   * Find the shortest path through a graph using Dijkstra's Algorithm.
+   */
+  def findPath(startId : K, endId : K) : Queue[GraphNode[K, V]] = {
+    val paths = findPaths(startId, Vector(endId));
+    if (paths.nonEmpty)
+      return paths(endId);
+    return null;
+  }
   
-  def getOrElse(key : K, e : GraphNode[K, V]) = nodes.getOrElse(key, e);
+  /**
+   * Find the shortest paths from the start to the ends using Dijkstra's Algorithm.
+   * Adapted from pseudocode courtesy of Wikipedia.
+   * Returns a map of endId -> path.
+   */
+  def findPaths(startId : K, endIds : Iterable[K]) : Map[K, Queue[GraphNode[K, V]]] = {
+    val startNode = nodes.getOrElse(startId, null);
+    if (startNode == null) {
+      println(s"No paths from $startId: failed to get start node.");
+      return Map();
+    }
+    
+    val endNodes = endIds.map(nodes.getOrElse(_, null)).filter(_ != null).toBuffer;
+    if (endNodes.length == 0) {
+      println(s"No paths from $startId: failed to get end nodes for " + endIds.mkString(", ") + ".");
+      return Map();
+    }
+    
+    val pq = new PQueue[GraphNode[K, V]];
+    val dist = new HashMap[GraphNode[K, V], Int];
+    val previous = new HashMap[GraphNode[K, V], GraphNode[K, V]];
+    val outPaths = new HashMap[K, Queue[GraphNode[K, V]]];
+    
+    for ((key, node) <- nodes) dist(node) = Int.MaxValue;
+    dist(startNode) = 0;
+    for ((node, distance) <- dist) pq.enqueue(node, distance);
+    
+    while (pq.nonEmpty) {
+      val (u, uDist) = pq.dequeue;
+      
+      // If we have found a path we are looking for, save it.
+      if (endNodes.contains(u)) {
+        var outPath = Queue[GraphNode[K, V]]();
+        var outU = u;
+        
+        // Build the path, with an extra clause to prevent infinite loops.
+        while (previous.contains(outU) && !outPath.contains(outU)) {
+          outPath = outU +: outPath;
+          outU = previous(outU);
+        }
+        
+        // If no cycle was found, keep the path.
+        if (!outPath.contains(outU))
+          outPaths.update(u.id, outPath);
+        else
+          println(s"Cycle detected while finding path from $startNode to $u at $outU.");
+        
+        endNodes -= u;
+        if (endNodes.size <= 0)
+          return outPaths.toMap;
+      }
+      
+      for (i <- 0 until u.connections.length) {
+        val v = u.connections(i);
+        val alt = uDist + u.weights(i);
+        if (alt < dist(v)) {
+          dist(v) = alt;
+          previous(v) = u;
+          pq.remove(v);
+          pq.enqueue(v, alt);
+        }
+      }
+    }
+    
+    return outPaths.toMap;
+  }
+  
+  /**
+   * Find the shortest paths from start points to end points.
+   * Returns a map of (startId, endId) -> path.
+   */
+  def findPaths(endpointIds : Map[K, Iterable[K]]) : Map[(K, K), Queue[GraphNode[K, V]]] = {
+    val out = new TrieMap[(K, K), Queue[GraphNode[K, V]]];
+    
+    val startTime = System.currentTimeMillis;
+    
+    val futures = new ArrayBuffer[Future[_]];
+    for ((startId, endIds) <- endpointIds if endIds.nonEmpty) {
+      val f : Future[Map[K, Queue[GraphNode[K, V]]]] = future {
+        findPaths(startId, endIds);
+      }
+      f onSuccess {
+        case paths => for (e <- endIds if paths contains e) out((startId, e)) = paths(e);
+      }
+      futures += f;
+    }
+    
+    for (f <- futures) Await.ready(f, Duration.Inf);
+    
+    val endTime = System.currentTimeMillis;
+    println("Found paths in " + (endTime - startTime) + " miliseconds.");
+    
+    return out.toMap;
+  }
   
 }
 
@@ -113,111 +214,6 @@ object Graph {
         gMap(g).connectTo(gMap(c._1), c._2);
       }
     }
-  }
-  
-  /**
-   * Find the shortest path through a graph using Dijkstra's Algorithm.
-   */
-  def findPath[K, V](startId : K, endId : K, graph : Graph[K, V]) : Queue[GraphNode[K, V]] = {
-    val paths = findPaths(startId, Vector(endId), graph);
-    if (paths.nonEmpty)
-      return paths(endId);
-    return null;
-  }
-  
-  /**
-   * Find the shortest paths from the start to the ends using Dijkstra's Algorithm.
-   * Adapted from pseudocode courtesy of Wikipedia.
-   * Returns a map of endId -> path.
-   */
-  def findPaths[K, V](startId : K, endIds : Iterable[K], graph : Graph[K, V]) : Map[K, Queue[GraphNode[K, V]]] = {
-    val startNode = graph.getOrElse(startId, null);
-    if (startNode == null) {
-      println(s"No paths from $startId: failed to get start node.");
-      return Map();
-    }
-    
-    val endNodes = endIds.map(graph.getOrElse(_, null)).filter(_ != null).toBuffer;
-    if (endNodes.length == 0) {
-      println(s"No paths from $startId: failed to get end nodes for " + endIds.mkString(", ") + ".");
-      return Map();
-    }
-    
-    val pq = new PQueue[GraphNode[K, V]];
-    val dist = new HashMap[GraphNode[K, V], Int];
-    val previous = new HashMap[GraphNode[K, V], GraphNode[K, V]];
-    val outPaths = new HashMap[K, Queue[GraphNode[K, V]]];
-    
-    for ((key, node) <- graph.nodes) dist(node) = Int.MaxValue;
-    dist(startNode) = 0;
-    for ((node, distance) <- dist) pq.enqueue(node, distance);
-    
-    while (pq.nonEmpty) {
-      val (u, uDist) = pq.dequeue;
-      
-      // If we have found a path we are looking for, save it.
-      if (endNodes.contains(u)) {
-        var outPath = Queue[GraphNode[K, V]]();
-        var outU = u;
-        
-        // Build the path, with an extra clause to prevent infinite loops.
-        while (previous.contains(outU) && !outPath.contains(outU)) {
-          outPath = outU +: outPath;
-          outU = previous(outU);
-        }
-        
-        // If no cycle was found, keep the path.
-        if (!outPath.contains(outU))
-          outPaths.update(u.id, outPath);
-        else
-          println(s"Cycle detected while finding path from $startNode to $u at $outU.");
-        
-        endNodes -= u;
-        if (endNodes.size <= 0)
-          return outPaths.toMap;
-      }
-      
-      for (i <- 0 until u.connections.length) {
-        val v = u.connections(i);
-        val alt = uDist + u.weights(i);
-        if (alt < dist(v)) {
-          dist(v) = alt;
-          previous(v) = u;
-          pq.remove(v);
-          pq.enqueue(v, alt);
-        }
-      }
-    }
-    
-    return outPaths.toMap;
-  }
-  
-  /**
-   * Find the shortest paths from start points to end points.
-   * Returns a map of (startId, endId) -> path.
-   */
-  def findPaths[K, V](endpointIds : Map[K, Iterable[K]], graph : Graph[K, V]) : Map[(K, K), Queue[GraphNode[K, V]]] = {
-    val out = new TrieMap[(K, K), Queue[GraphNode[K, V]]];
-    
-    val startTime = System.currentTimeMillis;
-    
-    val futures = new ArrayBuffer[Future[_]];
-    for ((startId, endIds) <- endpointIds if endIds.nonEmpty) {
-      val f : Future[Map[K, Queue[GraphNode[K, V]]]] = future {
-        findPaths(startId, endIds, graph);
-      }
-      f onSuccess {
-        case paths => for (e <- endIds if paths contains e) out((startId, e)) = paths(e);
-      }
-      futures += f;
-    }
-    
-    for (f <- futures) Await.ready(f, Duration.Inf);
-    
-    val endTime = System.currentTimeMillis;
-    println("Found paths in " + (endTime - startTime) + " miliseconds.");
-    
-    return out.toMap;
   }
   
 }

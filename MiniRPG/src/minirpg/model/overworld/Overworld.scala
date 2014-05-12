@@ -38,7 +38,7 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
     }
     
     // Find the paths through the terrain.
-    val paths = Graph.findPaths(closest.map(p => (p._1.coords, p._2.map(_.coords))).toMap, terrain.navMap);
+    val paths = terrain.navMap.findPaths(closest.map(p => (p._1.coords, p._2.map(_.coords))).toMap);
     
     // Make the roads.
     paths.map(p => (

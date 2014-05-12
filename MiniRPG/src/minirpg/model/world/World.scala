@@ -78,7 +78,7 @@ class World(
     val startId = (x1, y1);
     val endId = (x2, y2);
     
-    val path = Graph.findPath(startId, endId, tileGrid.navMap);
+    val path = tileGrid.navMap.findPath(startId, endId);
     if (path == null) {
       println("No path: failed to find path.");
       debugCanvas.children.clear;
