@@ -34,11 +34,6 @@ class PQueue[E] {
     return false;
   }
   
-  /*def update(index : Int, value : E, priority : Int) = {
-    removeFrom(index);
-    enqueue(value, priority);
-  }*/
-  
   def indexOf(value : E) : Int = {
     for (i <- 0 until queue.length) {
       if (value == getValueAt(i))
