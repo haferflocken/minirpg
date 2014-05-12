@@ -15,7 +15,7 @@ import minirpg.model.world._
 class WorldScene(val world : World) extends Scene with Initializable with Tickable {
   
   val player = world.getEntitiesById("player")(0).asInstanceOf[Actor];
-  val gui : MiniRPGGui = new MiniRPGGui(player);
+  val gui = new ActorGUI(player);
   
   fill = Color.BLACK;
   content = new StackPane {
@@ -31,16 +31,6 @@ class WorldScene(val world : World) extends Scene with Initializable with Tickab
   
   onMouseClicked = (me : MouseEvent) => {
     val tileCoords = world.tileGrid.screenToTileCoords(me.x, me.y);
-
-    // Left click should pull up an action menu of what can be done
-    // to the entities on the tile.
-    if (me.button == MouseButton.SECONDARY) {
-      if ((tileCoords._1 - player.x).abs + (tileCoords._2 - player.y).abs <= 1 ) {
-        val useTargets = world.getEntitiesAt(tileCoords._1, tileCoords._2).filter(_.node != null);
-        if (useTargets.nonEmpty)
-          gui.showActionMenu(useTargets);
-      }
-    }
   };
 
   onKeyPressed = (ke : KeyEvent) => {

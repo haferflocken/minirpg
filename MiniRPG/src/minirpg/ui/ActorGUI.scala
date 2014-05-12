@@ -25,11 +25,13 @@ import scalafx.stage.Stage
 import javafx.stage.StageStyle
 import minirpg.util.Tickable
 import minirpg.model.world._
+import scala.collection.mutable.HashMap
 
 /**
  * Creates a GUI to control an Actor.
 */
-class MiniRPGGui(actor : Actor) extends AnchorPane with Initializable with Tickable {
+class ActorGUI(actor : Actor) extends AnchorPane with Initializable with Tickable {
+  ActorGUI.guis(actor) = this;
   
   def init = {
     vitalsGraph.init;
@@ -111,38 +113,11 @@ class MiniRPGGui(actor : Actor) extends AnchorPane with Initializable with Ticka
     children.add(popup);
     popupAnim.play();
   }
-  
-  /**
-   * Show a menu of actions for a vector of entities.
-   */
-  def showActionMenu(entities : Vector[Entity]) : Unit = {
-    val menus = new ArrayBuffer[MenuItem];
-    for (t <- entities if (t.useable || t.description != null)) {
-      val menu = new Menu(t.name);
-      val subItems = new ArrayBuffer[MenuItem];
-      if (t.useable) {
-        subItems.append(new MenuItem("Use") {
-          onAction = handle {
-            t.beUsedBy(actor);
-          }
-        });
-      }
-      if (t.description != null) {
-        subItems.append(new MenuItem("Examine") {
-          onAction = handle {
-            showPopup(t.description, t.node.layoutX(), t.node.layoutY());
-          }
-        });
-      }
-      menu.items = subItems;
-      menus.append(menu);
-    }
-    if (menus.length == 0)
-      return;
-    val cm = new ContextMenu {
-      for (m <- menus) items.append(m);
-    }
-    cm.show(entities(0).node, Side.RIGHT, 0, 0);
-  }
 
+}
+
+object ActorGUI {
+  
+  val guis = new HashMap[Actor, ActorGUI];
+  
 }
