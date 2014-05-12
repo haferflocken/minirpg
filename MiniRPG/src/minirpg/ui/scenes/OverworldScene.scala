@@ -13,6 +13,7 @@ import scalafx.scene.layout.BorderPane
 import scalafx.scene.image.ImageView
 import scalafx.scene.layout.AnchorPane
 import scalafx.geometry.Pos
+import minirpg.loaders.WorldLoader
 
 class OverworldScene(val overworld : Overworld) extends Scene with Initializable with Tickable {
   
@@ -33,6 +34,8 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
         val landmarkNode = new ImageView(Landmark.Image) {
           onMouseClicked = (me : MouseEvent) => {
             println(l.toString);
+            val world = WorldLoader.loadJsonFile(l.worldPath);
+            MiniRPGApp.scene = new WorldScene(world);
           };
         };
         AnchorPane.setLeftAnchor(landmarkNode, l.x * oIWidth / overworld.width + xOffset);
