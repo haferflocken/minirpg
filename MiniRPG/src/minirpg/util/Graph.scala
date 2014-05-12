@@ -13,6 +13,8 @@ import ExecutionContext.Implicits.global
 
 class Graph[K, V](val nodes : Map[K, GraphNode[K, V]]) {
   
+  def foreach(f: ((K, GraphNode[K, V])) => Unit) = nodes.foreach(f);
+  
   /**
    * Find the shortest path through a graph using Dijkstra's Algorithm.
    */
