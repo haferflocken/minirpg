@@ -5,7 +5,6 @@ import scalafx.scene.Node
 import minirpg.model.world.Gear
 import scalafx.scene.image.ImageView
 import scalafx.scene.image.Image
-import minirpg.entities.GearEntity
 import minirpg.model.world.Entity
 import minirpg.model.world.Actor
 

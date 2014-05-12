@@ -103,7 +103,7 @@ class Graph[K, V](val nodes : Map[K, GraphNode[K, V]]) {
     
     val futures = new ArrayBuffer[Future[_]];
     for ((startId, endIds) <- endpointIds if endIds.nonEmpty) {
-      val f : Future[Map[K, Queue[GraphNode[K, V]]]] = future {
+      val f : Future[Map[K, Queue[GraphNode[K, V]]]] = Future {
         findPaths(startId, endIds);
       }
       f onSuccess {
@@ -159,15 +159,6 @@ class GraphNode[K, V](
       for (x <- g.connections)
         stack.push(x);
     }
-  }
-  
-  def indexOfLightestConnection() : Int = {
-    var minIndex = 0;
-    for (i <- minIndex + 1 until weights.length) {
-      if (weights(i) < weights(minIndex))
-        minIndex = i;
-    }
-    return minIndex;
   }
   
   def verboseToString =
