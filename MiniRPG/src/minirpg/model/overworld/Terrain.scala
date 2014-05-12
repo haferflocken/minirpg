@@ -25,7 +25,7 @@ class Terrain(
   val maxSlope = gradient.foldLeft(gradient(0)(0)._1)((b1, l) => (b1 max l.foldLeft(l(0)._1)((b2, n) => b2 max n._1 max n._2)));
   val slopeRange = maxSlope - minSlope;
   
-  val navMap : NavMap = {
+  val navMap : Graph[(Int, Int), Null] = {
     val conMap = new HashMap[(Int, Int), Array[((Int, Int), Int)]];
     for (i <- 0 until width; j <- 0 until height if grid(i)(j) > waterLevel) {
       var cons : List[((Int, Int), Int)] = Nil;

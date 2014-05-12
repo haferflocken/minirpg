@@ -54,7 +54,7 @@ class TileGrid(
   
   lazy val node = new ImageView(compositeImage);
   
-  val navMap : NavMap = {
+  val navMap : Graph[(Int, Int), Null] = {
     val connections = for(x <- 0 until width; y <- 0 until height if !isSolid(x, y))
       yield ((x, y), getConnections(x, y));
     val conMap = connections.toMap;

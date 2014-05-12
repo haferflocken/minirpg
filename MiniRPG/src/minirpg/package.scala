@@ -9,8 +9,6 @@ import javafx.scene.input.KeyCode
 
 package object minirpg {
   
-  type NavMap = Map[(Int, Int), Graph[(Int, Int), Null]];
-  
   val TENTOTHE9 : Long = 1000000000;
   val TENTOTHE11 : Long = TENTOTHE9 * 100;
   
