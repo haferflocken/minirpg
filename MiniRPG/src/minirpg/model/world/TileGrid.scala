@@ -4,7 +4,7 @@ import minirpg._
 import scalafx.scene.image.Image
 import scalafx.scene.image.WritableImage
 import scalafx.scene.image.ImageView
-import minirpg.util.Graph
+import minirpg.collection.mutable.Graph
 import minirpg.model._
 import scala.Array.canBuildFrom
 

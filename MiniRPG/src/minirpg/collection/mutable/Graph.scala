@@ -1,10 +1,8 @@
-package minirpg.util
+package minirpg.collection.mutable
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.ArrayStack
 import scala.collection.immutable.Queue
-import scala.collection.mutable.PriorityQueue
-import scala.collection.mutable.ImmutableMapAdaptor
 import scala.collection.mutable.HashMap
 import scala.collection.concurrent.TrieMap
 import scala.concurrent._

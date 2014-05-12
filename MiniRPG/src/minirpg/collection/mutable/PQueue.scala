@@ -1,4 +1,4 @@
-package minirpg.util
+package minirpg.collection.mutable
 
 import scala.collection.mutable.ArrayBuffer
 import scala.annotation.tailrec
