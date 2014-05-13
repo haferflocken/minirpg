@@ -1,7 +1,7 @@
 package minirpg.model.overworld
 
 import minirpg._
-import minirpg.collection.mutable.Graph
+import minirpg.collection.immutable.Graph
 import scalafx.scene.paint.Color
 import scalafx.scene.image.Image
 import scalafx.scene.image.WritableImage

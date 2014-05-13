@@ -7,7 +7,7 @@ import scalafx.scene.image.WritableImage
 import scalafx.scene.image.ImageView
 import scala.collection.mutable.HashMap
 import scala.collection.immutable.Queue
-import minirpg.collection.mutable.Graph
+import minirpg.collection.immutable.Graph
 import scalafx.scene.paint.Color
 import minirpg.model.world.World
 

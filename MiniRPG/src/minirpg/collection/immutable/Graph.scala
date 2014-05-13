@@ -1,4 +1,4 @@
-package minirpg.collection.mutable
+package minirpg.collection.immutable
 
 import scala.collection.mutable
 import scala.collection.immutable.Queue
@@ -6,6 +6,8 @@ import scala.collection.concurrent.TrieMap
 import scala.concurrent._
 import scala.concurrent.duration._
 import ExecutionContext.Implicits.global
+import minirpg.collection.mutable.PQueue
+import scala.Vector
 
 /**
  * An immutable graph.
