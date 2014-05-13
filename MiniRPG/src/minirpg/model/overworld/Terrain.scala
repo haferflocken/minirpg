@@ -26,7 +26,7 @@ class Terrain(
   val slopeRange = maxSlope - minSlope;
   
   val navMap : Graph[(Int, Int)] = {
-    val conMap = new mutable.HashMap[(Int, Int), Vector[((Int, Int), Int)]];
+    val conMap = new mutable.HashMap[(Int, Int), Iterable[((Int, Int), Int)]];
     for (i <- 0 until width; j <- 0 until height if grid(i)(j) > waterLevel) {
       var cons : List[((Int, Int), Int)] = Nil;
       if (grid(i)(j) > waterLevel) {
@@ -48,7 +48,7 @@ class Terrain(
           cons = ((i, j + 1), weight) +: cons;
         }
       }
-      conMap.update((i, j), cons.toVector);
+      conMap.update((i, j), cons);
     }
     
     new Graph(conMap.keySet.toSet, conMap.toMap);
