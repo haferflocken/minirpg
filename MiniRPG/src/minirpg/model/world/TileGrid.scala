@@ -7,6 +7,7 @@ import scalafx.scene.image.ImageView
 import minirpg.collection.mutable.Graph
 import minirpg.model._
 import scala.Array.canBuildFrom
+import scala.collection.mutable
 
 class TileGrid(
     _grid : Array[Array[Int]],
@@ -54,17 +55,24 @@ class TileGrid(
   
   lazy val node = new ImageView(compositeImage);
   
-  val navMap : Graph[(Int, Int), Null] = {
-    val connections = for(x <- 0 until width; y <- 0 until height if !isSolid(x, y))
-      yield ((x, y), getConnections(x, y));
-    val conMap = connections.toMap;
-    Graph(data = null, rawCons = conMap);
+  val navMap : Graph[(Int, Int)] = {
+    val nodes = new mutable.HashSet[(Int, Int)];
+    for (x <- 0 until width; y <- 0 until height if !isSolid(x, y)) {
+      nodes += ((x, y));
+    }
+    
+    val connections = new mutable.HashMap[(Int, Int), Iterable[((Int, Int), Int)]];
+    for(node <- nodes; x = node._1; y = node._2; if !isSolid(x, y)) {
+      connections(node) = getConnections(x, y);
+    }
+    
+    new Graph(nodes.toSet, connections.toMap);
   }
   
   def isInBounds(x : Int, y : Int) : Boolean = (x > -1 && y > -1 && x < width && y < height);
   
-  def getConnections(x : Int, y : Int) : Array[((Int, Int), Int)] = {
-    val neighbors = Array((x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y));
+  def getConnections(x : Int, y : Int) : Iterable[((Int, Int), Int)] = {
+    val neighbors = Vector((x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y));
     return for (n <- neighbors if isInBounds(n._1, n._2) if !isSolid(n._1, n._2)) yield ((n._1, n._2), 1);
   }
   

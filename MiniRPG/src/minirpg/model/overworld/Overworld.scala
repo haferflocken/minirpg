@@ -43,7 +43,7 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
     // Make the roads.
     paths.map(p => (
         (landmarks.find(_.isAt(p._1._1)).get, landmarks.find(_.isAt(p._1._2)).get),
-        p._2.map(_.id).toVector
+        p._2.toVector
       ));
   };
   

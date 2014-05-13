@@ -7,7 +7,7 @@ import scalafx.scene.image.Image
 import scalafx.scene.image.WritableImage
 import scalafx.scene.canvas.Canvas
 import scalafx.scene.SnapshotParameters
-import scala.collection.mutable.HashMap
+import scala.collection.mutable
 
 class Terrain(
     val grid : Vector[Vector[Double]],
@@ -25,8 +25,8 @@ class Terrain(
   val maxSlope = gradient.foldLeft(gradient(0)(0)._1)((b1, l) => (b1 max l.foldLeft(l(0)._1)((b2, n) => b2 max n._1 max n._2)));
   val slopeRange = maxSlope - minSlope;
   
-  val navMap : Graph[(Int, Int), Null] = {
-    val conMap = new HashMap[(Int, Int), Array[((Int, Int), Int)]];
+  val navMap : Graph[(Int, Int)] = {
+    val conMap = new mutable.HashMap[(Int, Int), Vector[((Int, Int), Int)]];
     for (i <- 0 until width; j <- 0 until height if grid(i)(j) > waterLevel) {
       var cons : List[((Int, Int), Int)] = Nil;
       if (grid(i)(j) > waterLevel) {
@@ -48,10 +48,10 @@ class Terrain(
           cons = ((i, j + 1), weight) +: cons;
         }
       }
-      conMap.update((i, j), cons.toArray);
+      conMap.update((i, j), cons.toVector);
     }
     
-    Graph(data = null, conMap.toMap);
+    new Graph(conMap.keySet.toSet, conMap.toMap);
   }
   
   /**

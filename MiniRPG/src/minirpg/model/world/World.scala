@@ -84,9 +84,8 @@ class World(
       debugCanvas.children.clear;
       return null;
     }
-    val out = path.map(_.id);
-    debugDisplayPath(out);
-    return out;
+    debugDisplayPath(path);
+    return path;
   }
   
   def getSpotNextTo(x : Int, y : Int) : (Int, Int) = {
