@@ -58,7 +58,7 @@ class Terrain(
    * Make a canvas of given dimensions and return it, along with the width and
    * height of the border surrounding it.
    */
-  def mkCanvas(imageWidth : Int, imageHeight : Int, borderColor : Color = Color.YELLOW) : Canvas = {
+  def mkCanvas(imageWidth : Int, imageHeight : Int, painter : TerrainPainter = GrayCartoPainter) : Canvas = {
     val canvas = new Canvas(imageWidth, imageHeight);
     val g = canvas.graphicsContext2D;
     val tileWidth = imageWidth.toDouble / width;
@@ -67,12 +67,10 @@ class Terrain(
     for (i <- 0 until width; j <- 0 until height) {
       if (grid(i)(j) > waterLevel) {
         val percHeight = (grid(i)(j) - minHeight) / heightRange;
-        val grad = gradient(i)(j);
-        val percGrad = ((grad._1 max grad._2) - minSlope) / slopeRange;
-        g.fill = Terrain.cartoGray(percHeight);
+        g.fill = painter.paintFor(percHeight, gradient(i)(j));
       }
       else {
-        g.fill = Terrain.cartoWaterColor;
+        g.fill = painter.waterPaint;
       }
       val x = i * imageWidth / width;
       val y = j * imageHeight / height;
@@ -82,8 +80,8 @@ class Terrain(
     return canvas;
   }
   
-  def mkImage(imageWidth : Int, imageHeight : Int) : Image = {
-    val canvas = mkCanvas(imageWidth, imageHeight)
+  def mkImage(imageWidth : Int, imageHeight : Int, painter : TerrainPainter = GrayCartoPainter) : Image = {
+    val canvas = mkCanvas(imageWidth, imageHeight, painter);
     return canvas.snapshot(new SnapshotParameters, new WritableImage(imageWidth, imageHeight));
   }
   
@@ -103,48 +101,6 @@ class Terrain(
 }
 
 object Terrain {
-  
-  val cartoWaterColor = Color.LIGHTSKYBLUE;
-  
-  val cartoColors = Vector[(Double, Color)](
-      (0.9, Color.gray(1.0)),
-      (0.8, Color.gray(0.9)),
-      (0.7, Color.gray(0.8)),
-      (0.6, Color.gray(0.7)),
-      (0.5, Color.gray(0.6)),
-      (0.4, Color.gray(0.5)),
-      (0.3, Color.gray(0.4)),
-      (0.2, Color.gray(0.3)),
-      (0.1, Color.gray(0.2)),
-      (0.0, Color.gray(0.1)));
-  
-  def cartoGray(perc : Double) : Color = {
-    for ((p, c) <- cartoColors if perc >= p)
-      return c;
-    return Color.BLACK;
-  }
-  
-  val cartoHBs = Vector[(Double, (Double, Double))](
-      (0.9, (0, 1.0)),
-      (0.8, (30, 1.0)),
-      (0.7, (60, 1.0)),
-      (0.6, (90, 1.0)),
-      (0.5, (120, 1.0)),
-      (0.4, (150, 1.0)),
-      (0.3, (180, 1.0)),
-      (0.2, (210, 1.0)),
-      (0.1, (240, 1.0)));
-  
-  def cartoHB(perc : Double) : (Double, Double) = {
-    for ((p, hb) <- cartoHBs if perc >= p)
-      return hb;
-    return (300.0, 1.0);
-  }
-  
-  def cartoColor(percHeight : Double, percGradient : Double) : Color = {
-    val (hue, brightness) = cartoHB(percHeight);
-    return Color.hsb(hue, Math.sqrt(1.0 - percGradient), brightness);
-  }
   
   def mkRandomTerrain(gridSize : Int, maxHeight : Double, waterLevel : Double) : Terrain = {
     val gridBuff = new Array[Double](gridSize * gridSize);
