@@ -31,20 +31,20 @@ class Terrain(
       var cons : List[((Int, Int), Int)] = Nil;
       if (grid(i)(j) > waterLevel) {
         if (isInBounds(i - 1, j) && grid(i - 1)(j) > waterLevel) {
-          val weight = Math.abs(percGradientRight(i - 1, j));
+          val weight = Math.abs(gradient(i - 1)(j)._1 toInt) + 1;
           cons = ((i - 1, j), weight) +: cons;
         }
         if (isInBounds(i, j - 1) && grid(i)(j - 1) > waterLevel) {
-          val weight = Math.abs(percGradientDown(i, j - 1));
+          val weight = Math.abs(gradient(i)(j - 1)._2 toInt) + 1;
           cons = ((i, j - 1), weight) +: cons;
         }
         if (isInBounds(i + 1, j) && grid(i + 1)(j) > waterLevel) {
-          val weight = Math.abs(percGradientRight(i, j));
+          val weight = Math.abs(gradient(i)(j)._1 toInt) + 1;
           cons = ((i + 1, j), weight) +: cons;
           
         }
         if (isInBounds(i, j + 1) && grid(i)(j + 1) > waterLevel) {
-          val weight = Math.abs(percGradientDown(i, j));
+          val weight = Math.abs(gradient(i)(j)._2 toInt) + 1;
           cons = ((i, j + 1), weight) +: cons;
         }
       }
@@ -97,9 +97,6 @@ class Terrain(
   
   def isInBounds(x : Int, y : Int) = x >= 0 && y >= 0 && x < width && y < height;
   
-  def percGradientRight(x : Int, y : Int) = (gradient(x)(y)._1 * 100 / slopeRange).toInt;
-  
-  def percGradientDown(x : Int, y : Int) = (gradient(x)(y)._2 * 100 / slopeRange).toInt;
 }
 
 object Terrain {
