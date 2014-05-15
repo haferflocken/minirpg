@@ -14,6 +14,7 @@ import scalafx.scene.image.ImageView
 import scalafx.scene.layout.AnchorPane
 import scalafx.geometry.Pos
 import minirpg.loaders.WorldLoader
+import scalafx.scene.input.KeyCode
 
 class OverworldScene(val overworld : Overworld) extends Scene with Initializable with Tickable {
   
@@ -54,7 +55,9 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
   };
 
   onKeyPressed = (ke : KeyEvent) => {
-
+	if (ke.code == KeyCode.R) {
+	  MiniRPGApp.scene = new NewGameSetupScene;
+	}
   };
   
   onKeyReleased = (ke : KeyEvent) => {

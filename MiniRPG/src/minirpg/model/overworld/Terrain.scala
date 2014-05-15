@@ -31,20 +31,20 @@ class Terrain(
       var cons : List[((Int, Int), Int)] = Nil;
       if (grid(i)(j) > waterLevel) {
         if (isInBounds(i - 1, j) && grid(i - 1)(j) > waterLevel) {
-          val weight = Math.max(1, Math.abs(percGradientRight(i - 1, j)));
+          val weight = Math.abs(percGradientRight(i - 1, j));
           cons = ((i - 1, j), weight) +: cons;
         }
         if (isInBounds(i, j - 1) && grid(i)(j - 1) > waterLevel) {
-          val weight = Math.max(1, Math.abs(percGradientDown(i, j - 1)));
+          val weight = Math.abs(percGradientDown(i, j - 1));
           cons = ((i, j - 1), weight) +: cons;
         }
         if (isInBounds(i + 1, j) && grid(i + 1)(j) > waterLevel) {
-          val weight = Math.max(1, Math.abs(percGradientRight(i, j)));
+          val weight = Math.abs(percGradientRight(i, j));
           cons = ((i + 1, j), weight) +: cons;
           
         }
         if (isInBounds(i, j + 1) && grid(i)(j + 1) > waterLevel) {
-          val weight = Math.max(1, Math.abs(percGradientDown(i, j)));
+          val weight = Math.abs(percGradientDown(i, j));
           cons = ((i, j + 1), weight) +: cons;
         }
       }
