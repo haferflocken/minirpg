@@ -7,6 +7,6 @@ trait TerrainPainter {
   
   val waterPaint : Paint;
   
-  def paintFor(height : Double, gradient : (Double, Double)) : Paint;
+  def paintFor(height : Double, gradient : (Double, Double), waterLevel : Double) : Paint;
 
 }

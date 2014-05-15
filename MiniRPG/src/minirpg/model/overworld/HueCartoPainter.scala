@@ -24,7 +24,7 @@ object HueCartoPainter extends TerrainPainter {
     return (300.0, 1.0);
   }
   
-  def paintFor(height : Double, gradient : (Double, Double)) : Paint = {
+  def paintFor(height : Double, gradient : (Double, Double), waterLevel : Double) : Paint = {
     val (hue, brightness) = hb(height);
     return Color.hsb(hue, Math.sqrt(1.0 - Math.max(gradient._1, gradient._2)), brightness);
   }

@@ -19,7 +19,7 @@ object GrayCartoPainter extends TerrainPainter {
       (0.1, Color.gray(0.2)),
       (0.0, Color.gray(0.1)));
   
-  def paintFor(height : Double, gradient : (Double, Double)) : Paint = {
+  def paintFor(height : Double, gradient : (Double, Double), waterLevel : Double) : Paint = {
     for ((h, c) <- colors if height >= h)
       return c;
     return Color.BLACK;

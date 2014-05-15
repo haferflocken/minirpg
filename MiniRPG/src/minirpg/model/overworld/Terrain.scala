@@ -58,16 +58,18 @@ class Terrain(
    * Make a canvas of given dimensions and return it, along with the width and
    * height of the border surrounding it.
    */
-  def mkCanvas(imageWidth : Int, imageHeight : Int, painter : TerrainPainter = GrayCartoPainter) : Canvas = {
+  def mkCanvas(imageWidth : Int, imageHeight : Int, painter : TerrainPainter = TropicalPainter) : Canvas = {
     val canvas = new Canvas(imageWidth, imageHeight);
     val g = canvas.graphicsContext2D;
     val tileWidth = imageWidth.toDouble / width;
     val tileHeight = imageHeight.toDouble / height;
     
+    val heightRange = (maxHeight - waterLevel)
+    
     for (i <- 0 until width; j <- 0 until height) {
       if (grid(i)(j) > waterLevel) {
-        val percHeight = (grid(i)(j) - minHeight) / heightRange;
-        g.fill = painter.paintFor(percHeight, gradient(i)(j));
+        val percHeight = (grid(i)(j) - waterLevel) / heightRange;
+        g.fill = painter.paintFor(percHeight, gradient(i)(j), 0);
       }
       else {
         g.fill = painter.waterPaint;
@@ -80,7 +82,7 @@ class Terrain(
     return canvas;
   }
   
-  def mkImage(imageWidth : Int, imageHeight : Int, painter : TerrainPainter = GrayCartoPainter) : Image = {
+  def mkImage(imageWidth : Int, imageHeight : Int, painter : TerrainPainter = TropicalPainter) : Image = {
     val canvas = mkCanvas(imageWidth, imageHeight, painter);
     return canvas.snapshot(new SnapshotParameters, new WritableImage(imageWidth, imageHeight));
   }
