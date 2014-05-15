@@ -58,7 +58,7 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
     val tileWidth = imageWidth.toDouble / width;
     val tileHeight = imageHeight.toDouble / height;
     
-    /*var i = 0;
+    var i = 0;
     for (((l1, l2), path) <- roads) {
       i += 1;
       g.fill = Color.rgb(255 * i / roads.size, 0, 0);
@@ -74,7 +74,7 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
       val lX = l.x * imageWidth / width;
       val lY = l.y * imageHeight / height;
       g.fillRect(lX, lY, tileWidth, tileHeight);
-    }*/
+    }
     
     return canvas;
   }

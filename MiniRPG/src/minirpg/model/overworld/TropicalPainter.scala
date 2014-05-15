@@ -38,6 +38,7 @@ object TropicalPainter extends TerrainPainter {
     if (height < 0.25)
       return Color.KHAKI;
     
+    // Errors. Shouldn't ever get here, so make sure it's noticeable.
     println("Height: " + height + ", Slope: " + slope + ", Water proximity: " + waterProximity);
     return Color.RED;
   }
