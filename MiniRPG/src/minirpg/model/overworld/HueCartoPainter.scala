@@ -5,8 +5,6 @@ import scalafx.scene.paint.Paint
 
 object HueCartoPainter extends TerrainPainter {
   
-  val waterPaint = Color.LIGHTGRAY;
-  
   val colors = Vector[(Double, (Double, Double))](
       (0.9, (0, 1.0)),
       (0.8, (30, 1.0)),
@@ -24,9 +22,11 @@ object HueCartoPainter extends TerrainPainter {
     return (300.0, 1.0);
   }
   
-  def paintFor(height : Double, gradient : (Double, Double), waterLevel : Double) : Paint = {
+  def paintForLand(height : Double, gradient : (Double, Double)) : Paint = {
     val (hue, brightness) = hb(height);
     return Color.hsb(hue, Math.sqrt(1.0 - Math.max(gradient._1, gradient._2)), brightness);
   }
+  
+  def paintForWater(depth : Double, gradient : (Double, Double)) : Paint = Color.LIGHTGRAY;
   
 }

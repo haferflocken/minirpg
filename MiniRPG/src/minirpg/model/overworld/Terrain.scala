@@ -64,15 +64,17 @@ class Terrain(
     val tileWidth = imageWidth.toDouble / width;
     val tileHeight = imageHeight.toDouble / height;
     
-    val heightRange = (maxHeight - waterLevel)
+    val landHeightRange = (maxHeight - waterLevel);
+    val waterHeightRange = (waterLevel - minHeight);
     
     for (i <- 0 until width; j <- 0 until height) {
       if (grid(i)(j) > waterLevel) {
-        val percHeight = (grid(i)(j) - waterLevel) / heightRange;
-        g.fill = painter.paintFor(percHeight, gradient(i)(j), 0);
+        val percHeight = (grid(i)(j) - waterLevel) / landHeightRange;
+        g.fill = painter.paintForLand(percHeight, gradient(i)(j));
       }
       else {
-        g.fill = painter.waterPaint;
+        val percDepth = (waterLevel + grid(i)(j)) / waterHeightRange;
+        g.fill = painter.paintForWater(percDepth, gradient(i)(j));
       }
       val x = i * imageWidth / width;
       val y = j * imageHeight / height;

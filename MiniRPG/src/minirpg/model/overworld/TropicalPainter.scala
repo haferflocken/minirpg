@@ -4,12 +4,15 @@ import scalafx.scene.paint.Paint
 import scalafx.scene.paint.Color
 
 object TropicalPainter extends TerrainPainter {
-
-  val waterPaint : Paint = Color.LIGHTSKYBLUE;
   
-  val mudPaint : Paint = Color.rgb(91, 39, 17);
+  val waterColors = Vector[(Double, Color)](
+      (-1.0, Color.rgb(61, 118, 150)),
+      (-0.8, Color.rgb(81, 138, 171)),
+      (-0.6, Color.rgb(88, 169, 203)),
+      (-0.2, Color.rgb(91, 186, 200)),
+      (0.0,  Color.rgb(106, 211, 215)));
   
-  def paintFor(height : Double, gradient : (Double, Double), waterLevel : Double) : Paint = {
+  def paintForLand(height : Double, gradient : (Double, Double)) : Paint = {
     val slope = Math.max(Math.abs(gradient._1), Math.abs(gradient._2));
     
     // Cliff:		Slope: [220, inf)	Height: Any				Water proximity: Any
@@ -24,24 +27,27 @@ object TropicalPainter extends TerrainPainter {
     if (slope >= 80  && height >= 0.25)
       return Color.FORESTGREEN;
     
-    val waterProximity = height - waterLevel;
-    
     // Valley:		Slope: [0, 50)		Height: [0%, 80%)		Water proximity: No
-    if (slope < 80 && waterProximity > 0.05)
+    if (slope < 80 && height > 0.05)
       return Color.LIMEGREEN;
     
     // Hills:		Slope: [50, 220)	Height: [0%, 80%)		Water proximity: No
-    if (slope >= 80 && waterProximity > 0.05)
+    if (slope >= 80 && height > 0.05)
       return Color.LAWNGREEN;
     
-    // Shore:	Slope: [0, 220)		Height: [0%, 25%)		Water proximity: Yes
+    // Shore:	Slope: [0, 220)		Height: [0%, 25%)			Water proximity: Yes
     if (height < 0.25)
       return Color.KHAKI;
     
     // Errors. Shouldn't ever get here, so make sure it's noticeable.
-    println("Height: " + height + ", Slope: " + slope + ", Water proximity: " + waterProximity);
+    println(s"Height: $height, Slope: $slope");
     return Color.RED;
   }
 
+  def paintForWater(depth : Double, gradient : (Double, Double)) : Paint = {
+    for ((d, c) <- waterColors if depth <= d)
+      return c;
+    return Color.PINK;
+  };
   
 }
