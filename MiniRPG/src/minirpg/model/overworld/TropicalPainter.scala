@@ -6,11 +6,11 @@ import scalafx.scene.paint.Color
 object TropicalPainter extends TerrainPainter {
   
   val waterColors = Vector[(Double, Color)](
-      (-1.0, Color.rgb(61, 118, 150)),
-      (-0.8, Color.rgb(81, 138, 171)),
-      (-0.6, Color.rgb(88, 169, 203)),
-      (-0.2, Color.rgb(91, 186, 200)),
-      (0.0,  Color.rgb(106, 211, 215)));
+      (-1.0, Color.rgb(55, 22, 154)),
+      (-0.8, Color.rgb(19, 34, 164)),
+      (-0.6, Color.rgb(45, 80, 247)),
+      (-0.2, Color.rgb(82, 165, 248)),
+      (0.0,  Color.rgb(135, 206, 250)));
   
   def paintForLand(height : Double, gradient : (Double, Double)) : Paint = {
     val slope = Math.max(Math.abs(gradient._1), Math.abs(gradient._2));
