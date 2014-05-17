@@ -7,7 +7,7 @@ import scalafx.scene.paint.Color
 import minirpg.entities._
 import minirpg.model.world._
 
-trait ConduitAttack extends Power {
+trait GunAttack extends Power {
   
   protected def mkParticles(world : World, region : Region) : Unit;
   
@@ -18,7 +18,7 @@ trait ConduitAttack extends Power {
   
 }
 
-trait ExplosiveConduitAttack extends ConduitAttack {
+trait ConduitBlasterAttack extends GunAttack {
   
   protected def mkParticles(world : World, region : Region) : Unit = {
     for (c <- region.coords) {
@@ -36,7 +36,7 @@ trait ExplosiveConduitAttack extends ConduitAttack {
   
 }
 
-trait FocusedConduitAttack extends ConduitAttack {
+trait ConduitRifleAttack extends GunAttack {
   
   protected def mkParticles(world : World, region : Region) : Unit = {
     val rX = world.tileGrid.tileWidth * region.centerX + world.tileGrid.tileWidth / 2;
@@ -52,7 +52,7 @@ trait FocusedConduitAttack extends ConduitAttack {
   
 }
 
-trait TrapConduitAttack extends ConduitAttack {
+trait ConduitMineLauncherAttack extends GunAttack {
   
   protected def mkParticles(world : World, region : Region) : Unit = {}
   
@@ -63,10 +63,10 @@ trait TrapConduitAttack extends ConduitAttack {
   
 }
 
-object RedExplosiveConduitAttack extends ExplosiveConduitAttack {
+object CyanConduitBlasterAttack extends ConduitBlasterAttack {
   
-  val name = "Red Explosion";
-  val orb = RedOrb;
+  val name = "Cyan Blast";
+  val orb = CyanOrb;
   val particleColor = Color.RED;
   
   def apply(user : Actor, targets : Vector[Entity], region : Region) = {
@@ -76,10 +76,10 @@ object RedExplosiveConduitAttack extends ExplosiveConduitAttack {
   }
 }
 
-object RedFocusedConduitAttack extends FocusedConduitAttack {
+object CyanConduitRifleAttack extends ConduitRifleAttack {
   
-  val name = "Red Attack";
-  val orb = RedOrb;
+  val name = "Red Shot";
+  val orb = CyanOrb;
   val particleColor = Color.RED;
   
   def apply(user : Actor, targets : Vector[Entity], region : Region) = {
@@ -89,10 +89,10 @@ object RedFocusedConduitAttack extends FocusedConduitAttack {
   }
 }
 
-object RedTrapConduitAttack extends TrapConduitAttack {
+object CyanConduitMineLauncherAttack extends ConduitMineLauncherAttack {
   
-  val name = "Red Trap"
-  val orb = RedOrb;
+  val name = "Cyan Mine"
+  val orb = CyanOrb;
   val particleColor = Color.RED;
   
   def apply(user : Actor, targets : Vector[Entity], region : Region) = {

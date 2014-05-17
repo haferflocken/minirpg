@@ -10,27 +10,23 @@ abstract class Orb extends Gear {
   val skillBonuses = Map.empty[String, Int];
 }
 
-object RedOrb extends Orb {
-  val name = "Red Orb";
-  val description = "A magical orb of disintegration whose power can be channeled through a wand.";
+object CyanOrb extends Orb {
+  val name = "Cyan Orb";
+  val description = "Cyan magic weakens other magic.";
+}
+
+object MagentaOrb extends Orb {
+  val name = "Magenta Orb";
+  val description = "Magenta magic calms spirits down.";
 }
 
 object YellowOrb extends Orb {
   val name = "Yellow Orb";
-  val description = "A magical orb of stunning whose power can be channeled through a wand.";
+  val description = "Yellow magic scares spirits.";
 }
 
-object GreenOrb extends Orb {
-  val name = "Green Orb";
-  val description = "A magical orb of reflection whose power can be channeled through a wand.";
-}
 
-object BlueOrb extends Orb {
-  val name = "Blue Orb";
-  val description = "A magical orb of absorbtion whose power can be channeled through a wand.";
-}
-
-object PurpleOrb extends Orb {
-  val name = "Purple Orb";
-  val description = "A magical orb of dispelling whose power can be channeled through a wand.";
+object BlackOrb extends Orb {
+  val name = "Black Orb";
+  val description = "Black magic disintegrates matter.";
 }

@@ -10,7 +10,7 @@ object ConduitBlaster extends Gear {
   val description = "Conducts magical energy into an explosion.";
   val equipSlots = Vector("Back");
   val wieldSlots = Vector("Main Hand", "Off Hand");
-  val powers = Vector[Power](RedExplosiveConduitAttack);
+  val powers = Vector[Power](CyanConduitBlasterAttack);
   val skillBonuses = Map.empty[String, Int];
 }
 
@@ -19,7 +19,7 @@ object ConduitRifle extends Gear {
   val description = "Conducts magical energy to a single point.";
   val equipSlots = Vector("Back");
   val wieldSlots = Vector("Main Hand", "Off Hand");
-  val powers = Vector[Power](RedFocusedConduitAttack);
+  val powers = Vector[Power](CyanConduitRifleAttack);
   val skillBonuses = Map.empty[String, Int];
 }
 
@@ -28,6 +28,6 @@ object ConduitMineLauncher extends Gear {
   val description = "Conducts magical energy to create a proximity mine.";
   val equipSlots = Vector("Back");
   val wieldSlots = Vector("Main Hand", "Off Hand");
-  val powers = Vector[Power](RedTrapConduitAttack);
+  val powers = Vector[Power](CyanConduitMineLauncherAttack);
   val skillBonuses = Map.empty[String, Int];
 }

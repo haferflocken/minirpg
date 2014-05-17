@@ -10,7 +10,7 @@ object FrogHelmet extends Gear {
   val equipSlots = Vector("Head");
   val wieldSlots = null;
   val powers = null;
-  val skillBonuses = Map(Skills.impactRes -> 6);
+  val skillBonuses = Map(Skills.pierceRes -> 6, Skills.slashRes -> 6, Skills.bashRes -> 4);
     
 }
 
@@ -21,7 +21,7 @@ object FrogCuirass extends Gear {
   val equipSlots = Vector("Torso");
   val wieldSlots = null;
   val powers = null;
-  val skillBonuses = Map(Skills.impactRes -> 11);
+  val skillBonuses = Map(Skills.pierceRes -> 11, Skills.slashRes -> 11, Skills.bashRes -> 9);
     
 }
 
@@ -32,7 +32,7 @@ object FrogGreaves extends Gear {
   val equipSlots = Vector("Legs");
   val wieldSlots = null;
   val powers = null;
-  val skillBonuses = Map(Skills.impactRes -> 8);
+  val skillBonuses = Map(Skills.pierceRes -> 8, Skills.slashRes -> 8, Skills.bashRes -> 6);
     
 }
 
@@ -43,7 +43,7 @@ object FrogGauntlets extends Gear {
   val equipSlots = Vector("Hands");
   val wieldSlots = null;
   val powers = null;
-  val skillBonuses = Map(Skills.impactRes -> 4);
+  val skillBonuses = Map(Skills.pierceRes -> 4, Skills.slashRes -> 4, Skills.bashRes -> 2);
     
 }
 
@@ -54,6 +54,6 @@ object FrogBoots extends Gear {
   val equipSlots = Vector("Feet");
   val wieldSlots = null;
   val powers = null;
-  val skillBonuses = Map(Skills.impactRes -> 4);
+  val skillBonuses = Map(Skills.pierceRes -> 4, Skills.slashRes -> 4, Skills.bashRes -> 2);
     
 }

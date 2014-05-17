@@ -17,7 +17,7 @@ package object minirpg {
         Shortsword,
         CyclopsGoggles, CyclopsJacket, CyclopsPants, CyclopsGloves, CyclopsBoots,
         FrogHelmet, FrogCuirass, FrogGreaves, FrogGauntlets, FrogBoots,
-        RedOrb, YellowOrb, GreenOrb, BlueOrb, PurpleOrb,
+        CyanOrb, MagentaOrb, YellowOrb, BlackOrb,
         ConduitBlaster, ConduitRifle, ConduitMineLauncher
     ).map((e) => (e.name, e)).toMap[String, Gear];
   

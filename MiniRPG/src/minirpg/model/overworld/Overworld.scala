@@ -41,8 +41,9 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
     val paths = terrain.navMap.findPaths(closest.map(p => (p._1.coords, p._2.map(_.coords))).toMap);
     
     // Make the roads.
+    val coordsToLandmark : Map[(Int, Int), Landmark] = landmarks.map(l => ((l.x, l.y), l)).toMap;
     paths.map(p => (
-        (landmarks.find(_.isAt(p._1._1)).get, landmarks.find(_.isAt(p._1._2)).get),
+        (coordsToLandmark(p._1._1), coordsToLandmark(p._1._2)),
         p._2.toVector
       ));
   };
@@ -58,7 +59,7 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
     val tileWidth = imageWidth.toDouble / width;
     val tileHeight = imageHeight.toDouble / height;
     
-    /*var i = 0;
+    var i = 0;
     for (((l1, l2), path) <- roads) {
       i += 1;
       g.fill = Color.rgb(255 * i / roads.size, 0, 0);
@@ -74,7 +75,7 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
       val lX = l.x * imageWidth / width;
       val lY = l.y * imageHeight / height;
       g.fillRect(lX, lY, tileWidth, tileHeight);
-    }*/
+    }
     
     return canvas;
   }

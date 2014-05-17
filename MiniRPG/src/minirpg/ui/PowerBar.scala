@@ -20,8 +20,10 @@ import scalafx.scene.layout.Background
 import scalafx.scene.layout.Border
 import minirpg.util.Tickable
 import minirpg.model.world._
+import scalafx.geometry.Orientation
 
 class PowerBar(gui : ActorGUI, actor : Actor) extends TilePane with Subscriber[ActorEvent, Actor] with Initializable with Tickable {
+  orientation = Orientation.VERTICAL;
   
   private var cooldownRects : List[(Power, Rectangle)] = Nil;
   private var buttons : List[(Power, Button)] = Nil;
@@ -59,6 +61,7 @@ class PowerBar(gui : ActorGUI, actor : Actor) extends TilePane with Subscriber[A
       }
       val (bdr, bg) = borderAndBackground(p.canUse(actor));
       val button = new Button(i + ") " + p.name, graphic) {
+        alignment = Pos.CENTER_LEFT;
         maxWidth = Double.MaxValue;
         maxHeight = Double.MaxValue;
         onAction = handle {
@@ -80,7 +83,7 @@ class PowerBar(gui : ActorGUI, actor : Actor) extends TilePane with Subscriber[A
         scene().getAccelerators.put(accel._1, accel._2);
       }
     }
-    prefColumns = powers.length;
+    prefRows = powers.length;
   }
   
   def refreshBackgrounds : Unit = {

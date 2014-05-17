@@ -4,16 +4,35 @@ import scala.collection.mutable.LinkedHashMap
 
 object Skills {
   
+  // Skill skills.
   val archery = "Archery";
   val blocking = "Blocking";
   val melee = "Melee";
   val pointing = "Pointing";
-  val speed = "Speed";          // A measure of the actor's speed, in (% of a tile)/second
+  val speed = "Speed";						// A measure of the actor's speed, in (% of a tile)/second
   val style = "Style";
   
-  val impactRes = "Impact Resistance";
+  // Physical resistances.
+  val pierceRes = "Pierce Resistance";
+  val slashRes = "Slash Resistance";
+  val bashRes = "Bash Resistance";
+  
+  // Mental resistances.
+  val emotionalRes = "Emotional Resistance";
+  val persaudeRes = "Persaude Resistance";
+  
+  // Magical resistances.
+  val cyanRes = "Cyan Resistance";
+  val magentaRes = "Magenta Resistance";
+  val yellowRes = "Yellow Resistance";
+  val blackRes = "Black Resistance";
 
-  val all = Vector(archery, blocking, melee, pointing, speed, style, impactRes);
+  // Utilities.
+  val all = Vector(
+    archery, blocking, melee, pointing, speed, style,
+    pierceRes, slashRes, bashRes,
+    emotionalRes, persaudeRes,
+    cyanRes, magentaRes, yellowRes, blackRes);
   val zeroTuples = all.map((_, 0));
   val zeroMap = zeroTuples.toMap;
   
