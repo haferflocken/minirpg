@@ -15,6 +15,7 @@ import scalafx.scene.layout.AnchorPane
 import scalafx.geometry.Pos
 import minirpg.loaders.WorldLoader
 import scalafx.scene.input.KeyCode
+import scalafx.scene.control.Tooltip
 
 class OverworldScene(val overworld : Overworld) extends Scene with Initializable with Tickable {
   
@@ -39,6 +40,7 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
             MiniRPGApp.scene = new WorldScene(world);
           };
         };
+        Tooltip.install(landmarkNode, l.name);
         AnchorPane.setLeftAnchor(landmarkNode, l.x * oIWidth / overworld.width + xOffset);
         AnchorPane.setTopAnchor(landmarkNode, l.y * oIHeight / overworld.height + yOffset);
         content add landmarkNode;

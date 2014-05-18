@@ -152,11 +152,12 @@ object World {
   val barrowPaths = centerBarrowPath +: outerBarrowPaths;
   
   val filePaths : Vector[String] = {
-    val worldDir = new File(dirPath);
-    worldDir.listFiles.map(_.getAbsolutePath).toVector;
+    val rootPath = new File("").getAbsolutePath;
+    val worldFiles = new File(dirPath).listFiles.toVector;
+    worldFiles.map(f => f.getAbsolutePath.substring(rootPath.length + 1).replace('\\', '/'));
   }
   
-  val nonBarrowPaths = filePaths.filter(p => barrowPaths.forall(t => !p.endsWith(t)));
+  val nonBarrowPaths = filePaths.filter(fP => barrowPaths.forall(bP => !fP.endsWith(bP) && !bP.endsWith(fP)));
   
   def nOuterBarrowPaths(n : Int) : Vector[String] = {
     val pool = outerBarrowPaths.toBuffer;
