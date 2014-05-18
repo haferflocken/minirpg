@@ -10,8 +10,14 @@ import scala.collection.immutable.Queue
 import minirpg.collection.immutable.Graph
 import scalafx.scene.paint.Color
 import minirpg.model.world.World
+import minirpg.loaders.WorldLoader
+import minirpg.model.Region
 
-class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
+class Overworld(
+    val terrain : Terrain,
+    val landmarks : Vector[Landmark],
+    val artillery : Landmark,
+    var artilleryRadius : Int) {
   
   val width = terrain.width;
   val height = terrain.height;
@@ -47,6 +53,7 @@ class Overworld(val terrain : Terrain, val landmarks : Vector[Landmark]) {
         p._2.toVector
       ));
   };
+
   
   /**
    * Make a canvas of some given dimensions and return it, along with the
@@ -91,25 +98,53 @@ object Overworld {
   
   val landmarkImage = new Image("file:res\\sprites\\landmark.png");
   
-  def mkRandomOverworld(width : Int, height : Int, numLandmarks : Int) : Overworld = {
+  def mkRandomOverworld(width : Int, height : Int, numLandmarks : Int, numBarrows : Int) : Overworld = {
     val powerOf2 = Math.pow(2, Math.ceil(Math.log(Math.max(width, height)) / Math.log(2))).toInt;
     val terrain = Terrain.mkRandomTerrain(powerOf2, 100.0, 0.0).crop((powerOf2 - width) / 2, (powerOf2 - height) / 2, width, height);
-    
-    val landmarkNames = Landmark.nRandomNames(numLandmarks);
-    val landmarkWorlds = World.nRandomPaths(numLandmarks);
     var landmarks = Vector[Landmark]();
-    for (i <- 0 until numLandmarks) {
+    
+    // Place the Necropolis. It consists of a center barrow surrounded by smaller barrows.
+    val centerBarrowWorld = WorldLoader.loadJsonFile(World.centerBarrowPath);
+    val numOuterBarrows = numBarrows - 1;
+    val outerBarrowPaths = World.nOuterBarrowPaths(numOuterBarrows);
+    val outerBarrowWorlds = outerBarrowPaths.map(p => WorldLoader.loadJsonFile(p));
+    
+    // Move the Necropolis circle around until it is on land.
+    val necropolisRadius = Math.max(width, height) / 40;
+    val necropolisCircle = Region.circle(0, 0, necropolisRadius);
+    do {
+      necropolisCircle.centerX = (Math.random * (width - necropolisRadius * 2)).toInt + necropolisRadius;
+      necropolisCircle.centerY = (Math.random * (height - necropolisRadius * 2)).toInt + necropolisRadius;
+    } while (!terrain.isLand(necropolisCircle));
+    
+    // Make the barrows.
+    val centerBarrow = new Landmark(centerBarrowWorld.name, necropolisCircle.centerX, necropolisCircle.centerY, World.centerBarrowPath);
+    landmarks = landmarks :+ centerBarrow;
+    for (i <- 0 until numOuterBarrows) {
+      val angle = Math.PI * 2.0 * i / numOuterBarrows;
+      val x = (necropolisCircle.centerX + necropolisRadius * Math.cos(angle)) toInt;
+      val y = (necropolisCircle.centerY + necropolisRadius * Math.sin(angle)) toInt;
+      val outerBarrow = new Landmark(outerBarrowWorlds(i).name, x, y, outerBarrowPaths(i));
+      landmarks = landmarks :+ outerBarrow;
+    }
+    
+    // Place the other landmarks.
+    val numRemaining = numLandmarks - numBarrows;
+    val landmarkPaths = World.nNonBarrowPaths(numRemaining);
+    val landmarkWorlds = landmarkPaths.map(p => WorldLoader.loadJsonFile(p));
+    
+    for (i <- 0 until numRemaining) {
       var x = Math.random * width toInt;
       var y = Math.random * height toInt;
-      while (terrain.grid(x)(y) <= terrain.waterLevel || landmarks.find(l => l.x == x && l.y == y).nonEmpty) {
+      while (necropolisCircle.contains(x, y) || !terrain.isLand(x, y) || landmarks.find(l => l.x == x && l.y == y).nonEmpty) {
         x = Math.random * width toInt;
         y = Math.random * height toInt;
       }
-      val landmark = new Landmark(landmarkNames(i), x, y, landmarkWorlds(i));
+      val landmark = new Landmark(landmarkWorlds(i).name, x, y, landmarkPaths(i));
       landmarks = landmarks :+ landmark;
     }
     
-    return new Overworld(terrain, landmarks);
+    return new Overworld(terrain, landmarks, centerBarrow, 0);
   }
   
 }

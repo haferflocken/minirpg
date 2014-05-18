@@ -8,6 +8,7 @@ import scalafx.scene.image.WritableImage
 import scalafx.scene.canvas.Canvas
 import scalafx.scene.SnapshotParameters
 import scala.collection.mutable
+import minirpg.model.Region
 
 class Terrain(
     val grid : Vector[Vector[Double]],
@@ -98,6 +99,11 @@ class Terrain(
   }
   
   def isInBounds(x : Int, y : Int) = x >= 0 && y >= 0 && x < width && y < height;
+  
+  def isLand(x : Int, y : Int) = grid(x)(y) > waterLevel;
+  
+  def isLand(region : Region) : Boolean =
+    region.coords.forall((c : (Int, Int)) => isLand(c._1 + region.centerX, c._2 + region.centerY));
   
 }
 

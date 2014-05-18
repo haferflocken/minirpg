@@ -137,21 +137,53 @@ class World(
 
 object World {
   
-  val Paths : Vector[String] = {
-    val worldDir = new File("res/worlds");
+  val dirPath = "res/worlds";
+  
+  val centerBarrowPath = s"$dirPath/centerBarrow.json";
+  val outerBarrowPaths = Vector(
+    s"$dirPath/alligatorBarrow.json",
+    s"$dirPath/valorBarrow.json",
+    s"$dirPath/wraithBarrow.json",
+    s"$dirPath/slimBarrow.json",
+    s"$dirPath/mommaBarrow.json",
+    s"$dirPath/poppaBarrow.json",
+    s"$dirPath/carpenterBarrow.json",
+    s"$dirPath/dandelionBarrow.json");
+  val barrowPaths = centerBarrowPath +: outerBarrowPaths;
+  
+  val filePaths : Vector[String] = {
+    val worldDir = new File(dirPath);
     worldDir.listFiles.map(_.getAbsolutePath).toVector;
   }
   
-  def nRandomPaths(n : Int) : Vector[String] = {
-    val pathPool = Paths.toBuffer;
-    while (pathPool.length < n) {
-      pathPool ++= Paths;
+  val nonBarrowPaths = filePaths.filter(p => barrowPaths.forall(t => !p.endsWith(t)));
+  
+  def nOuterBarrowPaths(n : Int) : Vector[String] = {
+    val pool = outerBarrowPaths.toBuffer;
+    while (pool.length < n) {
+      pool ++= nonBarrowPaths;
     }
     
     var out = Vector[String]();
     for (k <- 0 until n) {
-      val i = (Math.random * pathPool.length) toInt;
-      out = pathPool.remove(i) +: out;
+      val i = (Math.random * pool.length) toInt;
+      out = pool(i) +: out;
+      pool.remove(i);
+    }
+    return out;
+  }
+  
+  def nNonBarrowPaths(n : Int) : Vector[String] = {
+    val pool = nonBarrowPaths.toBuffer;
+    while (pool.length < n) {
+      pool ++= nonBarrowPaths;
+    }
+    
+    var out = Vector[String]();
+    for (k <- 0 until n) {
+      val i = (Math.random * pool.length) toInt;
+      out = pool(i) +: out;
+      pool.remove(i);
     }
     return out;
   }

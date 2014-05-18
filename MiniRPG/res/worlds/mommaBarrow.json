@@ -1,0 +1,23 @@
+{
+	"name" : "Momma's Barrow",
+	"tileGrid" : "res/tileGrids/world1-tileGrid.json",
+	"entities" : [
+			{	"id" : "player",
+				"class" : "Human",
+				"args" : {	"name" : "Player",
+							"x" : 11, "y" : 12,
+							"gear" : [ "Shortsword", "Conduit Blaster", "Frog's Helmet", "Frog's Cuirass", "Frog's Greaves", "Frog's Gauntlets", "Frog's Boots" ] } },
+			{	"id" : "rOrb",
+				"class" : "Gear",
+				"args" : {	"type" : "Cyan Orb", "x" : 9, "y" : 11 }},
+			{	"id" : "yOrb",
+				"class" : "Gear",
+				"args" : {	"type" : "Magenta Orb", "x" : 10, "y" : 11 }},
+			{	"id" : "gOrb",
+				"class" : "Gear",
+				"args" : {	"type" : "Yellow Orb", "x" : 11, "y" : 11 }},
+			{	"id" : "bOrb",
+				"class" : "Gear",
+				"args" : {	"type" : "Black Orb", "x" : 12, "y" : 11 }}
+		]
+}

@@ -20,6 +20,7 @@ class Region(val coords : Vector[(Int, Int)]) {
     });
     return false;
   }
+  
 }
 
 object Region {
@@ -30,10 +31,18 @@ object Region {
     return ring(centerX, centerY, radius, radius);
   }
   
-  def ring(centerX : Int, centerY : Int, radius : Int, thickness : Int) : Region = {
-    // TODO
+  def ring(cX : Int, cY : Int, radius : Int, thickness : Int) : Region = {
+    val innerRadius = radius - thickness;
+    val rect = rectangle(cX, cY, radius * 2, radius * 2);
+    val coords = rect.coords.filter(c => {
+      val h = Math.sqrt(c._1 * c._1 + c._2 * c._2);
+      h >= innerRadius && h <= radius;
+    });
     
-    return null;
+    return new Region(coords) {
+      centerX = cX;
+      centerY = cY;
+    };
   }
   
   def rectangle(centerX : Int, centerY : Int, width : Int, height : Int) : Region = {
@@ -43,10 +52,10 @@ object Region {
   def rectangleRing(cX : Int, cY : Int, width : Int, height : Int, thickness : Int = 1) : Region = {
     val buff = new ArrayBuffer[(Int, Int)];
     for (t <- 0 until thickness) {
-      val left = cX - width / 2 + t;
-      val top = cY - height / 2 + t;
-      val right = cX + width / 2 - t;
-      val bottom = cY + height / 2 - t;
+      val left = -width / 2 + t;
+      val top = -height / 2 + t;
+      val right = width / 2 - t;
+      val bottom = height / 2 - t;
       
       for (i <- left to right) buff += ((i, top), (i, bottom));
       for (j <- top + 1 to bottom - 1) buff += ((left, j), (right, j));
