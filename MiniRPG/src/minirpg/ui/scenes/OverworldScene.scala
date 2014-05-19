@@ -51,12 +51,13 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
       }
       
       // Add the artillery area indicator.
-      val artilleryRegion = Region.circle(0, 0, overworld.artilleryRadius)
-      val artilleryImageWidth = overworld.artilleryRadius * 2 * oIWidth / overworld.width;
-      val artilleryImageHeight = overworld.artilleryRadius * 2 * oIHeight / overworld.height;
+      val artilleryRegion = overworld.artilleryRegion;
+      val artilleryImageWidth = artilleryRegion.width * oIWidth / overworld.width;
+      val artilleryImageHeight = artilleryRegion.height * oIHeight / overworld.height;
       val artilleryX = overworld.artillery.x * oIWidth / overworld.width - artilleryImageWidth / 2;
       val artilleryY = overworld.artillery.y * oIHeight / overworld.height - artilleryImageHeight / 2;
       val artilleryNode = artilleryRegion.mkCanvas(artilleryImageWidth, artilleryImageHeight);
+      artilleryNode.mouseTransparent = true;
       AnchorPane.setLeftAnchor(artilleryNode, artilleryX);
       AnchorPane.setTopAnchor(artilleryNode, artilleryY);
       content add artilleryNode;

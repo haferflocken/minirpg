@@ -18,7 +18,8 @@ class Overworld(
     val terrain : Terrain,
     val landmarks : Vector[Landmark],
     val artillery : Landmark,
-    var artilleryRadius : Int) extends Canvasable {
+    val artilleryInnerRadius : Int,
+    private var _artilleryOuterRadius : Int) extends Canvasable {
   
   val width = terrain.width;
   val height = terrain.height;
@@ -54,7 +55,20 @@ class Overworld(
         p._2.toVector
       ));
   };
+  
+  var artilleryRegion = mkArtilleryRegion;
+  
+  private def mkArtilleryRegion : Region = {
+    val artilleryDoughnut = Region.ring(artillery.x, artillery.y, _artilleryOuterRadius, _artilleryOuterRadius - artilleryInnerRadius);
+    return artilleryDoughnut//.clip(0, 0, width, height);
+  }
 
+  def artilleryOuterRadius = _artilleryOuterRadius;
+  
+  def artilleryOuterRadius_=(a : Int) : Unit = {
+    _artilleryOuterRadius = a;
+    artilleryRegion = mkArtilleryRegion;
+  }
   
   /**
    * Make a canvas of some given dimensions and return it, along with the
@@ -143,7 +157,7 @@ object Overworld {
       landmarks = landmarks :+ landmark;
     }
     
-    return new Overworld(terrain, landmarks, centerBarrow, 50);
+    return new Overworld(terrain, landmarks, centerBarrow, necropolisRadius * 2, 50);
   }
   
 }
