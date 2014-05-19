@@ -104,7 +104,8 @@ object Overworld {
     var landmarks = Vector[Landmark]();
     
     // Place the Necropolis. It consists of a center barrow surrounded by smaller barrows.
-    val centerBarrowWorld = WorldLoader.loadJsonFile(World.centerBarrowPath);
+    val centerBarrowPath = World.randomCenterBarrowPath;
+    val centerBarrowWorld = WorldLoader.loadJsonFile(centerBarrowPath);
     val numOuterBarrows = numBarrows - 1;
     val outerBarrowPaths = World.nOuterBarrowPaths(numOuterBarrows);
     val outerBarrowWorlds = outerBarrowPaths.map(p => WorldLoader.loadJsonFile(p));
@@ -118,7 +119,7 @@ object Overworld {
     } while (!terrain.isLand(necropolisCircle));
     
     // Make the barrows.
-    val centerBarrow = new Landmark(centerBarrowWorld.name, necropolisCircle.centerX, necropolisCircle.centerY, World.centerBarrowPath);
+    val centerBarrow = new Landmark(centerBarrowWorld.name, necropolisCircle.centerX, necropolisCircle.centerY, centerBarrowPath);
     landmarks = landmarks :+ centerBarrow;
     
     val angleOffset = Math.random * Math.PI * 2.0;

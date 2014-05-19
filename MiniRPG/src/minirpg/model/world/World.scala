@@ -138,26 +138,17 @@ class World(
 object World {
   
   val dirPath = "res/worlds";
+  val centerBarrowsDirPath = s"$dirPath/centerBarrows";
+  val outerBarrowsDirPath = s"$dirPath/outerBarrows";
+  val nonBarrowsDirPath = s"$dirPath/nonBarrows";
   
-  val centerBarrowPath = s"$dirPath/centerBarrow.json";
-  val outerBarrowPaths = Vector(
-    s"$dirPath/alligatorBarrow.json",
-    s"$dirPath/valorBarrow.json",
-    s"$dirPath/wraithBarrow.json",
-    s"$dirPath/slimBarrow.json",
-    s"$dirPath/mommaBarrow.json",
-    s"$dirPath/poppaBarrow.json",
-    s"$dirPath/carpenterBarrow.json",
-    s"$dirPath/dandelionBarrow.json");
-  val barrowPaths = centerBarrowPath +: outerBarrowPaths;
+  val centerBarrowPaths = new File(centerBarrowsDirPath).list.toVector.map(centerBarrowsDirPath + "/" + _);
+  val outerBarrowPaths = new File(outerBarrowsDirPath).list.toVector.map(outerBarrowsDirPath + "/" + _);
+  val nonBarrowPaths = new File(nonBarrowsDirPath).list.toVector.map(nonBarrowsDirPath + "/" + _);
+  val barrowPaths = centerBarrowPaths ++: outerBarrowPaths;
+  val allPaths = barrowPaths ++: nonBarrowPaths;
   
-  val filePaths : Vector[String] = {
-    val rootPath = new File("").getAbsolutePath;
-    val worldFiles = new File(dirPath).listFiles.toVector;
-    worldFiles.map(f => f.getAbsolutePath.substring(rootPath.length + 1).replace('\\', '/'));
-  }
-  
-  val nonBarrowPaths = filePaths.filter(fP => barrowPaths.forall(bP => !fP.endsWith(bP) && !bP.endsWith(fP)));
+  def randomCenterBarrowPath = centerBarrowPaths(Math.random * centerBarrowPaths.length toInt);
   
   def nOuterBarrowPaths(n : Int) : Vector[String] = {
     val pool = outerBarrowPaths.toBuffer;
