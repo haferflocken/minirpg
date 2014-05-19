@@ -7,12 +7,42 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import ExecutionContext.Implicits.global
 import minirpg.collection.mutable.PQueue
-import scala.Vector
 
 /**
  * An immutable graph.
  */
-class Graph[K](val nodes : Set[K], val connections : Map[K, Iterable[(K, Int)]]) {
+class Graph[K](val nodes : Set[K], val connections : Map[K, Map[K, Int]]) {
+  
+  /**
+   * Figure out the sub-graphs of this graph in order to speed up pathfinding.
+   */
+  val subGraphs : Vector[Set[K]] = {
+    var out = Vector[Set[K]]();
+    
+    // Search from nodes.
+    for (n <- nodes) {
+      if (out.forall(s => !s.contains(n))) {
+        // If we don't yet have a sub-graph containing n, make one.
+        val stack = new mutable.ArrayStack[K];
+        val visited = new mutable.HashSet[K];
+        
+        stack += n;
+        while (stack.nonEmpty) {
+          val i = stack.pop;
+          visited += i;
+          val cons = connections.getOrElse(i, Nil);
+          for ((e, w) <- cons) if (!visited.contains(e))
+            stack += e;
+        }
+        
+        println("Found a sub-graph of size " + visited.size + ".");
+        out = out :+ visited.toSet;
+      }
+    }
+    
+    println("Found " + out.length + " sub-graphs.");
+    out;
+  };
   
   /**
    * Find the shortest path through a graph using Dijkstra's Algorithm.

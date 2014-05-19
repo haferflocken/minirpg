@@ -27,34 +27,34 @@ class Terrain(
   val maxSlope = gradient.foldLeft(gradient(0)(0)._1)((b1, l) => (b1 max l.foldLeft(l(0)._1)((b2, n) => b2 max n._1 max n._2)));
   val slopeRange = maxSlope - minSlope;
   
-  val navMap : Graph[(Int, Int)] = {
-    val conMap = new mutable.HashMap[(Int, Int), Iterable[((Int, Int), Int)]];
+  lazy val navMap : Graph[(Int, Int)] = {
+    val conMap = new mutable.HashMap[(Int, Int), Map[(Int, Int), Int]];
     for (i <- 0 until width; j <- 0 until height if grid(i)(j) > waterLevel) {
-      var cons : List[((Int, Int), Int)] = Nil;
+      var cons = new mutable.HashMap[(Int, Int), Int];
       if (grid(i)(j) > waterLevel) {
         if (isInBounds(i - 1, j) && grid(i - 1)(j) > waterLevel) {
           val s = gradient(i - 1)(j)._1;
           val weight = (s * s).toInt + 1;
-          cons = ((i - 1, j), weight) +: cons;
+          cons += (((i - 1, j), weight));
         }
         if (isInBounds(i, j - 1) && grid(i)(j - 1) > waterLevel) {
           val s = gradient(i)(j - 1)._2;
           val weight = (s * s).toInt + 1;
-          cons = ((i, j - 1), weight) +: cons;
+          cons += (((i, j - 1), weight));
         }
         if (isInBounds(i + 1, j) && grid(i + 1)(j) > waterLevel) {
           val s = gradient(i)(j)._1
           val weight = (s * s).toInt + 1;
-          cons = ((i + 1, j), weight) +: cons;
+          cons += (((i + 1, j), weight));
           
         }
         if (isInBounds(i, j + 1) && grid(i)(j + 1) > waterLevel) {
           val s = gradient(i)(j)._2;
           val weight = (s * s).toInt + 1;
-          cons = ((i, j + 1), weight) +: cons;
+          cons += (((i, j + 1), weight));
         }
       }
-      conMap.update((i, j), cons);
+      conMap.update((i, j), cons.toMap);
     }
     
     new Graph(conMap.keySet.toSet, conMap.toMap);

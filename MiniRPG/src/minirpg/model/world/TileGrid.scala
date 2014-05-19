@@ -61,7 +61,7 @@ class TileGrid(
       nodes += ((x, y));
     }
     
-    val connections = new mutable.HashMap[(Int, Int), Iterable[((Int, Int), Int)]];
+    val connections = new mutable.HashMap[(Int, Int), Map[(Int, Int), Int]];
     for(node <- nodes; x = node._1; y = node._2; if !isSolid(x, y)) {
       connections(node) = getConnections(x, y);
     }
@@ -71,9 +71,9 @@ class TileGrid(
   
   def isInBounds(x : Int, y : Int) : Boolean = (x > -1 && y > -1 && x < width && y < height);
   
-  def getConnections(x : Int, y : Int) : Iterable[((Int, Int), Int)] = {
-    val neighbors = Vector((x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y));
-    return for (n <- neighbors if isInBounds(n._1, n._2) if !isSolid(n._1, n._2)) yield ((n._1, n._2), 1);
+  def getConnections(x : Int, y : Int) : Map[(Int, Int), Int] = {
+    val neighbors = Set((x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y));
+    return (for (n <- neighbors if isInBounds(n._1, n._2) if !isSolid(n._1, n._2)) yield ((n._1, n._2), 1)).toMap;
   }
   
   def tileAt(x : Int, y : Int) : Image = tileMap(tileGrid(x)(y));
