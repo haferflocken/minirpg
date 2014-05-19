@@ -106,8 +106,6 @@ class Overworld(
 
 object Overworld {
   
-  val landmarkImage = new Image("file:res\\sprites\\landmark.png");
-  
   def mkRandomOverworld(width : Int, height : Int, numLandmarks : Int, numBarrows : Int) : Overworld = {
     val powerOf2 = Math.pow(2, Math.ceil(Math.log(Math.max(width, height)) / Math.log(2))).toInt;
     val terrain = Terrain.mkRandomTerrain(powerOf2, 100.0, 0.0).crop((powerOf2 - width) / 2, (powerOf2 - height) / 2, width, height);
@@ -120,13 +118,16 @@ object Overworld {
     val outerBarrowPaths = World.nOuterBarrowPaths(numOuterBarrows);
     val outerBarrowWorlds = outerBarrowPaths.map(p => WorldLoader.loadJsonFile(p));
     
-    // Move the Necropolis circle around until it is on land.
+    // Choose a random starting point from which to find a location
+    // for the Necropolis, then spiral around it until one is found.
     val necropolisRadius = Math.max(width, height) / 30;
     val necropolisCircle = Region.circle(0, 0, necropolisRadius);
-    do {
-      necropolisCircle.centerX = (Math.random * (width - necropolisRadius * 2)).toInt + necropolisRadius;
-      necropolisCircle.centerY = (Math.random * (height - necropolisRadius * 2)).toInt + necropolisRadius;
-    } while (!terrain.isLand(necropolisCircle));
+    placeBySpiral(
+      region = necropolisCircle,
+      startX = (Math.random * (width - necropolisRadius * 2)).toInt + necropolisRadius,
+      startY = (Math.random * (height - necropolisRadius * 2)).toInt + necropolisRadius,
+      maxRadius = Math.sqrt(width * width + height * height) toInt,
+      accept = (r) => terrain.isInBounds(r) && terrain.isLand(r));
     
     // Make the barrows.
     val centerBarrow = new Landmark(centerBarrowWorld.name, necropolisCircle.centerX, necropolisCircle.centerY, centerBarrowPath);
@@ -158,6 +159,40 @@ object Overworld {
     }
     
     return new Overworld(terrain, landmarks, centerBarrow, necropolisRadius * 2, 50);
+  }
+  
+  private def placeBySpiral(region : Region, startX : Int, startY : Int, maxRadius : Int, accept : (Region) => Boolean) : Boolean = {
+    region.centerX = startX;
+    region.centerY = startY;
+    if (accept(region)) {
+      println("Spiraling skipped because start point was acceptable.");
+      return true;
+    }
+    
+    val startTime = System.currentTimeMillis;
+    
+    val maxTheta = Math.PI * 2.0;
+    val thetaStep = maxTheta / 360.0;
+    val initialAngle = maxTheta * Math.random;
+    for (r <- 1 until maxRadius) {
+      var theta = 0.0;
+      while (theta < maxTheta) {
+        val angle = theta + initialAngle;
+        region.centerX = startX + (r * Math.cos(angle)).toInt;
+        region.centerY = startY + (r * Math.sin(angle)).toInt;
+        if (accept(region)) {
+          val endTime = System.currentTimeMillis;
+          val deltaTime = endTime - startTime;
+          println(s"Spiraling took $deltaTime ms and found a place for the region offset by ($r, $angle).");
+          return true;
+        }
+        theta += thetaStep;
+      }
+    }
+    
+    val endTime = System.currentTimeMillis;
+    println("Spiraling took " + (endTime - startTime) + " ms but failed to find a place for the region.");
+    return false;
   }
   
 }

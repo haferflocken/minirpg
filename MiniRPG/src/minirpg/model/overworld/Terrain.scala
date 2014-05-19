@@ -33,20 +33,24 @@ class Terrain(
       var cons : List[((Int, Int), Int)] = Nil;
       if (grid(i)(j) > waterLevel) {
         if (isInBounds(i - 1, j) && grid(i - 1)(j) > waterLevel) {
-          val weight = Math.abs(gradient(i - 1)(j)._1 toInt) + 1;
+          val s = gradient(i - 1)(j)._1;
+          val weight = (s * s).toInt + 1;
           cons = ((i - 1, j), weight) +: cons;
         }
         if (isInBounds(i, j - 1) && grid(i)(j - 1) > waterLevel) {
-          val weight = Math.abs(gradient(i)(j - 1)._2 toInt) + 1;
+          val s = gradient(i)(j - 1)._2;
+          val weight = (s * s).toInt + 1;
           cons = ((i, j - 1), weight) +: cons;
         }
         if (isInBounds(i + 1, j) && grid(i + 1)(j) > waterLevel) {
-          val weight = Math.abs(gradient(i)(j)._1 toInt) + 1;
+          val s = gradient(i)(j)._1
+          val weight = (s * s).toInt + 1;
           cons = ((i + 1, j), weight) +: cons;
           
         }
         if (isInBounds(i, j + 1) && grid(i)(j + 1) > waterLevel) {
-          val weight = Math.abs(gradient(i)(j)._2 toInt) + 1;
+          val s = gradient(i)(j)._2;
+          val weight = (s * s).toInt + 1;
           cons = ((i, j + 1), weight) +: cons;
         }
       }
@@ -99,6 +103,14 @@ class Terrain(
   }
   
   def isInBounds(x : Int, y : Int) = x >= 0 && y >= 0 && x < width && y < height;
+  
+  def isInBounds(region : Region) : Boolean = {
+    val left = region.leftBound;
+    val right = region.rightBound;
+    val top = region.topBound;
+    val bottom = region.bottomBound;
+    return isInBounds(left, top) && isInBounds(right, top) && isInBounds(left, bottom) && isInBounds(right, bottom);
+  }
   
   def isLand(x : Int, y : Int) = grid(x)(y) > waterLevel;
   

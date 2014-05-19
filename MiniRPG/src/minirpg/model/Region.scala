@@ -6,11 +6,23 @@ import scalafx.scene.paint.Color
 
 class Region(val coords : Vector[(Int, Int)]) extends Canvasable {
   
-  val width = coords.maxBy(_._1)._1 - coords.minBy(_._1)._1;
-  val height = coords.maxBy(_._2)._2 - coords.minBy(_._2)._2;
+  val leftmost = coords.minBy(_._1)._1;
+  val rightmost = coords.maxBy(_._1)._1;
+  val topmost = coords.minBy(_._2)._2;
+  val bottommost = coords.maxBy(_._2)._2;
+  
+  val width = rightmost - leftmost;
+  val height = bottommost - topmost;
 
   var centerX = 0;
   var centerY = 0;
+  
+  def leftBound = centerX + leftmost;
+  def rightBound = centerX + rightmost;
+  def topBound = centerY + topmost;
+  def bottomBound = centerY + bottommost;
+  
+  def bounds = (leftBound, topBound, rightBound, bottomBound);
   
   def ++(other : Region) : Region = {
     val outCoords = (coords ++ other.coords).toSet.toVector;
