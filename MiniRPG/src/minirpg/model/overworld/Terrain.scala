@@ -9,11 +9,12 @@ import scalafx.scene.canvas.Canvas
 import scalafx.scene.SnapshotParameters
 import scala.collection.mutable
 import minirpg.model.Region
+import minirpg.model.Canvasable
 
 class Terrain(
     val grid : Vector[Vector[Double]],
     val gradient : Vector[Vector[(Double, Double)]],
-    val waterLevel : Double) {
+    val waterLevel : Double) extends Canvasable {
   
   val width = grid.length;
   val height = grid(0).length;
@@ -55,11 +56,10 @@ class Terrain(
     new Graph(conMap.keySet.toSet, conMap.toMap);
   }
   
-  /**
-   * Make a canvas of given dimensions and return it, along with the width and
-   * height of the border surrounding it.
-   */
-  def mkCanvas(imageWidth : Int, imageHeight : Int, painter : TerrainPainter = TropicalPainter) : Canvas = {
+  def mkCanvas(imageWidth : Int, imageHeight : Int) : Canvas =
+    mkCanvas(imageWidth, imageHeight, TropicalPainter);
+  
+  def mkCanvas(imageWidth : Int, imageHeight : Int, painter : TerrainPainter) : Canvas = {
     val canvas = new Canvas(imageWidth, imageHeight);
     val g = canvas.graphicsContext2D;
     val tileWidth = imageWidth.toDouble / width;

@@ -12,12 +12,13 @@ import scalafx.scene.paint.Color
 import minirpg.model.world.World
 import minirpg.loaders.WorldLoader
 import minirpg.model.Region
+import minirpg.model.Canvasable
 
 class Overworld(
     val terrain : Terrain,
     val landmarks : Vector[Landmark],
     val artillery : Landmark,
-    var artilleryRadius : Int) {
+    var artilleryRadius : Int) extends Canvasable {
   
   val width = terrain.width;
   val height = terrain.height;
@@ -86,11 +87,6 @@ class Overworld(
     
     return canvas;
   }
-  
-  def mkImage(imageWidth : Int, imageHeight : Int) : Image = {
-    val canvas = mkCanvas(imageWidth, imageHeight);
-    return canvas.snapshot(new SnapshotParameters, new WritableImage(imageWidth, imageHeight));
-  }
 
 }
 
@@ -147,7 +143,7 @@ object Overworld {
       landmarks = landmarks :+ landmark;
     }
     
-    return new Overworld(terrain, landmarks, centerBarrow, 0);
+    return new Overworld(terrain, landmarks, centerBarrow, 50);
   }
   
 }

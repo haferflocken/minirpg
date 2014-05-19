@@ -1,8 +1,10 @@
 package minirpg.model
 
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable
+import scalafx.scene.canvas.Canvas
+import scalafx.scene.paint.Color
 
-class Region(val coords : Vector[(Int, Int)]) {
+class Region(val coords : Vector[(Int, Int)]) extends Canvasable {
   
   val width = coords.maxBy(_._1)._1 - coords.minBy(_._1)._1;
   val height = coords.maxBy(_._2)._2 - coords.minBy(_._2)._2;
@@ -19,6 +21,22 @@ class Region(val coords : Vector[(Int, Int)]) {
         return true;
     });
     return false;
+  }
+  
+  def mkCanvas(imageWidth : Int, imageHeight : Int) : Canvas = {
+    val canvas = new Canvas(imageWidth, imageHeight);
+    val g = canvas.graphicsContext2D;
+    val tileWidth = imageWidth / width;
+    val tileHeight = imageHeight / height;
+    
+    g.fill = Color.rgb(255, 0, 0, 0.5f);
+    for (c <- coords) {
+      val x = c._1 + width / 2;
+      val y = c._2 + height / 2;
+      g.fillRect(x * imageWidth / width, y * imageHeight / height, tileWidth, tileHeight);
+    }
+    
+    return canvas;
   }
   
 }
@@ -50,7 +68,7 @@ object Region {
   }
   
   def rectangleRing(cX : Int, cY : Int, width : Int, height : Int, thickness : Int = 1) : Region = {
-    val buff = new ArrayBuffer[(Int, Int)];
+    val buff = new mutable.HashSet[(Int, Int)];
     for (t <- 0 until thickness) {
       val left = -width / 2 + t;
       val top = -height / 2 + t;

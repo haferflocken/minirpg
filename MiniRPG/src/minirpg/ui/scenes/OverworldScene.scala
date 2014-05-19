@@ -16,6 +16,8 @@ import scalafx.geometry.Pos
 import minirpg.loaders.WorldLoader
 import scalafx.scene.input.KeyCode
 import scalafx.scene.control.Tooltip
+import scalafx.scene.shape.Ellipse
+import minirpg.model.Region
 
 class OverworldScene(val overworld : Overworld) extends Scene with Initializable with Tickable {
   
@@ -25,8 +27,10 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
     val oIHeight = oIWidth * overworld.height / overworld.width;
     val overworldImage = overworld.mkImage(oIWidth, oIHeight);
     center = new AnchorPane {
+      // Add the background image (terrain and roads).
       content = new ImageView(overworldImage);
       
+      // Add the clickable landmark nodes.
       val tileWidth = oIWidth / overworld.width;
       val tileHeight = oIHeight / overworld.height;
       val xOffset = (-Landmark.Image.width() + tileWidth) / 2;
@@ -45,6 +49,17 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
         AnchorPane.setTopAnchor(landmarkNode, l.y * oIHeight / overworld.height + yOffset);
         content add landmarkNode;
       }
+      
+      // Add the artillery area indicator.
+      val artilleryRegion = Region.circle(0, 0, overworld.artilleryRadius)
+      val artilleryImageWidth = overworld.artilleryRadius * 2 * oIWidth / overworld.width;
+      val artilleryImageHeight = overworld.artilleryRadius * 2 * oIHeight / overworld.height;
+      val artilleryX = overworld.artillery.x * oIWidth / overworld.width - artilleryImageWidth / 2;
+      val artilleryY = overworld.artillery.y * oIHeight / overworld.height - artilleryImageHeight / 2;
+      val artilleryNode = artilleryRegion.mkCanvas(artilleryImageWidth, artilleryImageHeight);
+      AnchorPane.setLeftAnchor(artilleryNode, artilleryX);
+      AnchorPane.setTopAnchor(artilleryNode, artilleryY);
+      content add artilleryNode;
     };
   };
   
