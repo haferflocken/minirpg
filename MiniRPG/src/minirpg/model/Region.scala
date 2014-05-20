@@ -47,8 +47,7 @@ class Region(val coords : Vector[(Int, Int)]) extends Canvasable {
     val modClipY = clipY - centerY;
     val modClipX2 = modClipX + clipWidth;
     val modClipY2 = modClipY + clipHeight;
-    
-    filter(coord => coord._1 >= modClipX && coord._2 >= modClipY && coord._1 < modClipX2 && coord._2 < modClipY2);
+    return filter(coord => coord._1 >= modClipX && coord._2 >= modClipY && coord._1 < modClipX2 && coord._2 < modClipY2);
   }
   
   def diff(other : Region) : Region = {
@@ -56,17 +55,19 @@ class Region(val coords : Vector[(Int, Int)]) extends Canvasable {
     val oNCoords = other.normalizeCoords;
     val diffCoords = nCoords diff oNCoords;
     val outCoords = diffCoords.map(c => ((c._1 - centerX, c._2 - centerY)));
+    val (cX, cY) = (centerX, centerY);
     return new Region(outCoords) {
-      centerX = this.centerX;
-      centerY = this.centerY;
+      centerX = cX;
+      centerY = cY;
     }
   }
   
   def filter(f : ((Int, Int)) => Boolean) : Region = {
     val outCoords = coords.filter(f);
+    val (cX, cY) = (centerX, centerY);
     return new Region(outCoords) {
-      centerX = this.centerX;
-      centerY = this.centerY;
+      centerX = cX;
+      centerY = cY;
     }
   }
   
@@ -75,9 +76,10 @@ class Region(val coords : Vector[(Int, Int)]) extends Canvasable {
     val oNCoords = other.normalizeCoords;
     val diffCoords = nCoords intersect oNCoords;
     val outCoords = diffCoords.map(c => ((c._1 - centerX, c._2 - centerY)));
+    val (cX, cY) = (centerX, centerY);
     return new Region(outCoords) {
-      centerX = this.centerX;
-      centerY = this.centerY;
+      centerX = cX;
+      centerY = cY;
     }
   }
   
@@ -112,14 +114,24 @@ object Region {
   def ring(cX : Int, cY : Int, radius : Int, thickness : Int) : Region = {
     val innerRadius = radius - thickness;
     val rect = rectangle(cX, cY, radius * 2, radius * 2);
+    
     return rect.filter(c => {
       val h = Math.sqrt(c._1 * c._1 + c._2 * c._2);
       h >= innerRadius && h <= radius;
     });
   }
   
-  def rectangle(centerX : Int, centerY : Int, width : Int, height : Int) : Region = {
-    return rectangleRing(centerX, centerY, width, height, ((width / 2) max (height / 2)) + 1);
+  def rectangle(cX : Int, cY : Int, width : Int, height : Int) : Region = {
+    val left = -width / 2;
+    val top = -height / 2;
+    val right = -left;
+    val bottom = -top;
+     
+    val coords = for (i <- left to right; j <- top to bottom) yield (i, j);
+    return new Region(coords.toVector) {
+      centerX = cX;
+      centerY = cY;
+    }
   }
   
   def rectangleRing(cX : Int, cY : Int, width : Int, height : Int, thickness : Int = 1) : Region = {

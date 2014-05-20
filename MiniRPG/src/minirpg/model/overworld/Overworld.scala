@@ -56,18 +56,21 @@ class Overworld(
       ));
   };
   
-  var artilleryRegion = mkArtilleryRegion;
-  
-  private def mkArtilleryRegion : Region = {
-    val artilleryDoughnut = Region.ring(artillery.x, artillery.y, _artilleryOuterRadius, _artilleryOuterRadius - artilleryInnerRadius);
-    return artilleryDoughnut//.clip(0, 0, width, height);
-  }
-
   def artilleryOuterRadius = _artilleryOuterRadius;
   
   def artilleryOuterRadius_=(a : Int) : Unit = {
     _artilleryOuterRadius = a;
-    artilleryRegion = mkArtilleryRegion;
+    _artilleryRegion = mkArtilleryRegion;
+  }
+  
+  def artilleryRegion = _artilleryRegion;
+  
+  def landmarksInArtillery = landmarks.filter(l => _artilleryRegion.contains(l.x, l.y));
+  
+  private var _artilleryRegion = mkArtilleryRegion;
+  private def mkArtilleryRegion : Region = {
+    val artilleryDoughnut = Region.ring(artillery.x, artillery.y, _artilleryOuterRadius, _artilleryOuterRadius - artilleryInnerRadius);
+    return artilleryDoughnut//.clip(0, 0, width, height);
   }
   
   /**
