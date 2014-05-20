@@ -44,6 +44,8 @@ class PQueue[E] {
   
   def nonEmpty : Boolean = queue.nonEmpty;
   
+  def contains(e : E) : Boolean = queue.find(_._1 equals e).nonEmpty;
+  
   override def toString = queue.toString;
   
   /**

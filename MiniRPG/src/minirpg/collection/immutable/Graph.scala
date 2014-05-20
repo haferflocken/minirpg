@@ -55,7 +55,7 @@ class Graph[K](
   };
   
   /**
-   * Find the shortest path through a graph using Dijkstra's Algorithm.
+   * Find the shortest path through a graph.
    */
   def findPath(startId : K, endId : K) : Queue[K] = {
     val paths = findPaths(startId, Vector(endId));
@@ -65,8 +65,9 @@ class Graph[K](
   }
   
   /**
-   * Find the shortest paths from the start to the ends using Dijkstra's Algorithm.
-   * Adapted from pseudocode courtesy of Wikipedia.
+   * Find the shortest paths from the start to the ends.
+   * This implementation is Dijkstra's Algorithm, adapted from pseudocode courtesy of Wikipedia.
+   * Subclasses may override this with more efficient behavior.
    * Returns a map of endId -> path.
    */
   def findPaths(startId : K, endIds : Iterable[K]) : Map[K, Queue[K]] = {

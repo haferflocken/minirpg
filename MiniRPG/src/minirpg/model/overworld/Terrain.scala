@@ -10,6 +10,7 @@ import scalafx.scene.SnapshotParameters
 import scala.collection.mutable
 import minirpg.model.Region
 import minirpg.model.Canvasable
+import minirpg.collection.immutable.HeuristicGraph
 
 class Terrain(
     val grid : Vector[Vector[Double]],
@@ -57,7 +58,7 @@ class Terrain(
       conMap.update((i, j), cons.toMap);
     }
     
-    new Graph(conMap.keySet.toSet, conMap.toMap, true);
+    new HeuristicGraph(conMap.keySet.toSet, conMap.toMap, HeuristicGraph.manhattanDist, true);
   }
   
   def mkCanvas(imageWidth : Int, imageHeight : Int) : Canvas =

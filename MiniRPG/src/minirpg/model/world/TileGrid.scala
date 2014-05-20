@@ -8,6 +8,7 @@ import minirpg.collection.immutable.Graph
 import minirpg.model._
 import scala.Array.canBuildFrom
 import scala.collection.mutable
+import minirpg.collection.immutable.HeuristicGraph
 
 class TileGrid(
     _grid : Array[Array[Int]],
@@ -66,7 +67,7 @@ class TileGrid(
       connections(node) = getConnections(x, y);
     }
     
-    new Graph(nodes.toSet, connections.toMap, true);
+    new HeuristicGraph(nodes.toSet, connections.toMap, HeuristicGraph.manhattanDist, true);
   }
   
   def isInBounds(x : Int, y : Int) : Boolean = (x > -1 && y > -1 && x < width && y < height);
