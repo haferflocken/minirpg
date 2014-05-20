@@ -10,13 +10,23 @@ import minirpg.collection.mutable.PQueue
 
 /**
  * An immutable graph.
+ * Setting optimize to true will only work properly if all edges
+ * have mutual edges in the other direction. Doing so when this is
+ * not the case could result in pathfinding failures.
  */
-class Graph[K](val nodes : Set[K], val connections : Map[K, Map[K, Int]]) {
+class Graph[K](
+  val nodes : Set[K],
+  val connections : Map[K, Map[K, Int]],
+  val optimize : Boolean = false) {
   
   /**
    * Figure out the sub-graphs of this graph in order to speed up pathfinding.
+   * Is null if optimize == false.
    */
   val subGraphs : Vector[Set[K]] = {
+    if (!optimize)
+      null;
+    
     var out = Vector[Set[K]]();
     
     // Search from nodes.
@@ -60,13 +70,20 @@ class Graph[K](val nodes : Set[K], val connections : Map[K, Map[K, Int]]) {
    * Returns a map of endId -> path.
    */
   def findPaths(startId : K, endIds : Iterable[K]) : Map[K, Queue[K]] = {
-    val startNode = startId;
-    if (startNode == null) {
-      println(s"No paths from $startId: failed to get start node.");
+    if (!nodes.contains(startId)) {
+      println(s"No paths from $startId: node is not in graph.");
       return Map();
     }
     
-    val endNodes = endIds.filter(_ != null).toBuffer;
+    val endNodes = endIds.filter(e => e != null && nodes.contains(e)).toBuffer;
+    if (optimize) {
+      val subGraph = subGraphs.find(_.contains(startId)).get;
+      val invalidEnds = endNodes.filterNot(subGraph contains _);
+      if (invalidEnds.nonEmpty) {
+    	endNodes --= invalidEnds;
+        println(s"Optimization removed invalid nodes: $invalidEnds");
+      }
+    }
     if (endNodes.length == 0) {
       println(s"No paths from $startId: failed to get end nodes for " + endIds.mkString(", ") + ".");
       return Map();
@@ -78,7 +95,7 @@ class Graph[K](val nodes : Set[K], val connections : Map[K, Map[K, Int]]) {
     val outPaths = new mutable.HashMap[K, Queue[K]];
     
     for (key <- nodes) dist(key) = Int.MaxValue;
-    dist(startNode) = 0;
+    dist(startId) = 0;
     for ((node, distance) <- dist) pq.enqueue(node, distance);
     
     while (pq.nonEmpty) {
@@ -99,7 +116,7 @@ class Graph[K](val nodes : Set[K], val connections : Map[K, Map[K, Int]]) {
         if (!outPath.contains(outU))
           outPaths.update(u, outPath);
         else
-          println(s"Cycle detected while finding path from $startNode to $u at $outU.");
+          println(s"Cycle detected while finding path from $startId to $u at $outU.");
         
         endNodes -= u;
         if (endNodes.size <= 0)

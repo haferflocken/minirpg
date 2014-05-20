@@ -57,7 +57,7 @@ class Terrain(
       conMap.update((i, j), cons.toMap);
     }
     
-    new Graph(conMap.keySet.toSet, conMap.toMap);
+    new Graph(conMap.keySet.toSet, conMap.toMap, true);
   }
   
   def mkCanvas(imageWidth : Int, imageHeight : Int) : Canvas =

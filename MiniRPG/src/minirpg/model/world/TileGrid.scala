@@ -66,7 +66,7 @@ class TileGrid(
       connections(node) = getConnections(x, y);
     }
     
-    new Graph(nodes.toSet, connections.toMap);
+    new Graph(nodes.toSet, connections.toMap, true);
   }
   
   def isInBounds(x : Int, y : Int) : Boolean = (x > -1 && y > -1 && x < width && y < height);
