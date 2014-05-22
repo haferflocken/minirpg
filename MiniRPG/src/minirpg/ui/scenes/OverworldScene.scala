@@ -25,33 +25,43 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
   content = new BorderPane {
     val oIWidth = MiniRPGApp.width;
     val oIHeight = oIWidth * overworld.height / overworld.width;
-    val overworldImage = overworld.mkImage(oIWidth, oIHeight);
+    
     center = new AnchorPane {
       // Add the background image (terrain and roads).
+      val overworldImage = overworld.mkImage(oIWidth, oIHeight);
       content = new ImageView(overworldImage);
       
       // Add the clickable landmark nodes.
+      val artilleryRegion = overworld.artilleryRegion;
       val tileWidth = oIWidth / overworld.width;
       val tileHeight = oIHeight / overworld.height;
       val xOffset = (-Landmark.Image.width() + tileWidth) / 2;
       val yOffset = (-Landmark.Image.height() + tileHeight) / 2;
       
       for (l <- overworld.landmarks) {
+        // Make the node.
         val landmarkNode = new ImageView(Landmark.Image) {
-          onMouseClicked = (me : MouseEvent) => {
-            println(l.toString);
-            val world = WorldLoader.loadJsonFile(l.worldPath);
-            MiniRPGApp.scene = new WorldScene(world);
-          };
+          // Nodes that aren't in the artillery region are clickable and display a tooltip.
+          if (!artilleryRegion.contains(l.x, l.y)) {
+	        onMouseClicked = (me : MouseEvent) => {
+	          println(l.toString);
+	          val world = WorldLoader.loadJsonFile(l.worldPath);
+	          MiniRPGApp.scene = new WorldScene(world);
+	        };
+	        Tooltip.install(this, l.name);
+          }
+          // Nodes in the artillery region display a "destroyed" tooltip and are not clickable.
+          else {
+            Tooltip.install(this, l.name + " (Destroyed)");
+          }
         };
-        Tooltip.install(landmarkNode, l.name);
+        // Add the node to this pane.
         AnchorPane.setLeftAnchor(landmarkNode, l.x * oIWidth / overworld.width + xOffset);
         AnchorPane.setTopAnchor(landmarkNode, l.y * oIHeight / overworld.height + yOffset);
         content add landmarkNode;
       }
       
       // Add the artillery area indicator.
-      val artilleryRegion = overworld.artilleryRegion;
       val artilleryImageWidth = artilleryRegion.width * oIWidth / overworld.width;
       val artilleryImageHeight = artilleryRegion.height * oIHeight / overworld.height;
       val artilleryX =
