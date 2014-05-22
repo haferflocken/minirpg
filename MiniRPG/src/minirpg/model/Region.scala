@@ -11,8 +11,8 @@ class Region(val coords : Set[(Int, Int)]) extends Canvasable {
   val topmost = coords.minBy(_._2)._2;
   val bottommost = coords.maxBy(_._2)._2;
   
-  val width = rightmost - leftmost;
-  val height = bottommost - topmost;
+  val width = rightmost - leftmost + 1;
+  val height = bottommost - topmost + 1;
 
   var centerX = 0;
   var centerY = 0;
