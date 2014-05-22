@@ -7,9 +7,58 @@ import scala.util.parsing.json.JSONObject
 import scala.util.parsing.json.JSONArray
 import minirpg.model.world.Entity
 import minirpg.model.world.World
+import java.io.File
 
 object WorldLoader extends Loader[World] {
+  
+  val dirPath = "res/worlds";
+  val centerBarrowsDirPath = s"$dirPath/centerBarrows";
+  val outerBarrowsDirPath = s"$dirPath/outerBarrows";
+  val nonBarrowsDirPath = s"$dirPath/nonBarrows";
+  
+  
+  val centerBarrowPaths = new File(centerBarrowsDirPath).list.toVector.map(centerBarrowsDirPath + "/" + _);
+  val outerBarrowPaths = new File(outerBarrowsDirPath).list.toVector.map(outerBarrowsDirPath + "/" + _);
+  val nonBarrowPaths = new File(nonBarrowsDirPath).list.toVector.map(nonBarrowsDirPath + "/" + _);
+  val barrowPaths = centerBarrowPaths ++: outerBarrowPaths;
+  val allPaths = barrowPaths ++: nonBarrowPaths;
+  
+  
+  def randomCenterBarrowPath = centerBarrowPaths(Math.random * centerBarrowPaths.length toInt);
+  
+  
+  def nOuterBarrowPaths(n : Int) : Vector[String] = {
+    val pool = outerBarrowPaths.toBuffer;
+    while (pool.length < n) {
+      pool ++= nonBarrowPaths;
+    }
+    
+    var out = Vector[String]();
+    for (k <- 0 until n) {
+      val i = (Math.random * pool.length) toInt;
+      out = pool(i) +: out;
+      pool.remove(i);
+    }
+    return out;
+  }
+  
+  
+  def nNonBarrowPaths(n : Int) : Vector[String] = {
+    val pool = nonBarrowPaths.toBuffer;
+    while (pool.length < n) {
+      pool ++= nonBarrowPaths;
+    }
+    
+    var out = Vector[String]();
+    for (k <- 0 until n) {
+      val i = (Math.random * pool.length) toInt;
+      out = pool(i) +: out;
+      pool.remove(i);
+    }
+    return out;
+  }
 
+  
   def loadJsonString(filePath : String, data : String) : World = {
     val jsonMap = parseRaw(filePath, data);
     if (jsonMap == null)
@@ -44,11 +93,13 @@ object WorldLoader extends Loader[World] {
     return new World(name, tileGrid, entities);
   }
   
+  
   private def makeEntities(filePath : String, raw : List[Any]) : Vector[Entity] = {
     val objs = for (o <- raw if o.isInstanceOf[JSONObject]) yield o.asInstanceOf[JSONObject].obj;
     val entities = for (m <- objs if m != null; e = makeEntity(filePath, m) if e != null) yield e;
     return entities.toVector;
   }
+  
   
   private def makeEntity(filePath : String, raw : Map[String, Any]) : Entity = {
     val rawId = raw.getOrElse("id", null);
