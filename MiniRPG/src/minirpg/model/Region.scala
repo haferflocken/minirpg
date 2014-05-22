@@ -156,8 +156,11 @@ object Region {
   }
   
   def arc(centerX : Int, centerY : Int, radius : Int, thickness : Int, angleStart : Double, angleEnd : Double) : Region = {
-    // TODO
+    val r = ring(centerX, centerY, radius, thickness);
     
-    return null;
+    return r.filter(c => {
+      val a = Math.atan2(c._2, c._1);
+      a >= angleStart && a < angleEnd;
+    });
   }
 }
