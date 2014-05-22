@@ -40,19 +40,23 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
       
       for (l <- overworld.landmarks) {
         // Make the node.
-        val landmarkNode = new ImageView(Landmark.Image) {
+        val landmarkNode = {
           // Nodes that aren't in the artillery region are clickable and display a tooltip.
           if (!artilleryRegion.contains(l.x, l.y)) {
-	        onMouseClicked = (me : MouseEvent) => {
-	          println(l.toString);
-	          val world = WorldLoader.loadJsonFile(l.worldPath);
-	          MiniRPGApp.scene = new WorldScene(world);
-	        };
-	        Tooltip.install(this, l.name);
+            new ImageView(Landmark.Image) {
+              Tooltip.install(this, l.name);
+              onMouseClicked = (me : MouseEvent) => {
+  	            println(l.toString);
+  	            val world = WorldLoader.loadJsonFile(l.worldPath);
+  	            MiniRPGApp.scene = new WorldScene(world);
+              };
+            }
           }
           // Nodes in the artillery region display a "destroyed" tooltip and are not clickable.
           else {
-            Tooltip.install(this, l.name + " (Destroyed)");
+            new ImageView(Landmark.DestroyedImage) {
+              Tooltip.install(this, l.name + " (Destroyed)");
+            }
           }
         };
         // Add the node to this pane.

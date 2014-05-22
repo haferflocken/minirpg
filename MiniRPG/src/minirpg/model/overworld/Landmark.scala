@@ -26,4 +26,6 @@ object Landmark {
   
   val Image = new Image("file:res/sprites/landmark.png");
   
+  val DestroyedImage = new Image("file:res/sprites/destroyedLandmark.png");
+  
 }
