@@ -70,7 +70,7 @@ class Overworld(
   private var _artilleryRegion = mkArtilleryRegion;
   private def mkArtilleryRegion : Region = {
     val artilleryDoughnut = Region.ring(artillery.x, artillery.y, _artilleryOuterRadius, _artilleryOuterRadius - artilleryInnerRadius);
-    return artilleryDoughnut//.clip(0, 0, width, height);
+    return artilleryDoughnut.clip(0, 0, width, height);
   }
   
   /**

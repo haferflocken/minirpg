@@ -4,7 +4,7 @@ import scala.collection.mutable
 import scalafx.scene.canvas.Canvas
 import scalafx.scene.paint.Color
 
-class Region(val coords : Vector[(Int, Int)]) extends Canvasable {
+class Region(val coords : Set[(Int, Int)]) extends Canvasable {
   
   val leftmost = coords.minBy(_._1)._1;
   val rightmost = coords.maxBy(_._1)._1;
@@ -25,7 +25,7 @@ class Region(val coords : Vector[(Int, Int)]) extends Canvasable {
   def bounds = (leftBound, topBound, rightBound, bottomBound);
   
   def ++(other : Region) : Region = {
-    val outCoords = (coords ++ other.coords).toSet.toVector;
+    val outCoords = coords ++ other.coords;
     return new Region(outCoords) {
       centerX = this.centerX;
       centerY = this.centerY;
@@ -91,21 +91,21 @@ class Region(val coords : Vector[(Int, Int)]) extends Canvasable {
     
     g.fill = Color.rgb(255, 0, 0, 0.5f);
     for (c <- coords) {
-      val x = c._1 + width / 2;
-      val y = c._2 + height / 2;
+      val x = c._1 - leftmost;
+      val y = c._2 - topmost;
       g.fillRect(x * imageWidth / width, y * imageHeight / height, tileWidth, tileHeight);
     }
     
     return canvas;
   }
   
-  def normalizeCoords : Vector[(Int, Int)] = coords.map(c => ((c._1 + centerX, c._2 + centerY)));
+  def normalizeCoords : Set[(Int, Int)] = coords.map(c => ((c._1 + centerX, c._2 + centerY)));
   
 }
 
 object Region {
   
-  def tile(x : Int, y : Int) : Region = new Region(Vector((0, 0))) { centerX = x; centerY = y; };
+  def tile(x : Int, y : Int) : Region = new Region(Set((0, 0))) { centerX = x; centerY = y; };
   
   def circle(centerX : Int, centerY : Int, radius : Int) : Region = {
     return ring(centerX, centerY, radius, radius);
@@ -128,7 +128,7 @@ object Region {
     val bottom = -top;
      
     val coords = for (i <- left to right; j <- top to bottom) yield (i, j);
-    return new Region(coords.toVector) {
+    return new Region(coords.toSet) {
       centerX = cX;
       centerY = cY;
     }
@@ -145,7 +145,7 @@ object Region {
       for (i <- left to right) buff += ((i, top), (i, bottom));
       for (j <- top + 1 to bottom - 1) buff += ((left, j), (right, j));
     }
-    return new Region(buff.toVector) {
+    return new Region(buff.toSet) {
       centerX = cX;
       centerY = cY;
     };
