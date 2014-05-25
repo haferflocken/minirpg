@@ -1,5 +1,5 @@
 {
-	"name" : "World Test",
+	"name" : "Ozymandias",
 	"tileGrid" : "res/tileGrids/world1-tileGrid.json",
 	"entities" : [
 			{	"id" : "player",

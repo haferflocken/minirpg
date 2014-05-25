@@ -1,5 +1,5 @@
 {
-	"name" : "Group World Test 1",
+	"name" : "The Cavern of Truth",
 	"tileGrid" : "res/tileGrids/world1-tileGrid.json",
 	"entities" : [
 			{	"id" : "player",
