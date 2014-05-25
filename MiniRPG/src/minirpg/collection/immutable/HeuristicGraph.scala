@@ -80,11 +80,12 @@ class HeuristicGraph[K](
           var minEstimate = Int.MaxValue;
           for (goal <- endNodes) {
             val est = alt + heuristic(v, goal);
-            if (est < minEstimate) minEstimate = est;
-        	estimate((v, goal)) = est;
+            if (est < minEstimate) 
+              minEstimate = est;
+            estimate((v, goal)) = est;
           }
           if (!open.contains(v))
-        	open.enqueue(v, minEstimate);
+            open.enqueue(v, minEstimate);
         }
       }
     }
