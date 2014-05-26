@@ -11,7 +11,7 @@ object ConduitBlaster extends Gear {
   val equipSlots = Vector("Back");
   val wieldSlots = Vector("Main Hand", "Off Hand");
   val powers = Vector[Power](CyanConduitBlasterAttack);
-  val skillBonuses = Map.empty[String, Int];
+  val skillBonuses = Map(Skills.threat -> 10);
 }
 
 object ConduitRifle extends Gear {
@@ -20,7 +20,7 @@ object ConduitRifle extends Gear {
   val equipSlots = Vector("Back");
   val wieldSlots = Vector("Main Hand", "Off Hand");
   val powers = Vector[Power](CyanConduitRifleAttack);
-  val skillBonuses = Map.empty[String, Int];
+  val skillBonuses = Map(Skills.threat -> 15);
 }
 
 object ConduitMineLauncher extends Gear {
@@ -29,5 +29,5 @@ object ConduitMineLauncher extends Gear {
   val equipSlots = Vector("Back");
   val wieldSlots = Vector("Main Hand", "Off Hand");
   val powers = Vector[Power](CyanConduitMineLauncherAttack);
-  val skillBonuses = Map.empty[String, Int];
+  val skillBonuses = Map(Skills.threat -> 10);
 }

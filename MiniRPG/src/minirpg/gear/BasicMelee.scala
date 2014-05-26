@@ -12,6 +12,6 @@ object Shortsword extends Gear {
   val equipSlots = Vector("Hip");
   val wieldSlots = Vector("Main Hand");
   val powers = Vector[Power](ShortswordAttack);
-  val skillBonuses = Map.empty[String, Int];
+  val skillBonuses = Map(Skills.threat -> 5);
     
 }

@@ -26,6 +26,10 @@ object Skills {
   val magentaRes = "Magenta Resistance";
   val yellowRes = "Yellow Resistance";
   val blackRes = "Black Resistance";
+  
+  // Other
+  val confidence = "Confidence";
+  val threat = "Threat";
 
   // Utilities.
   val all = Vector(

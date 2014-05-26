@@ -10,7 +10,7 @@ object CyclopsGoggles extends Gear {
   val equipSlots = Vector("Head");
   val wieldSlots = null;
   val powers = null;
-  val skillBonuses = Map(Skills.pierceRes -> 2, Skills.slashRes -> 2);
+  val skillBonuses = Map(Skills.pierceRes -> 2, Skills.slashRes -> 2, Skills.threat -> 2);
   
 }
 
@@ -21,7 +21,7 @@ object CyclopsJacket extends Gear {
   val equipSlots = Vector("Torso");
   val wieldSlots = null;
   val powers = null;
-  val skillBonuses = Map(Skills.pierceRes -> 4, Skills.slashRes -> 4, Skills.bashRes -> 1);
+  val skillBonuses = Map(Skills.pierceRes -> 4, Skills.slashRes -> 4, Skills.bashRes -> 1, Skills.threat -> 3);
     
 }
 
@@ -32,7 +32,7 @@ object CyclopsPants extends Gear {
   val equipSlots = Vector("Legs");
   val wieldSlots = null;
   val powers = null;
-  val skillBonuses = Map(Skills.pierceRes -> 4, Skills.slashRes -> 4, Skills.bashRes -> 1);
+  val skillBonuses = Map(Skills.pierceRes -> 4, Skills.slashRes -> 4, Skills.bashRes -> 1, Skills.threat -> 3);
     
 }
 
@@ -43,7 +43,7 @@ object CyclopsGloves extends Gear {
   val equipSlots = Vector("Hands");
   val wieldSlots = null;
   val powers = null;
-  val skillBonuses = Map(Skills.pierceRes -> 2, Skills.slashRes -> 2);
+  val skillBonuses = Map(Skills.pierceRes -> 2, Skills.slashRes -> 2, Skills.threat -> 2);
     
 }
 
@@ -54,6 +54,6 @@ object CyclopsBoots extends Gear {
   val equipSlots = Vector("Feet");
   val wieldSlots = null;
   val powers = null;
-  val skillBonuses = Map(Skills.pierceRes -> 2, Skills.slashRes -> 2);
+  val skillBonuses = Map(Skills.pierceRes -> 2, Skills.slashRes -> 2, Skills.threat -> 2);
     
 }
