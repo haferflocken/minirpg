@@ -22,8 +22,8 @@ trait ConduitBlasterAttack extends GunAttack {
   
   protected def mkParticles(world : World, region : Region) : Unit = {
     for (c <- region.coords) {
-      val rX = world.tileGrid.tileWidth * (region.centerX + c._1) + world.tileGrid.tileWidth / 2;
-      val rY = world.tileGrid.tileHeight * (region.centerY + c._2) + world.tileGrid.tileHeight / 2;
+      val rX = world.tileGrid.tileWidth * (region.anchorX + c._1) + world.tileGrid.tileWidth / 2;
+      val rY = world.tileGrid.tileHeight * (region.anchorY + c._2) + world.tileGrid.tileHeight / 2;
       val speeds = world.particleCanvas.randVelocities(20, 50, num = 10);
       world.particleCanvas.mkCircles(rX, rY, 2, particleColor, speeds);
     }
@@ -39,8 +39,8 @@ trait ConduitBlasterAttack extends GunAttack {
 trait ConduitRifleAttack extends GunAttack {
   
   protected def mkParticles(world : World, region : Region) : Unit = {
-    val rX = world.tileGrid.tileWidth * region.centerX + world.tileGrid.tileWidth / 2;
-    val rY = world.tileGrid.tileHeight * region.centerY + world.tileGrid.tileHeight / 2;
+    val rX = world.tileGrid.tileWidth * region.anchorX + world.tileGrid.tileWidth / 2;
+    val rY = world.tileGrid.tileHeight * region.anchorY + world.tileGrid.tileHeight / 2;
     val speeds = world.particleCanvas.randVelocities(20, 50, num = 30);
     world.particleCanvas.mkCircles(rX, rY, 2, Color.AQUA, speeds);
   }
@@ -100,8 +100,8 @@ object CyanConduitMineLauncherAttack extends ConduitMineLauncherAttack {
     addCooldown(user);
     val world = user.world;
     world.addEntity(new ProximityMine(world.makeEntityId) {
-      x = region.centerX;
-      y = region.centerY;
+      x = region.anchorX;
+      y = region.anchorY;
     });
   }
 }

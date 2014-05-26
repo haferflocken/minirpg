@@ -7,6 +7,8 @@ import scalafx.scene.paint.Color
 import scala.collection.mutable.LinkedHashMap
 import minirpg.model.world.ActorBuilder
 import minirpg.model.world.Actor
+import scalafx.scene.image.Image
+import scalafx.scene.image.ImageView
 
 class Human(id : String, name : String) extends Actor(
     id,
@@ -18,11 +20,11 @@ class Human(id : String, name : String) extends Actor(
   
   val vitals = new LinkedHashMap[String, (Int, Int)] ++= Map("Blood" -> (100, 100), "Oxygen" -> (100, 100), "Energy" -> (100, 100));
   
-  val node = new Rectangle() {
-    fill = Color.RED;
-    width = 32;
-    height = 32;
-  };
+  val node = new ImageView(Human.image);
+}
+
+object Human {
+  val image = new Image("file:res\\sprites\\human-naked.png");
 }
 
 object HumanBuilder extends ActorBuilder[Human] {

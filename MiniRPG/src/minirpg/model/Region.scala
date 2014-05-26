@@ -14,27 +14,28 @@ class Region(val coords : Set[(Int, Int)]) extends Canvasable {
   val width = rightmost - leftmost + 1;
   val height = bottommost - topmost + 1;
 
-  var centerX = 0;
-  var centerY = 0;
+  var anchorX = 0;
+  var anchorY = 0;
   
-  def leftBound = centerX + leftmost;
-  def rightBound = centerX + rightmost;
-  def topBound = centerY + topmost;
-  def bottomBound = centerY + bottommost;
+  def leftBound = anchorX + leftmost;
+  def rightBound = anchorX + rightmost;
+  def topBound = anchorY + topmost;
+  def bottomBound = anchorY + bottommost;
   
   def bounds = (leftBound, topBound, rightBound, bottomBound);
   
   def ++(other : Region) : Region = {
     val outCoords = coords ++ other.coords;
+    val (aX, aY) = (anchorX, anchorY);
     return new Region(outCoords) {
-      centerX = this.centerX;
-      centerY = this.centerY;
+      anchorX = aX;
+      anchorY = aY;
     }
   }
   
   def contains(x : Int, y : Int) : Boolean = {
-    val tX = x - centerX;
-    val tY = y - centerY;
+    val tX = x - anchorX;
+    val tY = y - anchorY;
     
     for ((x, y) <- coords)
       if (tX == x && tY == y) return true;
@@ -43,8 +44,8 @@ class Region(val coords : Set[(Int, Int)]) extends Canvasable {
   }
   
   def clip(clipX : Int, clipY : Int, clipWidth : Int, clipHeight : Int) : Region = {
-    val modClipX = clipX - centerX;
-    val modClipY = clipY - centerY;
+    val modClipX = clipX - anchorX;
+    val modClipY = clipY - anchorY;
     val modClipX2 = modClipX + clipWidth;
     val modClipY2 = modClipY + clipHeight;
     return filter(coord => coord._1 >= modClipX && coord._2 >= modClipY && coord._1 < modClipX2 && coord._2 < modClipY2);
@@ -54,20 +55,20 @@ class Region(val coords : Set[(Int, Int)]) extends Canvasable {
     val nCoords = normalizeCoords;
     val oNCoords = other.normalizeCoords;
     val diffCoords = nCoords diff oNCoords;
-    val outCoords = diffCoords.map(c => ((c._1 - centerX, c._2 - centerY)));
-    val (cX, cY) = (centerX, centerY);
+    val outCoords = diffCoords.map(c => ((c._1 - anchorX, c._2 - anchorY)));
+    val (aX, aY) = (anchorX, anchorY);
     return new Region(outCoords) {
-      centerX = cX;
-      centerY = cY;
+      anchorX = aX;
+      anchorY = aY;
     }
   }
   
   def filter(f : ((Int, Int)) => Boolean) : Region = {
     val outCoords = coords.filter(f);
-    val (cX, cY) = (centerX, centerY);
+    val (aX, aY) = (anchorX, anchorY);
     return new Region(outCoords) {
-      centerX = cX;
-      centerY = cY;
+      anchorX = aX;
+      anchorY = aY;
     }
   }
   
@@ -75,11 +76,11 @@ class Region(val coords : Set[(Int, Int)]) extends Canvasable {
     val nCoords = normalizeCoords;
     val oNCoords = other.normalizeCoords;
     val diffCoords = nCoords intersect oNCoords;
-    val outCoords = diffCoords.map(c => ((c._1 - centerX, c._2 - centerY)));
-    val (cX, cY) = (centerX, centerY);
+    val outCoords = diffCoords.map(c => ((c._1 - anchorX, c._2 - anchorY)));
+    val (aX, aY) = (anchorX, anchorY);
     return new Region(outCoords) {
-      centerX = cX;
-      centerY = cY;
+      anchorX = aX;
+      anchorY = aY;
     }
   }
   
@@ -99,13 +100,15 @@ class Region(val coords : Set[(Int, Int)]) extends Canvasable {
     return canvas;
   }
   
-  def normalizeCoords : Set[(Int, Int)] = coords.map(c => ((c._1 + centerX, c._2 + centerY)));
+  def normalizeCoords : Set[(Int, Int)] = coords.map(c => ((c._1 + anchorX, c._2 + anchorY)));
+  
+  def zeroCoords : Set[(Int, Int)] = coords.map(c => ((c._1 - leftmost, c._2 - topmost)));
   
 }
 
 object Region {
   
-  def tile(x : Int, y : Int) : Region = new Region(Set((0, 0))) { centerX = x; centerY = y; };
+  def tile(x : Int, y : Int) : Region = new Region(Set((0, 0))) { anchorX = x; anchorY = y; };
   
   def circle(centerX : Int, centerY : Int, radius : Int) : Region = {
     return ring(centerX, centerY, radius, radius);
@@ -129,8 +132,8 @@ object Region {
      
     val coords = for (i <- left to right; j <- top to bottom) yield (i, j);
     return new Region(coords.toSet) {
-      centerX = cX;
-      centerY = cY;
+      anchorX = cX;
+      anchorY = cY;
     }
   }
   
@@ -146,8 +149,8 @@ object Region {
       for (j <- top + 1 to bottom - 1) buff += ((left, j), (right, j));
     }
     return new Region(buff.toSet) {
-      centerX = cX;
-      centerY = cY;
+      anchorX = cX;
+      anchorY = cY;
     };
   }
   

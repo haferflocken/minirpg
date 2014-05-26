@@ -116,7 +116,7 @@ class Terrain(
   def isLand(x : Int, y : Int) = grid(x)(y) > waterLevel;
   
   def isLand(region : Region) : Boolean =
-    region.coords.forall((c : (Int, Int)) => isLand(c._1 + region.centerX, c._2 + region.centerY));
+    region.coords.forall((c : (Int, Int)) => isLand(c._1 + region.anchorX, c._2 + region.anchorY));
   
 }
 

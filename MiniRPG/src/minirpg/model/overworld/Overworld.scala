@@ -133,14 +133,14 @@ object Overworld {
       accept = (r) => terrain.isInBounds(r) && terrain.isLand(r));
     
     // Make the barrows.
-    val centerBarrow = new Landmark(centerBarrowWorld.name, necropolisCircle.centerX, necropolisCircle.centerY, centerBarrowPath);
+    val centerBarrow = new Landmark(centerBarrowWorld.name, necropolisCircle.anchorX, necropolisCircle.anchorY, centerBarrowPath);
     landmarks = landmarks :+ centerBarrow;
     
     val angleOffset = Math.random * Math.PI * 2.0;
     for (i <- 0 until numOuterBarrows) {
       val angle = Math.PI * 2.0 * i / numOuterBarrows + angleOffset;
-      val x = (necropolisCircle.centerX + necropolisRadius * Math.cos(angle)) toInt;
-      val y = (necropolisCircle.centerY + necropolisRadius * Math.sin(angle)) toInt;
+      val x = (necropolisCircle.anchorX + necropolisRadius * Math.cos(angle)) toInt;
+      val y = (necropolisCircle.anchorY + necropolisRadius * Math.sin(angle)) toInt;
       val outerBarrow = new Landmark(outerBarrowWorlds(i).name, x, y, outerBarrowPaths(i));
       landmarks = landmarks :+ outerBarrow;
     }
@@ -165,8 +165,8 @@ object Overworld {
   }
   
   private def placeBySpiral(region : Region, startX : Int, startY : Int, maxRadius : Int, accept : (Region) => Boolean) : Boolean = {
-    region.centerX = startX;
-    region.centerY = startY;
+    region.anchorX = startX;
+    region.anchorY = startY;
     if (accept(region)) {
       println("Spiraling skipped because start point was acceptable.");
       return true;
@@ -181,8 +181,8 @@ object Overworld {
       var theta = 0.0;
       while (theta < maxTheta) {
         val angle = theta + initialAngle;
-        region.centerX = startX + (r * Math.cos(angle)).toInt;
-        region.centerY = startY + (r * Math.sin(angle)).toInt;
+        region.anchorX = startX + (r * Math.cos(angle)).toInt;
+        region.anchorY = startY + (r * Math.sin(angle)).toInt;
         if (accept(region)) {
           val endTime = System.currentTimeMillis;
           val deltaTime = endTime - startTime;

@@ -20,7 +20,7 @@ class PowerReticle(gui : ActorGUI, creator : PowerBar, val actor : Actor, val po
   for (p <- region.coords) {
     val rect = Rectangle(world.tileGrid.tileWidth, world.tileGrid.tileHeight);
     rect.fill = Color.RED;
-    add(rect, p._1 + region.width / 2, p._2 + region.height / 2);
+    add(rect, p._1 - region.leftmost, p._2 - region.topmost);
   }
   
   def resetCreatorAppearance : Unit = {
@@ -28,10 +28,10 @@ class PowerReticle(gui : ActorGUI, creator : PowerBar, val actor : Actor, val po
   }
   
   def tick(delta : Long) : Unit = {
-    region.centerX = world.tileGrid.screenXToTileX(gui.mouseX);
-    region.centerY = world.tileGrid.screenXToTileX(gui.mouseY);
-    layoutX = region.centerX * world.tileGrid.tileWidth - region.width * world.tileGrid.tileWidth / 2;
-    layoutY = region.centerY * world.tileGrid.tileHeight - region.height * world.tileGrid.tileHeight / 2;
+    region.anchorX = world.tileGrid.screenXToTileX(gui.mouseX);
+    region.anchorY = world.tileGrid.screenXToTileX(gui.mouseY);
+    layoutX = region.anchorX * world.tileGrid.tileWidth - region.leftmost * world.tileGrid.tileWidth / 2;
+    layoutY = region.anchorY * world.tileGrid.tileHeight - region.topmost * world.tileGrid.tileHeight / 2;
   }
   
   onMouseClicked = handle {

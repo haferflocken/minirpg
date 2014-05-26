@@ -9,9 +9,8 @@ object Move extends Power {
   val range = 64;
   val cooldown : Long = 0;
   
-  def apply(user : Actor, targets : Vector[Entity], region : Region) = {
-    user.setMoveTarget(region.centerX, region.centerY);
-  }
+  def apply(user : Actor, targets : Vector[Entity], region : Region) = 
+    user.setMoveTarget(region.anchorX, region.anchorY);
   
   def canUse(user : Actor) = true;
   

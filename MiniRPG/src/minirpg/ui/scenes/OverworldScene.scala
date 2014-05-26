@@ -69,9 +69,9 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
       val artilleryImageWidth = artilleryRegion.width * oIWidth / overworld.width;
       val artilleryImageHeight = artilleryRegion.height * oIHeight / overworld.height;
       val artilleryX =
-        (artilleryRegion.centerX + artilleryRegion.leftmost) * oIWidth / overworld.width;
+        (artilleryRegion.anchorX + artilleryRegion.leftmost) * oIWidth / overworld.width;
       val artilleryY =
-        (artilleryRegion.centerY + artilleryRegion.topmost) * oIHeight / overworld.height;
+        (artilleryRegion.anchorY + artilleryRegion.topmost) * oIHeight / overworld.height;
       val artilleryNode = artilleryRegion.mkCanvas(artilleryImageWidth, artilleryImageHeight);
       artilleryNode.mouseTransparent = true;
       AnchorPane.setLeftAnchor(artilleryNode, artilleryX);
