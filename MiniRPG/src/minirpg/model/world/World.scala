@@ -16,6 +16,7 @@ import minirpg.collection.immutable.Graph
 import scala.collection.immutable.Queue
 import scala.util.Random
 import java.io.File
+import javafx.scene.Node
 
 class World(
     val name : String,
@@ -27,7 +28,7 @@ class World(
   
   _entities.foreach((e : Entity) => {
     e.world = this;
-    updateEntityNodeCoords(e)
+    updateEntityNodeCoords(e);
   });
   lazy val canvas = new Pane {
     children.add(tileGrid.node);
@@ -111,8 +112,8 @@ class World(
   
   private def updateEntityNodeCoords(e : Entity) : Unit = {
     if (e.node != null) {
-      e.node.layoutX = e.x * tileGrid.tileWidth;
-      e.node.layoutY = e.y * tileGrid.tileHeight;
+      e.node.layoutX = e.x * tileGrid.tileWidth + tileGrid.tileWidth / 2 - e.node.minWidth(tileGrid.pixelWidth) / 2;
+      e.node.layoutY = e.y * tileGrid.tileHeight + tileGrid.tileHeight / 2 - e.node.minHeight(tileGrid.pixelHeight) / 2;
     }
   }
   
