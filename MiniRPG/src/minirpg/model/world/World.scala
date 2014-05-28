@@ -28,7 +28,6 @@ class World(
   
   _entities.foreach((e : Entity) => {
     e.world = this;
-    updateEntityNodeCoords(e);
   });
   lazy val canvas = new Pane {
     children.add(tileGrid.node);
@@ -42,7 +41,6 @@ class World(
   def addEntity(e : Entity) : Unit = {
     _entities = _entities :+ e;
     e.world = this;
-    updateEntityNodeCoords(e);
     
     if (e.node != null) 
       canvas.children.add(e.node);
@@ -102,20 +100,12 @@ class World(
   def tick(delta : Long) : Unit = {
     for (e <- _entities) {
       e.tick(delta);
-      updateEntityNodeCoords(e);
     }
   }
   
   def toJsonString = null;
   
   override def toString() = s"$name\n$tileGrid\nentities: " + _entities.mkString(", ");
-  
-  private def updateEntityNodeCoords(e : Entity) : Unit = {
-    if (e.node != null) {
-      e.node.layoutX = e.x * tileGrid.tileWidth + tileGrid.tileWidth / 2 - e.node.minWidth(tileGrid.pixelWidth) / 2;
-      e.node.layoutY = e.y * tileGrid.tileHeight + tileGrid.tileHeight / 2 - e.node.minHeight(tileGrid.pixelHeight) / 2;
-    }
-  }
   
   private def debugDisplayPath(path : Queue[(Int, Int)]) = {
     if (minirpg.global_debugPaths) {

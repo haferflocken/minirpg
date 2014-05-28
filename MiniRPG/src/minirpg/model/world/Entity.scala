@@ -10,16 +10,52 @@ trait Entity {
   val name : String;
   val description : String = null;
   val useable : Boolean = false;
-  
-  var x : Int = 0;
-  var y : Int = 0;
-  var world : World = null;
-  
   val node : Node;
+  
+  private var _x : Int = 0;
+  private var _y : Int = 0;
+  private var _world : World = null;
+  
+  def x_=(a : Int) : Unit = {
+    _x = a;
+    if (_world != null && node != null) {
+      val tileGrid = _world.tileGrid;
+      node.layoutX = _x * tileGrid.tileWidth + tileGrid.tileWidth / 2 - node.minWidth(tileGrid.pixelWidth) / 2;
+    }
+  };
+  
+  def y_=(a : Int) : Unit = {
+    _y = a;
+    if (_world != null && node != null) {
+      val tileGrid = _world.tileGrid;
+      node.layoutY = _y * tileGrid.tileHeight + tileGrid.tileHeight / 2 - node.minHeight(tileGrid.pixelHeight) / 2;
+    }
+  };
+  
+  def world_=(w : World) : Unit = {
+    _world = w;
+    if (_world != null && node != null) {
+      val tileGrid = _world.tileGrid;
+      node.layoutX = _x * tileGrid.tileWidth + tileGrid.tileWidth / 2 - node.minWidth(tileGrid.pixelWidth) / 2;
+      node.layoutY = _y * tileGrid.tileHeight + tileGrid.tileHeight / 2 - node.minHeight(tileGrid.pixelHeight) / 2;
+    }
+  };
+  
+  def x = _x;
+  def y = _y;
+  def world = _world;
   
   def tick(delta : Long) : Unit = {};
   
   def beUsedBy(user : Entity) : Unit = {};
+  
+  override def equals(o : Any) : Boolean = {
+    if (!o.isInstanceOf[Entity])
+      return false;
+    return id.equals(o.asInstanceOf[Entity].id);
+  };
+  
+  override def hashCode : Int = id.hashCode;
 
   override def toString() : String = s"$id ($x, $y)";
 }
