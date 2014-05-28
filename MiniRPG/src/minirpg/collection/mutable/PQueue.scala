@@ -1,19 +1,26 @@
 package minirpg.collection.mutable
 
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable
 import scala.annotation.tailrec
 
 class PQueue[E] {
   
-  private val queue : ArrayBuffer[(E, Int)] = new ArrayBuffer;
+  private val queue = new mutable.ArrayBuffer[(E, Int)];
+  private val elems = new mutable.HashMap[E, Int];
   
   def +=(pair : (E, Int)) : Int = {
     val i = indexFor(pair._2);
     queue.insert(i, pair);
+    
+    val num = elems.getOrElse(pair._1, 0);
+    elems.update(pair._1, num + 1);
     return i;
   }
   
-  def ++=(es : Iterable[(E, Int)]) : Unit = queue ++= es;
+  def ++=(es : Iterable[(E, Int)]) : Unit = {
+    for (pair <- es)
+      this += pair;
+  }
   
   def -=(value : E) : Boolean = {
     val i = indexOf(value);
@@ -24,7 +31,7 @@ class PQueue[E] {
     return false;
   }
   
-  def dequeue() : (E, Int) = queue.remove(0);
+  def dequeue() : (E, Int) = removeFrom(0);
   
   def filter(f : (E) => Boolean) = queue.map(_._1).filter(f);
   
@@ -40,9 +47,24 @@ class PQueue[E] {
   
   def getValueOf(priority : Int) = getValueAt(indexFor(priority));
   
-  def removeFrom(index : Int) = queue.remove(index);
+  def removeFrom(index : Int) : (E, Int) = {
+    val pair = queue.remove(index);
+    if (pair != null) {
+      val num = elems(pair._1);
+      if (num > 1)
+        elems.update(pair._1, num - 1);
+      else
+        elems.remove(pair._1);
+      
+      return pair;
+    }
+    return null;
+  }
   
   def indexOf(value : E) : Int = {
+    if (!elems.contains(value))
+      return -1;
+    
     for (i <- 0 until queue.length) {
       if (value == getValueAt(i))
         return i;
@@ -52,7 +74,7 @@ class PQueue[E] {
   
   def nonEmpty : Boolean = queue.nonEmpty;
   
-  def contains(e : E) : Boolean = queue.find(_._1 equals e).nonEmpty;
+  def contains(e : E) : Boolean = elems.contains(e);
   
   def mkString(str : String) = queue.mkString(str);
   
