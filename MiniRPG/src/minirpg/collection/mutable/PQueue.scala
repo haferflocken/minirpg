@@ -7,13 +7,30 @@ class PQueue[E] {
   
   private val queue : ArrayBuffer[(E, Int)] = new ArrayBuffer;
   
-  def enqueue(value : E, priority : Int) : Int = {
-    val i = indexFor(priority);
-    queue.insert(i, (value, priority));
+  def +=(pair : (E, Int)) : Int = {
+    val i = indexFor(pair._2);
+    queue.insert(i, pair);
     return i;
   }
   
+  def ++=(es : Iterable[(E, Int)]) : Unit = queue ++= es;
+  
+  def -=(value : E) : Boolean = {
+    val i = indexOf(value);
+    if (i != -1 && getValueAt(i) == value) {
+      removeFrom(i);
+      return true;
+    }
+    return false;
+  }
+  
   def dequeue() : (E, Int) = queue.remove(0);
+  
+  def filter(f : (E) => Boolean) = queue.map(_._1).filter(f);
+  
+  def filterPairs(f : ((E, Int)) => Boolean) = queue.filter(f);
+  
+  def foreach(f : ((E, Int)) => Unit) : Unit = queue.foreach(f);
   
   def getPriorityAt(index : Int) : Int = queue(index)._2;
   
@@ -24,15 +41,6 @@ class PQueue[E] {
   def getValueOf(priority : Int) = getValueAt(indexFor(priority));
   
   def removeFrom(index : Int) = queue.remove(index);
-  
-  def remove(value : E) : Boolean = {
-    val i = indexOf(value);
-    if (i != -1 && getValueAt(i) == value) {
-      removeFrom(i);
-      return true;
-    }
-    return false;
-  }
   
   def indexOf(value : E) : Int = {
     for (i <- 0 until queue.length) {
@@ -45,6 +53,8 @@ class PQueue[E] {
   def nonEmpty : Boolean = queue.nonEmpty;
   
   def contains(e : E) : Boolean = queue.find(_._1 equals e).nonEmpty;
+  
+  def mkString(str : String) = queue.mkString(str);
   
   override def toString = queue.toString;
   
@@ -73,13 +83,12 @@ class PQueue[E] {
   
 }
 
-object PQueueTests extends App {
-  val subject = new PQueue[String];
+object PQueue {
   
-  subject.enqueue("10a", 10);
-  subject.enqueue("1", 1);
-  subject.enqueue("10b", 10);
-  subject.enqueue("5", 5);
+  def apply[E](elems : Iterable[(E, Int)]) : PQueue[E] = {
+    val out = new PQueue[E];
+    out ++= elems;
+    return out;
+  };
   
-  println(subject);
 }

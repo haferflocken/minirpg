@@ -97,7 +97,7 @@ class Graph[K](
     
     for (key <- nodes) dist(key) = Int.MaxValue;
     dist(startId) = 0;
-    for ((node, distance) <- dist) pq.enqueue(node, distance);
+    for ((node, distance) <- dist) pq += (node, distance);
     
     while (pq.nonEmpty) {
       val (u, uDist) = pq.dequeue;
@@ -129,8 +129,8 @@ class Graph[K](
         if (alt < dist(v)) {
           dist(v) = alt;
           previous(v) = u;
-          pq.remove(v);
-          pq.enqueue(v, alt);
+          pq -= v;
+          pq += (v, alt);
         }
       }
     }

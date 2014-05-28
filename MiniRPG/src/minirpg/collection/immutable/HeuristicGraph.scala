@@ -41,7 +41,7 @@ class HeuristicGraph[K](
     val previous = new mutable.HashMap[K, K];
     val outPaths = new mutable.HashMap[K, Queue[K]];
     
-    open.enqueue(startId, 0);
+    open += (startId, 0);
     dist(startId) = 0;
     for (goal <- endNodes)
       estimate((startId, goal)) = dist(startId) + heuristic(startId, goal);
@@ -85,7 +85,7 @@ class HeuristicGraph[K](
             estimate((v, goal)) = est;
           }
           if (!open.contains(v))
-            open.enqueue(v, minEstimate);
+            open += (v, minEstimate);
         }
       }
     }
@@ -101,6 +101,6 @@ object HeuristicGraph {
     Math.abs(c1._1 - c2._1) + Math.abs(c1._2 - c2._2);
   
   def lineDist(c1 : (Int, Int), c2 : (Int, Int)) : Int =
-    Math.sqrt(Math.pow(c1._1 - c2._1, 2) + Math.pow(c1._2 - c2._2, 2)) toInt;
+    (Math.sqrt(Math.pow(c1._1 - c2._1, 2) + Math.pow(c1._2 - c2._2, 2))).toInt;
   
 }
