@@ -90,7 +90,7 @@ class Graph[K](
       return Map();
     }
     
-    val pq = new PQueue[K];
+    val pq = new PQueue[K](nodes.size / 4);
     val dist = new mutable.HashMap[K, Int];
     val previous = new mutable.HashMap[K, K];
     val outPaths = new mutable.HashMap[K, Queue[K]];

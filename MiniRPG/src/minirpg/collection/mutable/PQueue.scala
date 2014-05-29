@@ -3,9 +3,9 @@ package minirpg.collection.mutable
 import scala.collection.mutable
 import scala.annotation.tailrec
 
-class PQueue[E] {
+class PQueue[E](initialCapacity : Int = 16) {
   
-  private val queue = new mutable.ArrayBuffer[(E, Int)];
+  private val queue = new mutable.ArrayBuffer[(E, Int)](initialCapacity);
   private val elems = new mutable.HashMap[E, Int];
   
   def +=(pair : (E, Int)) : Int = {
@@ -108,7 +108,7 @@ class PQueue[E] {
 object PQueue {
   
   def apply[E](elems : Iterable[(E, Int)]) : PQueue[E] = {
-    val out = new PQueue[E];
+    val out = new PQueue[E](elems.size * 2);
     out ++= elems;
     return out;
   };

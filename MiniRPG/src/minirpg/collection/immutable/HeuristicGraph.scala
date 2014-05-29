@@ -34,7 +34,7 @@ class HeuristicGraph[K](
       return Map();
     }
     
-    val open = new PQueue[K]; // The open set ordered by estimated cost.
+    val open = new PQueue[K](nodes.size / 4); // The open set ordered by estimated cost.
     val closed = new mutable.HashSet[K]; // The nodes that have been evaluated already.
     val dist = new mutable.HashMap[K, Int]; // The actual cost so far to a node.
     val estimate = new mutable.HashMap[(K, K), Int]; // The estimated cost to a node to a goal.
