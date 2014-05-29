@@ -4,7 +4,7 @@ import minirpg._
 import scalafx.scene.image.Image
 import scalafx.scene.image.WritableImage
 import scalafx.scene.image.ImageView
-import minirpg.collection.immutable.Graph
+import minirpg.collection.immutable.HeuristicGraph
 import minirpg.model._
 import scala.Array.canBuildFrom
 import scala.collection.mutable
@@ -56,7 +56,7 @@ class TileGrid(
   
   lazy val node = new ImageView(compositeImage);
   
-  val navMap : Graph[(Int, Int)] = {
+  val navMap : HeuristicGraph[(Int, Int)] = {
     val nodes = new mutable.HashSet[(Int, Int)];
     for (x <- 0 until width; y <- 0 until height if !isSolid(x, y)) {
       nodes += ((x, y));

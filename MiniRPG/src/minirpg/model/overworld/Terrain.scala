@@ -1,7 +1,7 @@
 package minirpg.model.overworld
 
 import minirpg._
-import minirpg.collection.immutable.Graph
+import minirpg.collection.immutable.HeuristicGraph
 import scalafx.scene.paint.Color
 import scalafx.scene.image.Image
 import scalafx.scene.image.WritableImage
@@ -28,7 +28,7 @@ class Terrain(
   val maxSlope = gradient.foldLeft(gradient(0)(0)._1)((b1, l) => (b1 max l.foldLeft(l(0)._1)((b2, n) => b2 max n._1 max n._2)));
   val slopeRange = maxSlope - minSlope;
   
-  lazy val navMap : Graph[(Int, Int)] = {
+  lazy val navMap : HeuristicGraph[(Int, Int)] = {
     val conMap = new mutable.HashMap[(Int, Int), Map[(Int, Int), Int]];
     for (i <- 0 until width; j <- 0 until height if grid(i)(j) > waterLevel) {
       var cons = new mutable.HashMap[(Int, Int), Int];

@@ -1,18 +1,27 @@
 package minirpg.collection.immutable
 
-import scala.collection.mutable;
+import scala.collection.mutable
 import scala.collection.immutable.Queue
+import scala.collection.concurrent.TrieMap
+import scala.concurrent._
+import scala.concurrent.duration._
+import ExecutionContext.Implicits.global
 import minirpg.collection.mutable.PQueue
 
-class HeuristicGraph[K](
-    override val nodes : Set[K],
-    override val connections : Map[K, Map[K, Int]],
-    val heuristic : (K, K) => Int,
-    override val optimize : Boolean = false)
-    extends AbstractGraph[K] {
+/**
+ * An immutable graph.
+ * Setting optimize to true will only work properly if all edges
+ * have mutual edges in the other direction. Doing so when this is
+ * not the case could result in pathfinding failures.
+ */
+class UninformedGraph[K](
+  override val nodes : Set[K],
+  override val connections : Map[K, Map[K, Int]],
+  override val optimize : Boolean = false)
+  extends AbstractGraph[K] {
   
   /**
-   * Find paths using A*.
+   * Find paths using Dijkstra's Algorithm, adapted from pseudocode courtesy of Wikipedia.
    */
   def findPaths(startId : K, endIds : Iterable[K]) : Map[K, Queue[K]] = {
     if (!nodes.contains(startId)) {
@@ -34,20 +43,17 @@ class HeuristicGraph[K](
       return Map();
     }
     
-    val open = new PQueue[K](nodes.size / 4); // The open set ordered by estimated cost.
-    val closed = new mutable.HashSet[K]; // The nodes that have been evaluated already.
-    val dist = new mutable.HashMap[K, Int]; // The actual cost so far to a node.
-    val estimate = new mutable.HashMap[(K, K), Int]; // The estimated cost to a node to a goal.
+    val pq = new PQueue[K](nodes.size / 4);
+    val dist = new mutable.HashMap[K, Int];
     val previous = new mutable.HashMap[K, K];
     val outPaths = new mutable.HashMap[K, Queue[K]];
     
-    open += (startId, 0);
+    for (key <- nodes) dist(key) = Int.MaxValue;
     dist(startId) = 0;
-    for (goal <- endNodes)
-      estimate((startId, goal)) = dist(startId) + heuristic(startId, goal);
+    for ((node, distance) <- dist) pq += (node, distance);
     
-    while (open.nonEmpty) {
-      val (u, uDist) = open.dequeue;
+    while (pq.nonEmpty) {
+      val (u, uDist) = pq.dequeue;
       
       // If we have found a path we are looking for, save it.
       if (endNodes.contains(u)) {
@@ -71,36 +77,17 @@ class HeuristicGraph[K](
           return outPaths.toMap;
       }
       
-      closed += u;
-      for ((v, weight) <- connections(u) if (!closed.contains(v))) {
+      for ((v, weight) <- connections(u)) {
         val alt = uDist + weight;
-        if (!open.contains(v) || alt < dist(v)) {
+        if (alt < dist(v)) {
           dist(v) = alt;
           previous(v) = u;
-          var minEstimate = Int.MaxValue;
-          for (goal <- endNodes) {
-            val est = alt + heuristic(v, goal);
-            if (est < minEstimate) 
-              minEstimate = est;
-            estimate((v, goal)) = est;
-          }
-          if (!open.contains(v))
-            open += (v, minEstimate);
+          pq -= v;
+          pq += (v, alt);
         }
       }
     }
     
     return outPaths.toMap;
   }
-
-}
-
-object HeuristicGraph {
-  
-  def manhattanDist(c1 : (Int, Int), c2 : (Int, Int)) : Int =
-    Math.abs(c1._1 - c2._1) + Math.abs(c1._2 - c2._2);
-  
-  def lineDist(c1 : (Int, Int), c2 : (Int, Int)) : Int =
-    (Math.sqrt(Math.pow(c1._1 - c2._1, 2) + Math.pow(c1._2 - c2._2, 2))).toInt;
-  
 }

@@ -12,7 +12,6 @@ import scalafx.scene.Node.sfxNode2jfx
 import scalafx.util.Duration
 import minirpg.model._
 import minirpg.model.world._
-import minirpg.collection.immutable.Graph
 import scala.collection.immutable.Queue
 import scala.util.Random
 import java.io.File

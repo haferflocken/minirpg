@@ -7,7 +7,6 @@ import scalafx.scene.image.WritableImage
 import scalafx.scene.image.ImageView
 import scala.collection.mutable.HashMap
 import scala.collection.immutable.Queue
-import minirpg.collection.immutable.Graph
 import scalafx.scene.paint.Color
 import minirpg.model.world.World
 import minirpg.loaders.WorldLoader
@@ -129,7 +128,7 @@ object Overworld {
       region = necropolisCircle,
       startX = (Math.random * (width - necropolisRadius * 2)).toInt + necropolisRadius,
       startY = (Math.random * (height - necropolisRadius * 2)).toInt + necropolisRadius,
-      maxRadius = Math.sqrt(width * width + height * height) toInt,
+      maxRadius = Math.sqrt(width * width + height * height).toInt,
       accept = (r) => terrain.isInBounds(r) && terrain.isLand(r));
     
     // Make the barrows.
@@ -139,8 +138,8 @@ object Overworld {
     val angleOffset = Math.random * Math.PI * 2.0;
     for (i <- 0 until numOuterBarrows) {
       val angle = Math.PI * 2.0 * i / numOuterBarrows + angleOffset;
-      val x = (necropolisCircle.anchorX + necropolisRadius * Math.cos(angle)) toInt;
-      val y = (necropolisCircle.anchorY + necropolisRadius * Math.sin(angle)) toInt;
+      val x = (necropolisCircle.anchorX + necropolisRadius * Math.cos(angle)).toInt;
+      val y = (necropolisCircle.anchorY + necropolisRadius * Math.sin(angle)).toInt;
       val outerBarrow = new Landmark(outerBarrowWorlds(i).name, x, y, outerBarrowPaths(i));
       landmarks = landmarks :+ outerBarrow;
     }
@@ -151,11 +150,11 @@ object Overworld {
     val landmarkWorlds = landmarkPaths.map(p => WorldLoader.loadJsonFile(p));
     
     for (i <- 0 until numRemaining) {
-      var x = Math.random * width toInt;
-      var y = Math.random * height toInt;
+      var x = (Math.random * width).toInt;
+      var y = (Math.random * height).toInt;
       while (necropolisCircle.contains(x, y) || !terrain.isLand(x, y) || landmarks.find(l => l.x == x && l.y == y).nonEmpty) {
-        x = Math.random * width toInt;
-        y = Math.random * height toInt;
+        x = (Math.random * width).toInt;
+        y = (Math.random * height).toInt;
       }
       val landmark = new Landmark(landmarkWorlds(i).name, x, y, landmarkPaths(i));
       landmarks = landmarks :+ landmark;
