@@ -5,10 +5,10 @@ import scala.collection.immutable.Queue
 import minirpg.collection.mutable.PQueue
 
 class HeuristicGraph[K](
-    _nodes : Set[K],
-    _connections : Map[K, Map[K, Int]],
+    override val nodes : Set[K],
+    override val connections : Map[K, Map[K, Int]],
     val heuristic : (K, K) => Int,
-    _optimize : Boolean = false) extends Graph[K](_nodes, _connections, _optimize) {
+    override val optimize : Boolean = false) extends Graph[K](nodes, connections, optimize) {
   
   
   /**
