@@ -12,61 +12,72 @@ import scalafx.scene.Node.sfxNode2jfx
 import scalafx.util.Duration
 import minirpg.model._
 import minirpg.model.world._
+import scala.collection.mutable
 import scala.collection.immutable.Queue
 import scala.util.Random
 import java.io.File
-import javafx.scene.Node
+import scalafx.scene.Node
+import scalafx.animation.Animation
+import scalafx.animation.PauseTransition
+import scalafx.animation.ParallelTransition
+import scalafx.scene.Group
+import scalafx.collections.ObservableBuffer
+import scalafx.animation.FadeTransition
 
 class World(
     val name : String,
-    val tileGrid : TileGrid,
-    private var _entities : Vector[Entity])
+    val tileGrid : TileGrid)
     extends Savable {
   
-  def this(name : String, tileGrid : TileGrid) = this(name, tileGrid, Vector[Entity]());
+  private val _entities = new ObservableBuffer[Entity];
   
-  _entities.foreach((e : Entity) => {
-    e.world = this;
-  });
-  lazy val canvas = new Pane {
-    children.add(tileGrid.node);
-    _entities.map(_.node).filter(_ != null).foreach((n) => {
-      children.add(n);
-    });
-  };
-  lazy val particleCanvas = new ParticlePane;
-  lazy val debugCanvas = new Pane;
+  val entityGroup = new Pane;
+  val particleGroup = new Pane;
   
   def addEntity(e : Entity) : Unit = {
-    _entities = _entities :+ e;
+    _entities += e;
     e.world = this;
     
     if (e.node != null) 
-      canvas.children.add(e.node);
+      entityGroup.children.add(e.node);
   }
   
   def removeEntity(e : Entity) : Unit = {
-    _entities = _entities.filter(_ != e);
+    _entities -= e;
     e.world = null;
+    
     if (e.node != null)
-      canvas.children.remove(e.node);
+      entityGroup.children.remove(e.node);
   }
   
-  def getEntitiesAt(x : Int, y : Int) : Vector[Entity] = {
-    return _entities.filter((e) => {e.x == x && e.y == y});
+  def addParticle(node : Node, lifetime : Duration, anim : Animation = null) : AbstractParticle = {
+    if (particleGroup == null)
+      return null;
+    
+    val particle = new Particle(this, node);
+    particleGroup.children.add(node);
+    
+    val killTimer = new PauseTransition(lifetime) {
+      onFinished = handle { particleGroup.children.remove(node) };
+    };
+    
+    if (anim == null) {
+      killTimer.play();
+    }
+    else {
+      val combined = new ParallelTransition(node, Seq(anim, killTimer));
+      combined.play();
+    }
+    return particle;
   }
   
-  def getEntitiesIn(region : Region) : Vector[Entity] = {
-    return _entities.filter(e => region.contains(e.x, e.y));
-  }
+  def getEntitiesAt(x : Int, y : Int) = _entities.filter((e) => {e.x == x && e.y == y});
   
-  def getEntitiesById(id : String) : Vector[Entity] = {
-    return _entities.filter(_.id == id);
-  }
+  def getEntitiesIn(region : Region) = _entities.filter(e => region.contains(e.x, e.y));
+  
+  def getEntitiesById(id : String) = _entities.filter(_.id == id);
   
   def makeEntityId : String = Random.nextLong.toString;
-  
-  def entites = _entities;
 
   val width = tileGrid.width;
   val height = tileGrid.height;
@@ -77,12 +88,9 @@ class World(
     val endId = (x2, y2);
     
     val path = tileGrid.navMap.findPath(startId, endId);
-    if (path == null) {
-      println("No path: failed to find path.");
-      debugCanvas.children.clear;
-      return null;
-    }
     debugDisplayPath(path);
+    if (path == null)
+      println("No path: failed to find path.");
     return path;
   }
   
@@ -108,58 +116,24 @@ class World(
   
   private def debugDisplayPath(path : Queue[(Int, Int)]) = {
     if (minirpg.global_debugPaths) {
-      debugCanvas.children.clear;
-      var i = 0;
-      val length = path.length;
-      for (point <- path) {
-        val c = new Circle() {
-          centerX = point._1 * tileGrid.tileWidth + tileGrid.tileWidth / 2;
-          centerY = point._2 * tileGrid.tileHeight + tileGrid.tileHeight / 2;
-          radius = (tileGrid.tileWidth / 4) min (tileGrid.tileHeight / 4);
-          fill = Color.rgb(255 * (length - i - 1) / length, 255 * (i + 1) / length, 0);
-        };
-        debugCanvas.children.add(c);
-        i = i + 1;
+      if (path != null) {
+        var i = 0;
+        val length = path.length;
+        for (point <- path) {
+          val c = new Circle() {
+            centerX = point._1 * tileGrid.tileWidth + tileGrid.tileWidth / 2;
+            centerY = point._2 * tileGrid.tileHeight + tileGrid.tileHeight / 2;
+            radius = (tileGrid.tileWidth / 4) min (tileGrid.tileHeight / 4);
+            fill = Color.rgb(255 * (length - i - 1) / length, 255 * (i + 1) / length, 0);
+          };
+          val fadeOut = new FadeTransition(new Duration(Duration(2000)), c) {
+            fromValue = 1.0;
+            toValue = 0.0;
+          };
+          addParticle(c, new Duration(Duration(4000)), fadeOut);
+          i = i + 1;
+        }
       }
     }
   }
-}
-
-class ParticlePane extends Pane {
-  
-  def components(speed : Double, direction : Double) =
-    (speed * Math.cos(direction), speed * Math.sin(direction));
-  
-  def randVelocity(minSpeed : Double, maxSpeed : Double, minAngle : Double = 0.0, maxAngle : Double = Math.PI * 2.0) = {
-    val speed = (maxSpeed - minSpeed) * Math.random + minSpeed;
-    val direction = (maxAngle - minAngle) * Math.random + minAngle;
-    components(speed, direction);
-  }
-  
-  def randVelocities(minSpeed : Double, maxSpeed : Double, minAngle : Double = 0.0, maxAngle : Double = Math.PI * 2.0, num : Int) = 
-    for (i <- 0 until num) yield randVelocity(minSpeed, maxSpeed, minAngle, maxAngle);
-
-  def mkCircle(x : Double, y : Double, r : Double, f : Paint, xSpeed : Double, ySpeed : Double) : Unit = {
-    val particle = new Circle {
-      radius = r;
-      centerX = x;
-      centerY = y;
-      fill = f;
-    }
-    val duration = new Duration(Duration(500));
-    val translate = new TranslateTransition(duration, particle) {
-      byX = xSpeed; 
-      byY = ySpeed;
-      onFinished = handle { children.remove(particle) };
-    };
-    children.add(particle);
-    translate.play;
-  }
-  
-  def mkCircles(x : Double, y : Double, r : Double, f : Paint, speeds : IndexedSeq[(Double, Double)]) : Unit = {
-    for (i <- 0 until speeds.length) {
-      mkCircle(x, y, r, f, speeds(i)._1, speeds(i)._2);
-    }
-  }
-  
 }

@@ -82,7 +82,9 @@ object WorldLoader extends Loader[World] {
     if (tileGrid == null)
       return null;
     
-    return new World(name, tileGrid, entities);
+    val world = new World(name, tileGrid);
+    for (e <- entities) world.addEntity(e);
+    return world;
   }
   
   

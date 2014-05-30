@@ -28,14 +28,14 @@ class PowerReticle(gui : ActorGUI, creator : PowerBar, val actor : Actor, val po
   }
   
   def tick(delta : Long) : Unit = {
-    region.anchorX = world.tileGrid.screenXToTileX(gui.mouseX);
-    region.anchorY = world.tileGrid.screenXToTileX(gui.mouseY);
-    layoutX = region.anchorX * world.tileGrid.tileWidth - region.leftmost * world.tileGrid.tileWidth / 2;
-    layoutY = region.anchorY * world.tileGrid.tileHeight - region.topmost * world.tileGrid.tileHeight / 2;
+    region.anchorX = gui.mouseGridX;
+    region.anchorY = gui.mouseGridY;
+    layoutX = (region.anchorX + region.leftmost) * world.tileGrid.tileWidth;
+    layoutY = (region.anchorY + region.topmost) * world.tileGrid.tileHeight;
   }
   
   onMouseClicked = handle {
-    power(actor, world getEntitiesIn region, region);
+    power(actor, world getEntitiesIn region toVector, region);
     gui.powerReticle = null;
   };
   

@@ -6,6 +6,9 @@ import minirpg.gear._
 import scalafx.scene.paint.Color
 import minirpg.entities._
 import minirpg.model.world._
+import minirpg.util.Velocity
+import scalafx.scene.shape.Circle
+import scalafx.util.Duration
 
 trait GunAttack extends Power {
   
@@ -21,11 +24,24 @@ trait GunAttack extends Power {
 trait ConduitBlasterAttack extends GunAttack {
   
   protected def mkParticles(world : World, region : Region) : Unit = {
+    val numPerCoord = 10;
+    val lifetime = new Duration(Duration(1000));
     for (c <- region.coords) {
       val rX = world.tileGrid.tileWidth * (region.anchorX + c._1) + world.tileGrid.tileWidth / 2;
       val rY = world.tileGrid.tileHeight * (region.anchorY + c._2) + world.tileGrid.tileHeight / 2;
-      val speeds = world.particleCanvas.randVelocities(20, 50, num = 10);
-      world.particleCanvas.mkCircles(rX, rY, 2, particleColor, speeds);
+      val nodes = Vector.fill(numPerCoord)(new Circle {
+        fill = particleColor;
+        radius = 2;
+        layoutX = rX;
+        layoutY = rY;
+      });
+      val speeds = Velocity.randVelocities(20, 50, num = numPerCoord);
+      val translations = for (i <- 0 until numPerCoord)
+        yield Velocity.asTranslation(speeds(i), lifetime, nodes(i));
+      
+      for (i <- 0 until numPerCoord) {
+        world.addParticle(nodes(i), lifetime, translations(i));
+      }
     }
   }
   
@@ -41,8 +57,8 @@ trait ConduitRifleAttack extends GunAttack {
   protected def mkParticles(world : World, region : Region) : Unit = {
     val rX = world.tileGrid.tileWidth * region.anchorX + world.tileGrid.tileWidth / 2;
     val rY = world.tileGrid.tileHeight * region.anchorY + world.tileGrid.tileHeight / 2;
-    val speeds = world.particleCanvas.randVelocities(20, 50, num = 30);
-    world.particleCanvas.mkCircles(rX, rY, 2, Color.AQUA, speeds);
+    //val speeds = world.particleCanvas.randVelocities(20, 50, num = 30);
+    //world.particleCanvas.mkCircles(rX, rY, 2, Color.AQUA, speeds);
   }
 
   val range = 7;

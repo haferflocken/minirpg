@@ -43,10 +43,17 @@ class ActorGUI(actor : Actor) extends AnchorPane with Initializable with Tickabl
   
   var mouseX : Double = 0;
   var mouseY : Double = 0;
+  var mouseGridX : Int = 0;
+  var mouseGridY : Int = 0;
   onMouseMoved = new EventHandler[MouseEvent] {
     def handle(me : MouseEvent) : Unit = {
       mouseX = me.getSceneX;
       mouseY = me.getSceneY;
+      
+      if (actor.world != null) {
+        mouseGridX = actor.world.tileGrid.screenXToTileX(mouseX);
+        mouseGridY = actor.world.tileGrid.screenYToTileY(mouseY);
+      }
     }
   }
   onMouseDragged = onMouseMoved.get;

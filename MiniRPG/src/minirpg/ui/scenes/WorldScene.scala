@@ -11,15 +11,19 @@ import scalafx.scene.input.MouseButton
 import scalafx.scene.input.KeyEvent
 import minirpg.util.Tickable
 import minirpg.model.world._
+import scalafx.scene.layout.Pane
 
 class WorldScene(val world : World) extends Scene with Initializable with Tickable {
   
   val player = world.getEntitiesById("player")(0).asInstanceOf[Actor];
   val gui = new ActorGUI(player);
+  val worldPane = new Pane {
+    children.addAll(world.tileGrid.node, world.entityGroup, world.particleGroup);
+  }
   
   fill = Color.BLACK;
   content = new StackPane {
-    children.addAll(world.canvas, world.particleCanvas, world.debugCanvas, gui);
+    children.addAll(worldPane, gui);
     minWidth = 800;
     minHeight = 600;
   };
