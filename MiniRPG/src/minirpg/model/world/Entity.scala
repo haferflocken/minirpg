@@ -3,6 +3,7 @@ package minirpg.model.world
 import scalafx.scene.Node
 import minirpg.model._
 import minirpg.model.world._
+import minirpg.ui.MiniRPGApp
 
 trait Entity {
   
@@ -11,6 +12,8 @@ trait Entity {
   val description : String = null;
   val useable : Boolean = false;
   val node : Node;
+  val nodeWidth : Int;
+  val nodeHeight : Int;
   
   private var _x : Int = 0;
   private var _y : Int = 0;
@@ -20,7 +23,7 @@ trait Entity {
     _x = a;
     if (_world != null && node != null) {
       val tileGrid = _world.tileGrid;
-      node.layoutX = _x * tileGrid.tileWidth + tileGrid.tileWidth / 2 - node.minWidth(tileGrid.pixelWidth) / 2;
+      node.layoutX = _x * tileGrid.tileWidth + tileGrid.tileWidth / 2 - nodeWidth / 2;
     }
   };
   
@@ -28,7 +31,7 @@ trait Entity {
     _y = a;
     if (_world != null && node != null) {
       val tileGrid = _world.tileGrid;
-      node.layoutY = _y * tileGrid.tileHeight + tileGrid.tileHeight / 2 - node.minHeight(tileGrid.pixelHeight) / 2;
+      node.layoutY = _y * tileGrid.tileHeight + tileGrid.tileHeight / 2 - nodeHeight / 2;
     }
   };
   

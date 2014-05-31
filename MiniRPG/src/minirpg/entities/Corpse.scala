@@ -12,6 +12,9 @@ class Corpse(val id : String, val name : String) extends Entity {
   
   override val useable = true;
   val node : Node = new ImageView(Corpse.image);
+  val nodeWidth = Corpse.imageWidth;
+  val nodeHeight = Corpse.imageHeight;
+  
   var gear : List[Gear] = Nil;
   
   override def beUsedBy(user : Entity) = {
@@ -32,4 +35,6 @@ class Corpse(val id : String, val name : String) extends Entity {
 
 object Corpse {
   val image = new Image("file:res\\sprites\\entities\\tombstone.png");
+  val imageWidth = image.width().toInt;
+  val imageHeight = image.height().toInt;
 }

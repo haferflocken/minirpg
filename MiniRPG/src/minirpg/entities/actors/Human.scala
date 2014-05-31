@@ -21,10 +21,14 @@ class Human(id : String, name : String) extends Actor(
   val vitals = new LinkedHashMap[String, (Int, Int)] ++= Map("Blood" -> (100, 100), "Oxygen" -> (100, 100), "Energy" -> (100, 100));
   
   val node = new ImageView(Human.image);
+  val nodeWidth = Human.imageWidth;
+  val nodeHeight = Human.imageHeight;
 }
 
 object Human {
-  val image = new Image("file:res\\sprites\\human-naked.png");
+  val image = new Image("file:res\\sprites\\entities\\human-naked.png");
+  val imageWidth = image.width().toInt;
+  val imageHeight = image.height().toInt;
 }
 
 object HumanBuilder extends ActorBuilder[Human] {

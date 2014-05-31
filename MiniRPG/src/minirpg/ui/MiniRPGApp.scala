@@ -33,7 +33,7 @@ object MiniRPGApp extends JFXApp {
   
   val (width, height) = (800, 600);
   val ticker = new DeltaTicker(tick);
-  private var _scene : Scene with Tickable with Initializable = new MainMenuScene
+  private var _scene : Scene with Tickable with Initializable = new NewGameSetupScene
   
   var overworld : Overworld = null;
   

@@ -10,9 +10,13 @@ class ProximityMine(val id : String) extends Entity {
   
   val name = "Proximity Mine";
   val node = new ImageView(ProximityMine.image);
-
+  val nodeWidth = ProximityMine.imageWidth;
+  val nodeHeight = ProximityMine.imageHeight;
+  
 }
 
 object ProximityMine {
   val image = new Image("file:res/sprites/entities/proximityMine.png");
+  val imageWidth = image.width().toInt;
+  val imageHeight = image.height().toInt;
 }

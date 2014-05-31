@@ -6,13 +6,18 @@ import minirpg.gearMap
 import minirpg.model._
 import minirpg.model.world._
 import minirpg.model.world.Gear
+import minirpg.ui.animation.SpriteTransition
+import scalafx.util.Duration
+import scalafx.geometry.Rectangle2D
 
 class GearEntity(val id : String, val gear : Gear) extends Entity {
   
   val name = gear.name;
   override val description = gear.description;
   override val useable = true;
-  val node : Node = new ImageView(GearEntity.image);
+  val node : Node = GearEntity.mkImageView;
+  val nodeWidth = GearEntity.frameWidth;
+  val nodeHeight = GearEntity.frameHeight;
   
   override def beUsedBy(user : Entity) : Unit = {
     if (user.isInstanceOf[Actor]) {
@@ -26,7 +31,20 @@ class GearEntity(val id : String, val gear : Gear) extends Entity {
 }
 
 object GearEntity {
-  val image = new Image("file:res\\sprites\\entities\\box.png");
+  val sheet = new Image("file:res\\sprites\\entities\\drop.png");
+  val duration = new Duration(Duration(500));
+  val frameWidth = 32;
+  val frameHeight = 32;
+  val columns = 3;
+  val rows = 2;
+  
+  def mkImageView : ImageView = {
+    val out = new ImageView(sheet);
+    out.viewport = new Rectangle2D(0, 0, frameWidth, frameHeight);
+    val anim = new SpriteTransition(out, duration, frameWidth, frameHeight, columns, rows);
+    anim.play();
+    return out;
+  };
 }
 
 object GearEntityBuilder extends Builder[GearEntity] {
