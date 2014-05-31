@@ -35,7 +35,7 @@ object GearEntity {
   val duration = new Duration(Duration(500));
   val frameWidth = 32;
   val frameHeight = 32;
-  val columns = 3;
+  val columns = 4;
   val rows = 2;
   
   def mkImageView : ImageView = {
