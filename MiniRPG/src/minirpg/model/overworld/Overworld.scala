@@ -150,13 +150,14 @@ object Overworld {
     val landmarkWorlds = landmarkPaths.map(p => WorldLoader.loadJsonFile(p));
     
     for (i <- 0 until numRemaining) {
-      var x = (Math.random * width).toInt;
-      var y = (Math.random * height).toInt;
-      while (necropolisCircle.contains(x, y) || !terrain.isLand(x, y) || landmarks.find(l => l.x == x && l.y == y).nonEmpty) {
-        x = (Math.random * width).toInt;
-        y = (Math.random * height).toInt;
+      val circle = Region.circle((Math.random * width).toInt, (Math.random * height).toInt, 5);
+      while (!terrain.isLand(circle.anchorX, circle.anchorY) || 
+             necropolisCircle.contains(circle.anchorX, circle.anchorY) || 
+             landmarks.find(l => circle.contains(l.x, l.y)).nonEmpty) {
+        circle.anchorX = (Math.random * width).toInt;
+        circle.anchorY = (Math.random * height).toInt;
       }
-      val landmark = new Landmark(landmarkWorlds(i).name, x, y, landmarkPaths(i));
+      val landmark = new Landmark(landmarkWorlds(i).name, circle.anchorX, circle.anchorY, landmarkPaths(i));
       landmarks = landmarks :+ landmark;
     }
     
