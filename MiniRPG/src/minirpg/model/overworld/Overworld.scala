@@ -5,7 +5,7 @@ import scalafx.scene.canvas.Canvas
 import scalafx.scene.SnapshotParameters
 import scalafx.scene.image.WritableImage
 import scalafx.scene.image.ImageView
-import scala.collection.mutable.HashMap
+import scala.collection.mutable
 import scala.collection.immutable.Queue
 import scalafx.scene.paint.Color
 import minirpg.model.world.World
@@ -25,7 +25,7 @@ class Overworld(
   
   val roads : Map[(Landmark, Landmark), Vector[(Int, Int)]] = {
     // Find the as-the-crow flies distance between all of the landmarks.
-    val distances = new HashMap[(Landmark, Landmark), Double];
+    val distances = new mutable.HashMap[(Landmark, Landmark), Double];
     for (i <- 0 until landmarks.length; l1 = landmarks(i)) {
       for (j <- i + 1 until landmarks.length; l2 = landmarks(j)) {
         val dX = l1.x - l2.x;
@@ -39,7 +39,7 @@ class Overworld(
     val avgDist = distances.foldLeft(0.0)((b, d) => b + d._2) / distances.size;
     
     // Grab the landmarks with less than the average distance to each landmark.
-    val closest = new HashMap[Landmark, List[Landmark]] ++= landmarks.map((_, Nil));
+    val closest = new mutable.HashMap[Landmark, List[Landmark]] ++= landmarks.map((_, Nil));
     for (((l1, l2), dist) <- distances if dist < avgDist) {
       closest(l1) = l2 +: closest(l1);
     }
