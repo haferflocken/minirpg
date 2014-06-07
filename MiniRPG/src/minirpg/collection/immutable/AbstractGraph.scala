@@ -26,34 +26,36 @@ abstract class AbstractGraph[K] {
    * Is null if optimize == false.
    */
   val subGraphs : Vector[Set[K]] = {
-    if (!optimize)
+    if (!optimize) {
       null;
-    
-    var out = Vector[Set[K]]();
-    
-    // Search from nodes.
-    for (n <- nodes) {
-      if (out.forall(s => !s.contains(n))) {
-        // If we don't yet have a sub-graph containing n, make one.
-        val stack = new mutable.ArrayStack[K];
-        val visited = new mutable.HashSet[K];
-        
-        stack += n;
-        while (stack.nonEmpty) {
-          val i = stack.pop;
-          visited += i;
-          val cons = connections.getOrElse(i, Nil);
-          for ((e, w) <- cons) if (!visited.contains(e))
-            stack += e;
-        }
-        
-        println("Found a sub-graph of size " + visited.size + ".");
-        out = out :+ visited.toSet;
-      }
     }
-    
-    println("Found " + out.length + " sub-graphs.");
-    out;
+    else {
+      var out = Vector[Set[K]]();
+      
+      // Search from nodes.
+      for (n <- nodes) {
+        if (out.forall(s => !s.contains(n))) {
+          // If we don't yet have a sub-graph containing n, make one.
+          val stack = new mutable.ArrayStack[K];
+          val visited = new mutable.HashSet[K];
+          
+          stack += n;
+          while (stack.nonEmpty) {
+            val i = stack.pop;
+            visited += i;
+            val cons = connections.getOrElse(i, Nil);
+            for ((e, w) <- cons) if (!visited.contains(e))
+              stack += e;
+          }
+          
+          println("Found a sub-graph of size " + visited.size + ".");
+          out = out :+ visited.toSet;
+        }
+      }
+      
+      println("Found " + out.length + " sub-graphs.");
+      out;
+    }
   };
   
   
