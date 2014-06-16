@@ -70,8 +70,8 @@ package object minirpg {
   /*
    * Global variables.
    */
-  var global_debugPaths : Boolean = true;
-  // TODO add more over time
+  var global_debugWorldPaths : Boolean = true;
+  var global_debugWorldNavMap : Boolean = false;
   
   /*
    * Implicit class definitions.

@@ -60,6 +60,17 @@ abstract class AbstractGraph[K] {
   
   
   /**
+   * Render this graph using a function to render nodes and a function to render edges.
+   */
+  def render(rNode : (K) => Unit, rEdge : (K, K, Int) => Unit) : Unit = {
+    for ((a, edges) <- connections; (b, weight) <- edges) 
+      rEdge(a, b, weight);
+    for (n <- nodes)
+      rNode(n);
+  };
+  
+  
+  /**
    * Find the shortest path through a graph.
    */
   def findPath(startId : K, endId : K) : Queue[K] = {

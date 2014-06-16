@@ -23,6 +23,7 @@ import scalafx.animation.ParallelTransition
 import scalafx.scene.Group
 import scalafx.collections.ObservableBuffer
 import scalafx.animation.FadeTransition
+import scalafx.scene.shape.Line
 
 class World(
     val name : String,
@@ -114,8 +115,8 @@ class World(
   
   override def toString() = s"$name\n$tileGrid\nentities: " + _entities.mkString(", ");
   
-  private def debugDisplayPath(path : Queue[(Int, Int)]) = {
-    if (minirpg.global_debugPaths) {
+  private def debugDisplayPath(path : Queue[(Int, Int)]) : Unit = {
+    if (minirpg.global_debugWorldPaths) {
       if (path != null) {
         var i = 0;
         val length = path.length;
@@ -135,5 +136,30 @@ class World(
         }
       }
     }
-  }
+  };
+  
+  private def debugDisplayNavMap : Unit = {
+    def renderNode(node : (Int, Int)) : Unit = {
+      val particle = new Circle() {
+        centerX = node._1 * tileGrid.tileWidth + tileGrid.tileWidth / 2;
+        centerY = node._2 * tileGrid.tileHeight + tileGrid.tileHeight / 2;
+        radius = (tileGrid.tileWidth / 4) min (tileGrid.tileHeight / 4);
+        fill = Color.RED;
+      };
+      addParticle(particle, new Duration(Duration.INDEFINITE));
+    };
+    def renderEdge(a : (Int, Int), b : (Int, Int), weight : Int) : Unit = {
+      val particle = new Line() {
+        startX = a._1 * tileGrid.tileWidth + tileGrid.tileWidth / 2;
+        startY = a._2 * tileGrid.tileHeight + tileGrid.tileHeight / 2;
+        endX = b._1 * tileGrid.tileWidth + tileGrid.tileWidth / 2;
+        endY = b._2 * tileGrid.tileHeight + tileGrid.tileHeight / 2;
+      };
+      addParticle(particle, new Duration(Duration.INDEFINITE));
+    };
+    tileGrid.navMap.render(renderNode, renderEdge);
+  };
+  if (minirpg.global_debugWorldNavMap)
+    debugDisplayNavMap;
+  
 }
