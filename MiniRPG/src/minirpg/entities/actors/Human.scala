@@ -5,18 +5,22 @@ import minirpg.powers._
 import scalafx.scene.shape.Rectangle
 import scalafx.scene.paint.Color
 import scala.collection.mutable.LinkedHashMap
-import minirpg.model.world.ActorBuilder
-import minirpg.model.world.Actor
+import minirpg.model.world._
 import scalafx.scene.image.Image
 import scalafx.scene.image.ImageView
+import minirpg.actorai.MoveRightAI
 
-class Human(id : String, name : String) extends Actor(
-    id,
-    name,
-    Map(("Head", 1), ("Torso", 1), ("Legs", 1), ("Hands", 1), ("Feet", 1), ("Hip", 2), ("Back", 2)),
-    Vector("Main Hand", "Off Hand"),
-    Vector(Move, Use, Examine),
-    Skills.zeroMap ++ Map(Skills.speed -> 200)) {
+class Human(
+    override val id : String,
+    override val name : String,
+    override val brain : ActorAI) extends Actor(
+      id,
+      name,
+      Map(("Head", 1), ("Torso", 1), ("Legs", 1), ("Hands", 1), ("Feet", 1), ("Hip", 2), ("Back", 2)),
+      Vector("Main Hand", "Off Hand"),
+      Vector(Move, Use, Examine),
+      Skills.zeroMap ++ Map(Skills.speed -> 200),
+      brain) {
   
   val vitals = new LinkedHashMap[String, (Int, Int)] ++= Map("Blood" -> (100, 100), "Oxygen" -> (100, 100), "Energy" -> (100, 100));
   
@@ -39,7 +43,8 @@ object HumanBuilder extends ActorBuilder[Human] {
     val gear = extractGear(args);
     if (name == null || pCoords == null || gear == null)
       return null;
-    return new Human(id, name) {
+    val ai = extractAI(args);
+    return new Human(id, name, ai) {
       x = pCoords._1;
       y = pCoords._2;
       for (g <- gear) equip(g);

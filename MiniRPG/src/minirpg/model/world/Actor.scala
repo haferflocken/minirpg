@@ -17,7 +17,8 @@ abstract class Actor(
     val equipSlots : Map[String, Int],
     val wieldSlots : Vector[String],
     defaultPowers : Vector[Power],
-    baseSkills : Map[String, Int]) extends Entity with Publisher[ActorEvent] {
+    baseSkills : Map[String, Int],
+    val brain : ActorAI) extends Entity with Publisher[ActorEvent] {
   
   type Pub = Actor;
   override val useable = true;
@@ -90,6 +91,10 @@ abstract class Actor(
         moveProgress = 0;
       }
     }
+    
+    // Think about life.
+    if (brain != null)
+      brain.tick(this, delta);
   }
   
   // Change the value of a vital.
@@ -305,6 +310,11 @@ abstract class ActorBuilder[A <: Actor] extends EntityBuilder[A] {
       }
     }
     return out;
-  }
+  };
+  
+  def extractAI(args : Map[String, Any]) : ActorAI = {
+    return null;
+  };
+  
   
 }
