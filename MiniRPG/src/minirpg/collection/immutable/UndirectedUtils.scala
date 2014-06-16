@@ -5,7 +5,7 @@ import scala.collection.mutable
 
 object UndirectedUtils {
   
-  class UndirectedGraph[K](graph : AbstractGraph[K]) {
+  implicit class UndirectedGraph[K](val graph : AbstractGraph[K]) {
     /**
      * Find the shortest paths from the several starts to the end.
      * Returns a map of startId -> path.
@@ -15,9 +15,6 @@ object UndirectedUtils {
       return reversedPaths.map(t => (t._1, t._2.reverse));
     };
   }
-  
-  implicit def asUndirectedGraph[K](graph : AbstractGraph[K]) = new UndirectedGraph(graph);
-  
   
   /**
    * Convert undirected edges to directed edges to use with the Graph classes.

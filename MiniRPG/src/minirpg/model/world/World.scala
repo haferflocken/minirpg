@@ -95,7 +95,7 @@ class World(
   }
   
   def getSpotNextTo(x : Int, y : Int) : (Int, Int) = {
-    val connections = tileGrid.getConnections(x, y);
+    val connections = tileGrid.navMap.connections((x, y));
     if (connections.isEmpty)
       return (x, y);
     for ((p, c) <- connections) {

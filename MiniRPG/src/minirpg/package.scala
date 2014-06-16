@@ -83,38 +83,34 @@ package object minirpg {
     def toIntOpt = catching(classOf[NumberFormatException]).opt(str.toInt);
   }
   
-  implicit class OpsForArray(val arr : Array[_]) {
+  implicit class OpsForSeq(val seq : Seq[_]) {
     
     def mkEvenString(open : String = "", sep : String, close : String = "") : String = {
-      val strs = for (i <- arr) yield i.toString;
+      val strs = for (i <- seq) yield i.toString;
       val maxLength = strs.foldLeft(0)((z : Int, s : String) => z max s.length);
       val padded = for (s <- strs) yield s.reverse.padTo(maxLength, ' ').reverse;
       return padded.mkString(open, sep, close);
     }
   }
   
-  implicit class OpsFor2DIntArray(val arr : Array[Array[Int]]) {
+  implicit class OpsFor2DIntSeq(val seq : Seq[Seq[Int]]) {
     
     def toPrettyString : String = {
-      val subs = for (e <- arr) yield e.mkEvenString("  {", ", ", "}");
+      val subs = for (e <- seq) yield e.mkEvenString("  {", ", ", "}");
       return subs.mkString("{\n", "\n", "\n}");
     }
     
-    def hasContent : Boolean = {
-      return arr != null && arr.length > 0 && arr(0) != null && arr(0).length > 0;
-    }
+    def hasContent = seq != null && seq.length > 0 && seq(0) != null && seq(0).length > 0;
   }
-  
-  implicit class OpsFor2DArray(val arr : Array[Array[_]]) {
+
+  implicit class OpsFor2DSeq(val seq : Seq[Seq[_]]) {
     
     def toPrettyString : String = {
-      val subs = for (e <- arr) yield e.mkEvenString("  {", ", ", "}");
+      val subs = for (e <- seq) yield e.mkEvenString("  {", ", ", "}");
       return subs.mkString("{\n", "\n", "\n}");
     }
     
-    def hasContent : Boolean = {
-      return arr != null && arr.length > 0 && arr(0) != null && arr(0).length > 0;
-    }
+    def hasContent = seq != null && seq.length > 0 && seq(0) != null && seq(0).length > 0;
   }
   
 }

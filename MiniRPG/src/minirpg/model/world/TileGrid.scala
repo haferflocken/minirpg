@@ -9,28 +9,18 @@ import minirpg.model._
 import scala.Array.canBuildFrom
 import scala.collection.mutable
 import minirpg.collection.immutable.HeuristicGraph
+import minirpg.collection.immutable.UndirectedUtils
 
 class TileGrid(
-    _grid : Array[Array[Int]],
+    cells : Vector[Vector[Int]],
     tileMap : Map[Int, Image],
+    val navMap : HeuristicGraph[(Int, Int)],
     val tileWidth : Int,
     val tileHeight : Int)
     extends Savable {
   
-  def this(grid : Array[Array[Int]], tileMap : Map[Int, Image], tileSize : Int) = 
-    this(grid, tileMap, tileSize, tileSize);
-  
-  def this(width : Int, height : Int, tileMap : Map[Int, Image], tileWidth : Int, tileHeight : Int) = 
-    this(Array.ofDim[Int](width, height), tileMap, tileWidth, tileHeight);
-  
-  def this(width : Int, height : Int, tileMap : Map[Int, Image], tileSize : Int) =
-    this(width, height, tileMap, tileSize, tileSize);
-  
-  private val tileGrid = _grid.map(_.map(_.abs));
-  private val collisionGrid = _grid.map(_.map((i : Int) => if (i < 0) true else false));
-  
-  val width = tileGrid.length;
-  val height = tileGrid(0).length;
+  val width = cells.length;
+  val height = cells(0).length;
   val area = width * height;
   
   val tiles = tileMap.values;
@@ -42,7 +32,7 @@ class TileGrid(
     println("Building composite image of TileGrid");
     for(x <- 0 to TileGrid.this.width - 1) {
       for (y <- 0 to TileGrid.this.height - 1) {
-        val im = tileMap(tileGrid(x)(y));
+        val im = tileMap(cells(x)(y));
         if (im != null) {
           val pRMaybe = im.pixelReader;
           if (!pRMaybe.isEmpty) {
@@ -56,30 +46,9 @@ class TileGrid(
   
   lazy val node = new ImageView(compositeImage);
   
-  val navMap : HeuristicGraph[(Int, Int)] = {
-    val nodes = new mutable.HashSet[(Int, Int)];
-    for (x <- 0 until width; y <- 0 until height if !isSolid(x, y)) {
-      nodes += ((x, y));
-    }
-    
-    val connections = new mutable.HashMap[(Int, Int), Map[(Int, Int), Int]];
-    for(node <- nodes; x = node._1; y = node._2; if !isSolid(x, y)) {
-      connections(node) = getConnections(x, y);
-    }
-    
-    new HeuristicGraph(nodes.toSet, connections.toMap, HeuristicGraph.manhattanDist, true);
-  }
-  
   def isInBounds(x : Int, y : Int) : Boolean = (x > -1 && y > -1 && x < width && y < height);
   
-  def getConnections(x : Int, y : Int) : Map[(Int, Int), Int] = {
-    val neighbors = Set((x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y));
-    return (for (n <- neighbors if isInBounds(n._1, n._2) if !isSolid(n._1, n._2)) yield ((n._1, n._2), 1)).toMap;
-  }
-  
-  def tileAt(x : Int, y : Int) : Image = tileMap(tileGrid(x)(y));
-  
-  def isSolid(x : Int, y : Int) : Boolean = collisionGrid(x)(y);
+  def tileAt(x : Int, y : Int) : Image = tileMap(cells(x)(y));
   
   def screenToTileCoords(screenX : Double, screenY : Double) : (Int, Int) = (screenXToTileX(screenX), screenYToTileY(screenY));
   
@@ -89,6 +58,54 @@ class TileGrid(
   
   def toJsonString() = null;
   
-  override def toString() = s"gridDim: $width x $height\ntileDim: $tileWidth x $tileHeight\ngrid: " + _grid.toPrettyString;
+  override def toString() = s"gridDim: $width x $height\ntileDim: $tileWidth x $tileHeight\ncells: " + cells.toPrettyString;
+  
+}
+
+object TileGrid {
+  
+  def apply(grid : Array[Array[Int]], tileMap : Map[Int, Image], tileWidth : Int, tileHeight : Int) : TileGrid = {
+    // Extract the cells from the grid.
+    val cellBuff = new mutable.ArrayBuffer[Vector[Int]];
+    for (x <- Range(0, grid.length, 2)) {
+      val columnBuff = new mutable.ArrayBuffer[Int];
+      for (y <- Range(0, grid(x).length, 2))
+        columnBuff += grid(x)(y);
+      cellBuff += columnBuff.toVector;
+    }
+    val cells = cellBuff.toVector;
+    
+    // Extract the edges from the grid.
+    val edgeBuff = new mutable.ArrayBuffer[((Int, Int), (Int, Int), Int)];
+    for (x <- 0 until grid.length) {
+      if (x % 2 == 0) {
+        // Vertical edges.
+        val trueCol = x / 2;
+        for (y <- Range(1, grid(x).length, 2)) {
+          if (grid(x)(y) == Int.MaxValue) {
+            val a = (trueCol, (y - 1) / 2);
+            val b = (trueCol, (y + 1) / 2);
+            edgeBuff += ((a, b, 1));
+          }
+        }
+      }
+      else {
+        // Horizontal edges.
+        for (y <- 0 until grid(x).length) {
+          if (grid(x)(y) == Int.MaxValue) {
+            val a = ((x - 1) / 2, y);
+            val b = ((x + 1) / 2, y);
+            edgeBuff += ((a, b, 1));
+          }
+        }
+      }
+    }
+    
+    // Make a graph from the cells and edges.
+    val cellSeq = for (x <- 0 until cells.length; y <- 0 until cells(x).length) yield (x, y);
+    val navMap = new HeuristicGraph(cellSeq.toSet, UndirectedUtils.undirectedToDirected(edgeBuff), HeuristicGraph.manhattanDist, true);
+    
+    return new TileGrid(cells, tileMap, navMap, tileWidth, tileHeight);
+  }
   
 }

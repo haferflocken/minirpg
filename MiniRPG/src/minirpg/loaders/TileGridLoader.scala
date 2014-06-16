@@ -5,7 +5,9 @@ import java.io.InputStream
 import scalafx.scene.image.Image
 import scala.util.parsing.json.JSONArray
 import scala.util.parsing.json.JSONObject
+import scala.collection.mutable
 import minirpg.model.world.TileGrid
+import java.util.regex.Pattern
 
 object TileGridLoader extends Loader[TileGrid] {
 
@@ -47,34 +49,37 @@ object TileGridLoader extends Loader[TileGrid] {
     val tileWidth = jsonTileWidth.asInstanceOf[Double].intValue;
     val tileHeight = jsonTileHeight.asInstanceOf[Double].intValue;
     
-    return new TileGrid(grid, tileMap, tileWidth, tileHeight);
+    return TileGrid(grid, tileMap, tileWidth, tileHeight);
   }
   
   private def makeGrid(filePath : String, raw : List[Any]) : Array[Array[Int]] = {
-    var buff = List[Array[Int]]();
+    val buff = new mutable.ArrayBuffer[Array[Int]]();
     raw.foreach((rawCol : Any) => {
-      if (!rawCol.isInstanceOf[JSONArray]) {
-        println("Field \"grid\" must be an array of arrays. This is not the case in \"" + filePath + "\".");
+      if (!rawCol.isInstanceOf[String]) {
+        println("Field \"grid\" must be an array of strings. This is not the case in \"" + filePath + "\".");
         return null;
       }
-      val col = makeCol(filePath, rawCol.asInstanceOf[JSONArray].list);
+      val col = makeCol(filePath, rawCol.asInstanceOf[String]);
       if (col == null)
         return null;
-      buff = col +: buff;
-    });
-    return buff.toArray;
-  }
-  
-  private def makeCol(filePath : String, raw : List[Any]) : Array[Int] = {
-    var buff = List[Int]();
-    raw.foreach((rawVal : Any) => {
-      if (!rawVal.isInstanceOf[Double]) {
-        println("Entries in the arrays of field \"grid\" must be numbers. This is not the case in \"" + filePath + "\".");
-        return null;
-      }
-      buff = rawVal.asInstanceOf[Double].intValue +: buff;
+      buff += col;
     });
     return buff.reverse.toArray;
+  }
+  
+  private def makeCol(filePath : String, raw : String) : Array[Int] = {
+    val buff = new mutable.ArrayBuffer[Int]();
+    val matcher = Pattern.compile("\\d+|[-+]").matcher(raw);
+    while (matcher.find) {
+      val group = matcher.group;
+      group match {
+        case "-" => buff += Int.MinValue;
+        case "+" => buff += Int.MaxValue;
+        case _   => buff += Integer.parseInt(group);
+      }
+    }
+    
+    return buff.toArray;
   }
   
   private def makeTileMap(filePath : String, raw : Map[String, Any]) : Map[Int, Image] = {
