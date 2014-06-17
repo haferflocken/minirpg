@@ -11,7 +11,7 @@ import scalafx.scene.control.Button
 import minirpg.util.Tickable
 import minirpg.model.world._
 
-class PowerReticle(gui : ActorGUI, creator : PowerBar, val actor : Actor, val power : Power) extends GridPane with Tickable {
+class PowerReticle(gui : ActorGUI, creator : PowerButton, val actor : Actor, val power : Power) extends GridPane with Tickable {
   
   val world = actor.world;
   val region = power.mkRegion(0, 0);

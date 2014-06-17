@@ -51,7 +51,7 @@ class PowerButton(gui : ActorGUI, powerBar : PowerBar, power : Power, actor : Ac
   
   def fire() : Unit = {
     if (actor.powerCooldowns(power) <= 0 && power.canUse(actor)) {
-      gui.powerReticle = new PowerReticle(gui, powerBar, actor, power);
+      gui.powerReticle = new PowerReticle(gui, this, actor, power);
       border = FXUtils.DefaultActionBorder;
       background = FXUtils.DefaultActionBackground;
     }
