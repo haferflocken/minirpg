@@ -7,7 +7,7 @@ import scalafx.scene.image.Image
 object Use extends Power {
   
   val name = "Use";
-  val range = 2;
+  val range = 1;
   val cooldown : Long = 0;
   
   def apply(user : Actor, targets : Vector[Entity], region : Region) = {
@@ -20,6 +20,6 @@ object Use extends Power {
   
   def mkRegion(cX : Int, cY : Int) = Region.tile(cX, cY);
 
-  val uiImage = new Image("file:res/sprites/ui/power-base.png");
+  val uiImage = new Image("file:res/sprites/ui/powers/use.png");
   
 }

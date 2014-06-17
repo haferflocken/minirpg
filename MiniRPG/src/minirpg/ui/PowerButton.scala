@@ -14,7 +14,7 @@ class PowerButton(gui : ActorGUI, powerBar : PowerBar, power : Power, actor : Ac
   private val _width = power.uiImage.width();
   private val _height = power.uiImage.height();
   
-  val cooldownBackground = Rectangle(_width, _height, Color.LIMEGREEN);
+  val cooldownBackground = Rectangle(_width, _height, Color.rgb(0, 255, 0));
   children add cooldownBackground;
   
   val cooldownRect = {

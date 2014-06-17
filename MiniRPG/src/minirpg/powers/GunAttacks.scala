@@ -46,7 +46,7 @@ trait ConduitBlasterAttack extends GunAttack {
     }
   }
   
-  val range = 6;
+  val range = 2;
   val cooldown : Long = TENTOTHE9;
   
   def mkRegion(cX : Int, cY : Int) = Region.rectangle(cX, cY, 3, 3);
@@ -62,7 +62,7 @@ trait ConduitRifleAttack extends GunAttack {
     //world.particleCanvas.mkCircles(rX, rY, 2, Color.AQUA, speeds);
   }
 
-  val range = 7;
+  val range = 4;
   val cooldown : Long = TENTOTHE9 / 2;
   
   def mkRegion(cX : Int, cY : Int) = Region.tile(cX, cY);
@@ -73,7 +73,7 @@ trait ConduitMineLauncherAttack extends GunAttack {
   
   protected def mkParticles(world : World, region : Region) : Unit = {}
   
-  val range = 4;
+  val range = 3;
   val cooldown : Long = TENTOTHE9 * 3 / 2;
   
   def mkRegion(cX : Int, cY : Int) = Region.tile(cX, cY);
