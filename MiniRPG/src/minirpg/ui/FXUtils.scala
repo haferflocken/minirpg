@@ -36,7 +36,7 @@ object FXUtils {
   def makeJFXBorder(paint : Paint, strokeStyle : BorderStrokeStyle = BorderStrokeStyle.SOLID, corners : CornerRadii = CornerRadii.EMPTY, strokeWidths : BorderWidths = BorderStroke.THIN)
     = new javafx.scene.layout.Border(new BorderStroke(paint, strokeStyle, corners, strokeWidths));
   
-  def makeAccelerator(keyCode : KeyCode, action : Function0[Any]) : (KeyCodeCombination, Runnable) = 
+  def makeAccelerator(keyCode : KeyCode, action : () => Any) : (KeyCodeCombination, Runnable) = 
     (new KeyCodeCombination(keyCode), new Runnable { override def run = action() });
 
 }

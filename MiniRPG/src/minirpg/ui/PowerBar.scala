@@ -21,61 +21,31 @@ import scalafx.scene.layout.Border
 import minirpg.util.Tickable
 import minirpg.model.world._
 import scalafx.geometry.Orientation
+import scala.collection.mutable
+import scalafx.scene.image.ImageView
+import scalafx.scene.Node
 
 class PowerBar(gui : ActorGUI, actor : Actor) extends TilePane with Subscriber[ActorEvent, Actor] with Initializable with Tickable {
-  orientation = Orientation.VERTICAL;
+  orientation = Orientation.HORIZONTAL;
   
-  private var cooldownRects : List[(Power, Rectangle)] = Nil;
-  private var buttons : List[(Power, Button)] = Nil;
+  private val buttons = new mutable.ArrayBuffer[PowerButton];
   
   def notify(pub : Actor, e : ActorEvent) : Unit = {
-    if (e.event == EQUIP || e.event == UNEQUIP || e.event == WIELD || e.event == UNWIELD)
+    if (e.event == EQUIP || e.event == UNEQUIP || e.event == WIELD || e.event == UNWIELD || e.event == POWER_NOW_USEABLE || e.event == POWER_NO_LONGER_USEABLE)
       refreshButtons;
-    else if (e.event == POWER_NOW_USEABLE || e.event == POWER_NO_LONGER_USEABLE)
-      refreshBackgrounds;
   }
   
   def refreshButtons : Unit = {
     children.clear;
-    cooldownRects = Nil;
-    buttons = Nil;
+    buttons.clear;
     gui.powerReticle = null;
     val powers = actor.powers;
     var i = 0;
-    for (p <- powers) {
+    for (p <- powers if p.canUse(actor)) {
       i += 1;
-      val graphic = {
-        if (p.cooldown <= 0)
-          Circle(2, Color.BLACK);
-        else {
-          val bgRect = Rectangle(6, 16, Color.GRAY);
-          bgRect.stroke = Color.BLACK;
-          val fgRect = Rectangle(6, 8, Color.WHITE); 
-          fgRect.stroke = Color.BLACK;
-          cooldownRects = (p, fgRect) +: cooldownRects;
-          new StackPane {
-            children.addAll(bgRect, fgRect);
-            alignment = Pos.BOTTOM_LEFT;
-          }
-        }
-      }
-      val (bdr, bg) = borderAndBackground(p.canUse(actor));
-      val button = new Button(i + ") " + p.name, graphic) {
-        alignment = Pos.CENTER_LEFT;
-        maxWidth = Double.MaxValue;
-        maxHeight = Double.MaxValue;
-        onAction = handle {
-          if (actor.powerCooldowns(p) <= 0 && p.canUse(actor)) {
-            gui.powerReticle = new PowerReticle(gui, PowerBar.this, actor, p);
-            border = FXUtils.DefaultActionBorder;
-            background = FXUtils.DefaultActionBackground;
-          }
-        };
-        border = bdr;
-        background = bg;
-        textFill = Color.BLACK;
-      }
-      buttons = (p, button) +: buttons;
+      
+      val button = new PowerButton(gui, this, p, actor);
+      buttons += button;
       children.add(button);
       val accelKey = numsToDigitKeys.getOrElse(i, null);
       if (accelKey != null) {
@@ -83,11 +53,11 @@ class PowerBar(gui : ActorGUI, actor : Actor) extends TilePane with Subscriber[A
         scene().getAccelerators.put(accel._1, accel._2);
       }
     }
-    prefRows = powers.length;
+    prefColumns = powers.length;
   }
   
-  def refreshBackgrounds : Unit = {
-    for ((p, b) <- buttons) {
+  /*def refreshBackgrounds : Unit = {
+    for ((p, b, r) <- buttons) {
       val (bdr, bg) = borderAndBackground(p.canUse(actor));
       b.border = bdr;
       b.background = bg;
@@ -95,13 +65,13 @@ class PowerBar(gui : ActorGUI, actor : Actor) extends TilePane with Subscriber[A
   }
   
   def refreshBackground(power : Power) : Unit = {
-    for ((p, b) <- buttons if p == power) {
+    for ((p, b, r) <- buttons if p == power) {
       val (bdr, bg) = borderAndBackground(power.canUse(actor));
       b.border = bdr;
       b.background = bg;
       return;
     }
-  }
+  }*/
   
   def init = {
     actor.subscribe(
@@ -116,15 +86,8 @@ class PowerBar(gui : ActorGUI, actor : Actor) extends TilePane with Subscriber[A
   }
   
   def tick(delta : Long) : Unit = {
-    for ((p, r) <- cooldownRects) {
-      r.height = 16 * (p.cooldown - actor.powerCooldowns(p)) / p.cooldown;
-    }
-  }
-  
-  private def borderAndBackground(canUse : Boolean) : (Border, Background) = {
-    if (canUse)
-      return (FXUtils.DefaultBorder, FXUtils.DefaultBackground);
-    return (FXUtils.DefaultDisabledBorder, FXUtils.DefaultDisabledBackground);
+    for (b <- buttons) 
+      b.tick(delta);
   }
   
 }

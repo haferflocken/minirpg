@@ -24,7 +24,7 @@ class PowerReticle(gui : ActorGUI, creator : PowerBar, val actor : Actor, val po
   }
   
   def resetCreatorAppearance : Unit = {
-    creator.refreshBackground(power);
+    // TODO creator.refreshBackground(power);
   }
   
   def tick(delta : Long) : Unit = {

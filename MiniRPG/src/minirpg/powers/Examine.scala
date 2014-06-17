@@ -4,6 +4,7 @@ import minirpg.model._
 import minirpg.model.world._
 import minirpg.ui.MiniRPGApp
 import minirpg.ui.ActorGUI
+import scalafx.scene.image.Image
 
 object Examine extends Power {
   
@@ -21,5 +22,7 @@ object Examine extends Power {
   def canUse(user : Actor) = true;
   
   def mkRegion(cX : Int, cY : Int) = Region.tile(cX, cY);
+  
+  val uiImage = new Image("file:res/sprites/ui/power-base.png");
 
 }

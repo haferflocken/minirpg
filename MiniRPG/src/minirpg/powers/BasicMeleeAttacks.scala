@@ -3,6 +3,7 @@ package minirpg.powers
 import minirpg.TENTOTHE9
 import minirpg.model._
 import minirpg.model.world._
+import scalafx.scene.image.Image
 
 object ShortswordAttack extends Power {
   
@@ -18,5 +19,7 @@ object ShortswordAttack extends Power {
   def canUse(user : Actor) = true;
   
   def mkRegion(cX : Int, cY : Int) = Region.tile(cX, cY);
+  
+  val uiImage = new Image("file:res/sprites/ui/power-base.png");
   
 }

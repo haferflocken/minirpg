@@ -9,6 +9,7 @@ import minirpg.model.world._
 import minirpg.util.Velocity
 import scalafx.scene.shape.Circle
 import scalafx.util.Duration
+import scalafx.scene.image.Image
 
 trait GunAttack extends Power {
   
@@ -90,6 +91,8 @@ object CyanConduitBlasterAttack extends ConduitBlasterAttack {
     addCooldown(user);
     mkParticles(user.world, region);
   }
+  
+  val uiImage = new Image("file:res/sprites/ui/power-base.png");
 }
 
 object CyanConduitRifleAttack extends ConduitRifleAttack {
@@ -103,6 +106,8 @@ object CyanConduitRifleAttack extends ConduitRifleAttack {
     addCooldown(user);
     mkParticles(user.world, region);
   }
+  
+  val uiImage = new Image("file:res/sprites/ui/power-base.png");
 }
 
 object CyanConduitMineLauncherAttack extends ConduitMineLauncherAttack {
@@ -120,4 +125,6 @@ object CyanConduitMineLauncherAttack extends ConduitMineLauncherAttack {
       y = region.anchorY;
     });
   }
+  
+  val uiImage = new Image("file:res/sprites/ui/power-base.png");
 }

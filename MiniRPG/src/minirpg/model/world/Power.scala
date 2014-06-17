@@ -1,6 +1,7 @@
 package minirpg.model.world
 
 import minirpg.model._
+import scalafx.scene.image.Image
 
 trait Power {
 
@@ -12,5 +13,7 @@ trait Power {
   def mkRegion(cX : Int = 0, cY : Int = 0) : Region;
   
   protected def addCooldown(user : Actor) = user.powerCooldowns.update(this, cooldown);
+  
+  val uiImage : Image;
   
 }
