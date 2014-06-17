@@ -67,6 +67,17 @@ package object minirpg {
         23 -> KeyCode.F23,
         24 -> KeyCode.F24);
   
+  val numsToLetterActionKeys = 
+    Map[Int, KeyCode](
+        1-> KeyCode.Q,
+        2 -> KeyCode.W,
+        3 -> KeyCode.E, 
+        4 -> KeyCode.R,
+        5 -> KeyCode.A,
+        6 -> KeyCode.S,
+        7 -> KeyCode.D,
+        8 -> KeyCode.F);
+  
   /*
    * Global variables.
    */

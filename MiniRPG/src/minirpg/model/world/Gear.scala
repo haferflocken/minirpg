@@ -51,6 +51,7 @@ trait Gear {
 object Gear {
   
   val uiWieldImage = new Image("file:res/sprites/ui/wielded-gear-base.png");
-  val uiUnwieldImage = new Image("file:res/sprites/ui/gear/unwielded-gear-base.png");
+  val uiUnwieldImage = new Image("file:res/sprites/ui/unwielded-gear-base.png");
+  val uiImage = new Image("file:res/sprites/ui/gear-base.png");
   
 }

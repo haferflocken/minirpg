@@ -17,7 +17,7 @@ import minirpg.model._
 import scala.collection.mutable.Subscriber
 import scalafx.geometry.Insets
 import scalafx.scene.paint.Color
-import scalafx.scene.layout.HBox
+import scalafx.scene.layout.VBox
 import scalafx.geometry.Pos
 import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
@@ -71,13 +71,16 @@ class ActorGUI(actor : Actor) extends AnchorPane with Initializable with Tickabl
   }
   
   val vitalsGraph = new VitalsGraph(actor);
+  children add vitalsGraph;
+  AnchorPane.setLeftAnchor(vitalsGraph, 0.0);
+  AnchorPane.setTopAnchor(vitalsGraph, 0.0);
+  
   val wieldMenu = new WieldMenu(actor);
   val powerBar = new PowerBar(this, actor);
-  
-  val bottomBar = new HBox {
-    children.addAll(vitalsGraph, wieldMenu, powerBar);
+  val bottomBar = new VBox {
+    children.addAll(wieldMenu, powerBar);
     alignment = Pos.BOTTOM_LEFT;
-    fillHeight = false;
+    fillWidth = false;
   }
   children add bottomBar;
   AnchorPane.setLeftAnchor(bottomBar, 0.0);

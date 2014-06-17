@@ -12,8 +12,8 @@ object FrogHelmet extends Gear {
   val wieldSlots = null;
   val powers = null;
   val skillBonuses = Map(Skills.pierceRes -> 6, Skills.slashRes -> 6, Skills.bashRes -> 4, Skills.threat -> 3);
-  val uiWieldImage = Gear.uiWieldImage;
-  val uiUnwieldImage = Gear.uiUnwieldImage;
+  val uiWieldImage = Gear.uiImage;
+  val uiUnwieldImage = Gear.uiImage;
     
 }
 
@@ -25,8 +25,8 @@ object FrogCuirass extends Gear {
   val wieldSlots = null;
   val powers = null;
   val skillBonuses = Map(Skills.pierceRes -> 11, Skills.slashRes -> 11, Skills.bashRes -> 9, Skills.threat -> 4);
-  val uiWieldImage = Gear.uiWieldImage;
-  val uiUnwieldImage = Gear.uiUnwieldImage;
+  val uiWieldImage = Gear.uiImage;
+  val uiUnwieldImage = Gear.uiImage;
     
 }
 
@@ -38,8 +38,8 @@ object FrogGreaves extends Gear {
   val wieldSlots = null;
   val powers = null;
   val skillBonuses = Map(Skills.pierceRes -> 8, Skills.slashRes -> 8, Skills.bashRes -> 6, Skills.threat -> 4);
-  val uiWieldImage = Gear.uiWieldImage;
-  val uiUnwieldImage = Gear.uiUnwieldImage;
+  val uiWieldImage = Gear.uiImage;
+  val uiUnwieldImage = Gear.uiImage;
     
 }
 
@@ -51,8 +51,8 @@ object FrogGauntlets extends Gear {
   val wieldSlots = null;
   val powers = null;
   val skillBonuses = Map(Skills.pierceRes -> 4, Skills.slashRes -> 4, Skills.bashRes -> 2, Skills.threat -> 3);
-  val uiWieldImage = Gear.uiWieldImage;
-  val uiUnwieldImage = Gear.uiUnwieldImage;
+  val uiWieldImage = Gear.uiImage;
+  val uiUnwieldImage = Gear.uiImage;
     
 }
 
@@ -64,7 +64,7 @@ object FrogBoots extends Gear {
   val wieldSlots = null;
   val powers = null;
   val skillBonuses = Map(Skills.pierceRes -> 4, Skills.slashRes -> 4, Skills.bashRes -> 2, Skills.threat -> 3);
-  val uiWieldImage = Gear.uiWieldImage;
-  val uiUnwieldImage = Gear.uiUnwieldImage;
+  val uiWieldImage = Gear.uiImage;
+  val uiUnwieldImage = Gear.uiImage;
     
 }

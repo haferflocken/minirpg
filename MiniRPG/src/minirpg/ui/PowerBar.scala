@@ -1,6 +1,6 @@
 package minirpg.ui
 
-import minirpg.numsToDigitKeys
+import minirpg.numsToLetterActionKeys
 import minirpg.model._
 import minirpg.model.world.ActorEvent._
 import scalafx.Includes._
@@ -44,10 +44,11 @@ class PowerBar(gui : ActorGUI, actor : Actor) extends TilePane with Subscriber[A
     for (p <- powers if p.canUse(actor)) {
       i += 1;
       
-      val button = new PowerButton(gui, this, p, actor);
+      val accelKey = numsToLetterActionKeys.getOrElse(i, null);
+      val button = new PowerButton(gui, this, p, actor, accelKey);
       buttons += button;
       children.add(button);
-      val accelKey = numsToDigitKeys.getOrElse(i, null);
+      
       if (accelKey != null) {
         val accel = FXUtils.makeAccelerator(accelKey, button.fire);
         scene().getAccelerators.put(accel._1, accel._2);

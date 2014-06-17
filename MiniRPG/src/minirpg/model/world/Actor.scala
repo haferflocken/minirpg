@@ -127,8 +127,8 @@ abstract class Actor(
         unequipNoUpdate(equippedG(0));
       }
       equipSlotContents(s).append(g);
-      equipped += g;
     };
+    equipped += g;
     
     //initEquipped;
     initPowers;
@@ -145,7 +145,6 @@ abstract class Actor(
       return;
     
     unequipNoUpdate(g);
-    //initEquipped;
     initPowers;
     initSkills;
     publish(ActorEvent(this, ActorEvent.UNEQUIP));
@@ -217,14 +216,6 @@ abstract class Actor(
       wieldSlotContents(s) = null;
     }
   }
-  
-  /*private def initEquipped = {
-    val equippedBuffer = new ArrayBuffer[Gear];
-    for (b <- equipSlotContents.values) {
-      equippedBuffer.appendAll(b);
-    }
-    equipped = equippedBuffer.toVector;
-  }*/
   
   private def initPowers = {
     // Make the powers vector.

@@ -9,8 +9,8 @@ abstract class Orb extends Gear {
   val wieldSlots = null;
   val powers = null;
   val skillBonuses = Map.empty[String, Int];
-  val uiWieldImage = null;
-  val uiUnwieldImage = null;
+  val uiWieldImage = Gear.uiImage;
+  val uiUnwieldImage = Gear.uiImage;
 }
 
 object CyanOrb extends Orb {
