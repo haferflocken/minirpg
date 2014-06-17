@@ -2,12 +2,15 @@ package minirpg.gear
 
 import minirpg.model._
 import minirpg.model.world.Gear
+import scalafx.scene.image.Image
 
 abstract class Orb extends Gear {
   val equipSlots = Vector("Hip");
   val wieldSlots = null;
   val powers = null;
   val skillBonuses = Map.empty[String, Int];
+  val uiWieldImage = null;
+  val uiUnwieldImage = null;
 }
 
 object CyanOrb extends Orb {

@@ -17,7 +17,8 @@ trait Gear {
                               // Additionally, if wieldSlots != null, powers cannot be null.
   val skillBonuses : Map[String, Int];
   
-  lazy val equippedImages : Vector[Image] = null; // 0 is south, 1 is east, 2 is north, 3 is west
+  val uiWieldImage : Image;
+  val uiUnwieldImage : Image;
   
   def makeEntity(id : String) : Entity = new GearEntity(id, this);
   
@@ -40,10 +41,16 @@ trait Gear {
     if (wieldSlots != null) hash += wieldSlots.hashCode * 7;
     if (powers != null) hash += powers.hashCode * 11;
     hash += skillBonuses.hashCode * 13;
-    if (equippedImages != null) hash += equippedImages.hashCode * 17;
     return hash;
   }
   
   override def toString = name;
+  
+}
+
+object Gear {
+  
+  val uiWieldImage = new Image("file:res/sprites/ui/wielded-gear-base.png");
+  val uiUnwieldImage = new Image("file:res/sprites/ui/gear/unwielded-gear-base.png");
   
 }

@@ -4,6 +4,7 @@ import minirpg.model._
 import minirpg.powers._
 import minirpg.model.world.Power
 import minirpg.model.world.Gear
+import scalafx.scene.image.Image
 
 object ConduitBlaster extends Gear {
   val name = "Conduit Blaster";
@@ -12,6 +13,8 @@ object ConduitBlaster extends Gear {
   val wieldSlots = Vector("Main Hand", "Off Hand");
   val powers = Vector[Power](CyanConduitBlasterAttack);
   val skillBonuses = Map(Skills.threat -> 10);
+  val uiWieldImage = Gear.uiWieldImage;
+  val uiUnwieldImage = Gear.uiUnwieldImage;
 }
 
 object ConduitRifle extends Gear {
@@ -21,6 +24,8 @@ object ConduitRifle extends Gear {
   val wieldSlots = Vector("Main Hand", "Off Hand");
   val powers = Vector[Power](CyanConduitRifleAttack);
   val skillBonuses = Map(Skills.threat -> 15);
+  val uiWieldImage = Gear.uiWieldImage;
+  val uiUnwieldImage = Gear.uiUnwieldImage;
 }
 
 object ConduitMineLauncher extends Gear {
@@ -30,4 +35,6 @@ object ConduitMineLauncher extends Gear {
   val wieldSlots = Vector("Main Hand", "Off Hand");
   val powers = Vector[Power](CyanConduitMineLauncherAttack);
   val skillBonuses = Map(Skills.threat -> 10);
+  val uiWieldImage = Gear.uiWieldImage;
+  val uiUnwieldImage = Gear.uiUnwieldImage;
 }

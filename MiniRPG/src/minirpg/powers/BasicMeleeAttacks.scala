@@ -20,6 +20,6 @@ object ShortswordAttack extends Power {
   
   def mkRegion(cX : Int, cY : Int) = Region.tile(cX, cY);
   
-  val uiImage = new Image("file:res/sprites/ui/power-base.png");
+  val uiImage = Power.uiImage;
   
 }

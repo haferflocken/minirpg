@@ -17,3 +17,9 @@ trait Power {
   val uiImage : Image;
   
 }
+
+object Power {
+  
+  val uiImage = new Image("file:res/sprites/ui/power-base.png");
+  
+}

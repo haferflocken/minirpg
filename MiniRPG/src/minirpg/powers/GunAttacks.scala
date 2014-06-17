@@ -92,7 +92,7 @@ object CyanConduitBlasterAttack extends ConduitBlasterAttack {
     mkParticles(user.world, region);
   }
   
-  val uiImage = new Image("file:res/sprites/ui/power-base.png");
+  val uiImage = Power.uiImage;
 }
 
 object CyanConduitRifleAttack extends ConduitRifleAttack {
@@ -107,7 +107,7 @@ object CyanConduitRifleAttack extends ConduitRifleAttack {
     mkParticles(user.world, region);
   }
   
-  val uiImage = new Image("file:res/sprites/ui/power-base.png");
+  val uiImage = Power.uiImage;
 }
 
 object CyanConduitMineLauncherAttack extends ConduitMineLauncherAttack {
@@ -126,5 +126,5 @@ object CyanConduitMineLauncherAttack extends ConduitMineLauncherAttack {
     });
   }
   
-  val uiImage = new Image("file:res/sprites/ui/power-base.png");
+  val uiImage = Power.uiImage;
 }
