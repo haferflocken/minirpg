@@ -24,8 +24,8 @@ class Landmark(val name : String, val x : Int, val y : Int, val worldPath : Stri
 
 object Landmark {
   
-  val Image = new Image("file:res/sprites/landmark.png");
+  val Image = new Image("file:res/sprites/overworld/landmark.png");
   
-  val DestroyedImage = new Image("file:res/sprites/destroyedLandmark.png");
+  val DestroyedImage = new Image("file:res/sprites/overworld/destroyedLandmark.png");
   
 }
