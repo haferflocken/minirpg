@@ -29,7 +29,7 @@ abstract class Actor(
   val wieldSlotContents = new LinkedHashMap[String, Gear] ++= wieldSlots.map((_, null));
   val equipped : Buffer[Gear] = new ArrayBuffer;
   var powers : Vector[Power] = defaultPowers;
-  val powerUseables = new LinkedHashMap[Power, Boolean] ++= powers.map(p => (p, p.canUse(this)));
+  val powerUseables = new LinkedHashMap[Power, Boolean] ++= powers.map(p => (p, p.canBeUsedBy(this)));
   val powerCooldowns = new LinkedHashMap[Power, Long] ++= powers.map((_, 0.longValue));
   val skills = new LinkedHashMap[String, Int] ++= baseSkills;
   var path : Queue[(Int, Int)] = null;
@@ -62,7 +62,7 @@ abstract class Actor(
     
     // Check which powers are useable.
     for ((p, u) <- powerUseables) {
-      val canUse = p.canUse(this);
+      val canUse = p.canBeUsedBy(this);
       powerUseables(p) = canUse;
       if (u && !canUse)
         publish(ActorEvent(this, ActorEvent.POWER_NO_LONGER_USEABLE));
@@ -230,7 +230,7 @@ abstract class Actor(
     
     // Update the usability map.
     powerUseables.clear;
-    powerUseables ++= powers.map(p => (p, p.canUse(this)));
+    powerUseables ++= powers.map(p => (p, p.canBeUsedBy(this)));
     
     // Update the cooldowns map.
     for ((p, c) <- powerCooldowns) {
