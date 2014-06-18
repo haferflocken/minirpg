@@ -39,8 +39,6 @@ class ActorGUI(actor : Actor) extends AnchorPane with Initializable with Tickabl
     powerBar.init;
   }
   
-  val bottomOffset = 30.0;
-  
   var mouseX : Double = 0;
   var mouseY : Double = 0;
   var mouseGridX : Int = 0;
@@ -84,7 +82,7 @@ class ActorGUI(actor : Actor) extends AnchorPane with Initializable with Tickabl
   }
   children add bottomBar;
   AnchorPane.setLeftAnchor(bottomBar, 0.0);
-  AnchorPane.setBottomAnchor(bottomBar, bottomOffset);
+  AnchorPane.setBottomAnchor(bottomBar, 0.0);
   
   /**
    * Tick the gui, because that might be useful.

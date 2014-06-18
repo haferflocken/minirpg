@@ -12,20 +12,25 @@ import scalafx.scene.input.KeyEvent
 import minirpg.util.Tickable
 import minirpg.model.world._
 import scalafx.scene.layout.Pane
+import scalafx.geometry.Pos
 
 class WorldScene(val world : World) extends Scene with Initializable with Tickable {
   
   val player = world.getEntitiesById("player")(0).asInstanceOf[Actor];
-  val gui = new ActorGUI(player);
+  val gui = new ActorGUI(player) {
+    maxWidth <== WorldScene.this.width;
+    maxHeight <== WorldScene.this.height;
+  };
   val worldPane = new Pane {
     children.addAll(world.tileGrid.node, world.entityGroup, world.particleGroup);
-  }
+  };
   
   fill = Color.BLACK;
   content = new StackPane {
+    alignment = Pos.TOP_LEFT;
     children.addAll(worldPane, gui);
-    minWidth = 800;
-    minHeight = 600;
+    minWidth <== WorldScene.this.width;
+    minHeight <== WorldScene.this.height;
   };
   
   onMouseMoved = (me : MouseEvent) => {

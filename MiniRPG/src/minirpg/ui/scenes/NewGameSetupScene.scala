@@ -9,6 +9,7 @@ import minirpg.ui.MiniRPGApp
 import scalafx.scene.text.Text
 import minirpg.model.overworld.Overworld
 import minirpg.loaders.WorldLoader
+import scalafx.geometry.Pos
 
 class NewGameSetupScene extends Scene with Initializable with Tickable {
   
@@ -16,11 +17,12 @@ class NewGameSetupScene extends Scene with Initializable with Tickable {
   
   fill = Color.BLACK;
   content = new StackPane {
-    minWidth = MiniRPGApp.width;
-    minHeight = MiniRPGApp.height;
+    minWidth <== NewGameSetupScene.this.width;
+    minHeight <== NewGameSetupScene.this.height;
     content = new Text("- Setting up a new game -") {
       fill = Color.WHITE;
-    }
+    };
+    alignment = Pos.CENTER;
   };
 
   def tick(delta : Long) : Unit = {

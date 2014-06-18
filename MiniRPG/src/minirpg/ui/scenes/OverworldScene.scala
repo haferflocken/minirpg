@@ -23,6 +23,9 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
   
   fill = Color.BLACK;
   content = new BorderPane {
+    minWidth <== OverworldScene.this.width;
+    minHeight <== OverworldScene.this.height;
+    
     val oIWidth = MiniRPGApp.width;
     val oIHeight = oIWidth * overworld.height / overworld.width;
     
@@ -89,9 +92,8 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
   };
 
   onKeyPressed = (ke : KeyEvent) => {
-	if (ke.code == KeyCode.R) {
-	  MiniRPGApp.scene = new NewGameSetupScene;
-	}
+  	if (ke.code == KeyCode.R)
+  	  MiniRPGApp.scene = new NewGameSetupScene;
   };
   
   onKeyReleased = (ke : KeyEvent) => {

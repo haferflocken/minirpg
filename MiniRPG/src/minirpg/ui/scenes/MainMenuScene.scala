@@ -18,8 +18,8 @@ class MainMenuScene extends Scene with Tickable with Initializable {
   
   fill = Color.BLACK;
   content = new StackPane {
-    minWidth = MiniRPGApp.width;
-    minHeight = MiniRPGApp.height;
+    minWidth <== MainMenuScene.this.width;
+    minHeight <== MainMenuScene.this.height;
     content = new Button("New Game") {
       onMouseClicked = handle { MiniRPGApp.scene = new NewGameSetupScene };
     }

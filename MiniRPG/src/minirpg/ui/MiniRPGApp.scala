@@ -41,7 +41,7 @@ object MiniRPGApp extends JFXApp {
     title = "MiniRPG";
     width = MiniRPGApp.width;
     height = MiniRPGApp.height;
-    resizable = false;
+    resizable = true;
     scene = _scene;
   }
   _scene.init;
