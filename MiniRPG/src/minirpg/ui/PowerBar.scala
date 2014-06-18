@@ -41,7 +41,7 @@ class PowerBar(gui : ActorGUI, actor : Actor) extends TilePane with Subscriber[A
     gui.powerReticle = null;
     val powers = actor.powers;
     var i = 0;
-    for (p <- powers if p.canUse(actor)) {
+    for (p <- powers if p.canBeUsedBy(actor)) {
       i += 1;
       
       val accelKey = numsToLetterActionKeys.getOrElse(i, null);

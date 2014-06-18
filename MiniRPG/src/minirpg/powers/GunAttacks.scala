@@ -18,7 +18,7 @@ trait GunAttack extends Power {
   val orb : Gear;
   val particleColor : Color;
   
-  def canUse(user : Actor) = user.equipped.contains(orb);
+  def canBeUsedBy(user : Actor) = user.equipped.contains(orb);
   
 }
 

@@ -13,7 +13,7 @@ object Move extends Power {
   def apply(user : Actor, targets : Vector[Entity], region : Region) = 
     user.setMoveTarget(region.anchorX, region.anchorY);
   
-  def canUse(user : Actor) = true;
+  def canBeUsedBy(user : Actor) = true;
   
   def mkRegion(cX : Int, cY : Int) = Region.tile(cX, cY);
   

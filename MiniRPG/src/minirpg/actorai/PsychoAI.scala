@@ -26,7 +26,7 @@ object PsychoAI extends ActorAI {
     }
     
     // Murder it.
-    if (target != null && actor.path == null && actor.powers.contains(Move) && Move.canUse(actor)) {
+    if (target != null && actor.path == null && actor.powers.contains(Move) && Move.canBeUsedBy(actor)) {
       Move(actor, null, Region.tile(target.x, target.y));
     }
   };

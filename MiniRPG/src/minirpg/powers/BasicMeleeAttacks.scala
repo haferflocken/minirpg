@@ -16,7 +16,7 @@ object ShortswordAttack extends Power {
     addCooldown(user);
   }
   
-  def canUse(user : Actor) = true;
+  def canBeUsedBy(user : Actor) = true;
   
   def mkRegion(cX : Int, cY : Int) = Region.tile(cX, cY);
   
