@@ -11,7 +11,8 @@
 				"class" : "Human",
 				"args" : {	"name" : "NPC 1",
 							"x" : 11, "y" : 13,
-							"gear" : []
+							"gear" : [],
+							"brain" : "psycho"
 							} },
 			{	"id" : "rOrb",
 				"class" : "Gear",

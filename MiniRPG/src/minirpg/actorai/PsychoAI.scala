@@ -4,13 +4,13 @@ import minirpg.model.world._
 import minirpg.powers.Move
 import minirpg.model.Region
 
-object MoveRightAI extends ActorAI {
+object PsychoAI extends ActorAI {
   
-  val name = "move-right";
+  val name = "psycho";
   
   def tick(actor : Actor, delta : Long) : Unit = {
     if (actor.path == null)
-      Move(actor, null, Region.tile(actor.x + 1, actor.y));
+      Move(actor, null, Region.tile(actor.x - 1, actor.y));
   };
 
 }

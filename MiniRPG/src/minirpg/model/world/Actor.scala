@@ -7,6 +7,7 @@ import scala.util.parsing.json.JSONArray
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Publisher
 import minirpg.gearMap
+import minirpg.actorAIMap
 import minirpg.model._
 import minirpg.model.world._
 import minirpg.entities._
@@ -303,8 +304,11 @@ abstract class ActorBuilder[A <: Actor] extends EntityBuilder[A] {
     return out;
   };
   
-  def extractAI(args : Map[String, Any]) : ActorAI = {
-    return null;
+  def extractBrain(args : Map[String, Any]) : ActorAI = {
+    val brainType = extract[String]("brain", args, null);
+    if (brainType == null)
+      return null;
+    return actorAIMap.getOrElse(brainType, null);
   };
   
   

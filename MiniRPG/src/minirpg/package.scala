@@ -6,11 +6,17 @@ import minirpg.util._
 import minirpg.entities._
 import minirpg.entities.actors._
 import javafx.scene.input.KeyCode
+import minirpg.actorai._
 
 package object minirpg {
   
   val TENTOTHE9 : Long = 1000000000;
   val TENTOTHE11 : Long = TENTOTHE9 * 100;
+  
+  val actorAIMap =
+    Vector[ActorAI](
+        PsychoAI, MoveRightAI
+    ).map(e => (e.name, e)).toMap[String, ActorAI];
   
   val gearMap =
     Vector[Gear](

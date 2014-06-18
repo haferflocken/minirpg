@@ -43,8 +43,8 @@ object HumanBuilder extends ActorBuilder[Human] {
     val gear = extractGear(args);
     if (name == null || pCoords == null || gear == null)
       return null;
-    val ai = extractAI(args);
-    return new Human(id, name, ai) {
+    val brain = extractBrain(args);
+    return new Human(id, name, brain) {
       x = pCoords._1;
       y = pCoords._2;
       for (g <- gear) equip(g);

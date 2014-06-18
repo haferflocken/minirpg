@@ -47,7 +47,7 @@ object GearEntity {
   };
 }
 
-object GearEntityBuilder extends Builder[GearEntity] {
+object GearEntityBuilder extends EntityBuilder[GearEntity] {
   
   def build(id : String, args : Map[String, Any]) : GearEntity = {
     val rawType = args.getOrElse("type", null);
@@ -62,18 +62,7 @@ object GearEntityBuilder extends Builder[GearEntity] {
       return null;
     }
     
-    val rawX = args.getOrElse("x", null);
-    if (rawX == null || !rawX.isInstanceOf[Double]) {
-      println("Argument \"x\" of class \"Gear\" must be a number.");
-      return null;
-    }
-    val pX = rawX.asInstanceOf[Double].intValue;
-    val rawY = args.getOrElse("y", null);
-    if (rawY == null || !rawY.isInstanceOf[Double]) {
-      println("Argument \"y\" of class \"Gear\" must be a number.");
-      return null;
-    }
-    val pY = rawY.asInstanceOf[Double].intValue;
+    val (pX, pY) = extractCoords(args);
     return new GearEntity(id, gear) {
       x = pX;
       y = pY;
