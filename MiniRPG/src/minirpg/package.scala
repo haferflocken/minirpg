@@ -29,6 +29,7 @@ package object minirpg {
   
   val builderMap =
     Vector[Builder[_]](
+      DoorBuilder,
       GearEntityBuilder,
       HumanBuilder
     ).map((e) => (e.buildName, e)).toMap[String, Builder[_]];

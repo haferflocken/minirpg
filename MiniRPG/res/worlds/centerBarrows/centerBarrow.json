@@ -25,6 +25,9 @@
 				"args" : {	"type" : "Yellow Orb", "x" : 11, "y" : 11 }},
 			{	"id" : "bOrb",
 				"class" : "Gear",
-				"args" : {	"type" : "Black Orb", "x" : 12, "y" : 11 }}
+				"args" : {	"type" : "Black Orb", "x" : 12, "y" : 11 }},
+			{	"id" : "doorTest",
+				"class" : "Door",
+				"args" : { "name" : "doorTest", "x" : 11, "y" : 9, "orientation" : "top" }}
 		]
 }

@@ -279,8 +279,6 @@ object ActorEvent {
 
 abstract class ActorBuilder[A <: Actor] extends EntityBuilder[A] {
   
-  def extractName(args : Map[String, Any]) : String = extract[String]("name", args, null);
-  
   def extractGear(args : Map[String, Any]) : List[Gear] = {
     val jsonGear = extract[JSONArray]("gear", args, null);
     if (jsonGear == null)

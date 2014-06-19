@@ -65,12 +65,14 @@ trait Entity {
 
 abstract class EntityBuilder[E <: Entity] extends Builder[Entity] {
   
+  def extractName(args : Map[String, Any]) : String = extract[String]("name", args, null);
+  
   def extractCoords(args : Map[String, Any]) : (Int, Int) = {
     val pX = extract[Double]("x", args, Double.MinValue);
     val pY = extract[Double]("y", args, Double.MinValue);
-    if (pX == Double.MinValue || pY == Double.MinValue)
+    if (pX == Double.MinValue || pY == Double.MinValue) 
       return null;
-    return (pX.intValue, pY.intValue);
-  }
+    return (pX.toInt, pY.toInt);
+  };
   
 }

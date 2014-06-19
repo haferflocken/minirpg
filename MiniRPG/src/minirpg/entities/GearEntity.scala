@@ -62,10 +62,12 @@ object GearEntityBuilder extends EntityBuilder[GearEntity] {
       return null;
     }
     
-    val (pX, pY) = extractCoords(args);
+    val coords = extractCoords(args);
+    if (coords == null) 
+      return null;
     return new GearEntity(id, gear) {
-      x = pX;
-      y = pY;
+      x = coords._1;
+      y = coords._2;
     };
   }
   

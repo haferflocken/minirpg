@@ -55,3 +55,34 @@ object Door {
   val rightClosed = new Image("file:res\\sprites\\entities\\doors\\rightClosed.png");
   
 }
+
+object DoorBuilder extends EntityBuilder[Door] {
+  
+  def build(id : String, args : Map[String, Any]) : Door = {
+    val rawOrientation = extract[String]("orientation", args, null);
+    val orientation : Door.Orientation = rawOrientation match {
+      case "top" => Door.Top;
+      case "left" => Door.Left;
+      case "bottom" => Door.Bottom;
+      case "right" => Door.Right;
+      case _ => null;
+    }
+    if (orientation == null)
+      return null;
+    
+    val name = extractName(args);
+    if (name == null)
+      return null;
+    
+    val coords = extractCoords(args);
+    if (coords == null)
+      return null;
+    return new Door(id, name, orientation) {
+      x = coords._1;
+      y = coords._2;
+    };
+  }
+  
+  val buildName = "Door";
+  val buildClass = classOf[Door];
+}
