@@ -23,7 +23,7 @@ trait Entity {
     _x = a;
     if (_world != null && node != null) {
       val tileGrid = _world.tileGrid;
-      node.layoutX = _x * tileGrid.tileWidth + tileGrid.tileWidth / 2 - nodeWidth / 2;
+      node.layoutX = _x * tileGrid.tileWidth + nodeOffsetX;
     }
   };
   
@@ -31,7 +31,7 @@ trait Entity {
     _y = a;
     if (_world != null && node != null) {
       val tileGrid = _world.tileGrid;
-      node.layoutY = _y * tileGrid.tileHeight + tileGrid.tileHeight / 2 - nodeHeight / 2;
+      node.layoutY = _y * tileGrid.tileHeight + nodeOffsetY;
     }
   };
   
@@ -47,6 +47,9 @@ trait Entity {
   def x = _x;
   def y = _y;
   def world = _world;
+  
+  def nodeOffsetX = world.tileGrid.tileWidth / 2 - nodeWidth / 2;
+  def nodeOffsetY = world.tileGrid.tileHeight / 2 - nodeHeight / 2;
   
   def tick(delta : Long) : Unit = {};
   

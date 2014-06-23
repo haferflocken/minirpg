@@ -88,7 +88,7 @@ package object minirpg {
   /*
    * Global variables.
    */
-  var global_debugWorldPaths : Boolean = true;
+  var global_debugWorldPaths : Boolean = false;
   var global_debugWorldNavMap : Boolean = false;
   
   /*

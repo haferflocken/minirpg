@@ -32,8 +32,9 @@ abstract class Actor(
   val powerUseables = new LinkedHashMap[Power, Boolean] ++= powers.map(p => (p, p.canBeUsedBy(this)));
   val powerCooldowns = new LinkedHashMap[Power, Long] ++= powers.map((_, 0.longValue));
   val skills = new LinkedHashMap[String, Int] ++= baseSkills;
-  var path : Queue[(Int, Int)] = null;
-  var moveProgress : Long = 0;
+  protected var path : Queue[(Int, Int)] = null;
+  protected var moveProgress : Long = 0;
+  protected var dir : (Int, Int) = (0, 0);
  
   /* * * * * * * * * * * * * *
    * Methods.
@@ -81,14 +82,24 @@ abstract class Actor(
     // Move along the path.
     if (path != null) {
       val speed = skills(Skills.speed);
-      moveProgress += (speed * delta).longValue;
+      moveProgress += (speed * delta).toLong;
+      val (tileWidth, tileHeight) = (world.tileGrid.tileWidth, world.tileGrid.tileHeight);
+      node.layoutX = x * tileWidth + nodeOffsetX + tileWidth * dir._1 * moveProgress / minirpg.TENTOTHE11;
+      node.layoutY = y * tileHeight + nodeOffsetY + tileHeight * dir._2 * moveProgress / minirpg.TENTOTHE11;
+      
       if (moveProgress >= minirpg.TENTOTHE11) {
         val next = path.dequeue;
         x = next._1._1;
         y = next._1._2;
         path = next._2;
-        if (path.length == 0)
+        if (path.length == 0) {
           path = null;
+          dir = (0, 0);
+        }
+        else {
+          val (nX, nY) = path.front;
+          dir = (nX - x, nY - y);
+        }
         moveProgress = 0;
       }
     }
@@ -190,10 +201,18 @@ abstract class Actor(
   // Tell the actor to move to a coordinate.
   def setMoveTarget(targetX : Int, targetY : Int) = {
     path = world.findPath(x, y, targetX, targetY);
-    if (path != null && path.length == 0)
+    if (path != null && path.length == 0) {
       path = null;
+    }
+    else {
+      val (nX, nY) = path.front;
+      dir = (nX - x, nY - y);
+    }
     publish(ActorEvent(this, ActorEvent.MOVE_TARGET_SET));
   }
+  
+  // Check if we have a path.
+  def hasPath = path != null;
   
   
   /* * * * * * * * * * * * * *

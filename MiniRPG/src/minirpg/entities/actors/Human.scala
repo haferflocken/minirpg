@@ -30,7 +30,7 @@ class Human(
 }
 
 object Human {
-  val image = new Image("file:res\\sprites\\entities\\human-naked.png");
+  val image = new Image("file:res\\sprites\\entities\\tombstone.png");
   val imageWidth = image.width().toInt;
   val imageHeight = image.height().toInt;
 }
