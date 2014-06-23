@@ -9,15 +9,16 @@ import minirpg.model.world.Gear
 import minirpg.ui.animation.SpriteTransition
 import scalafx.util.Duration
 import scalafx.geometry.Rectangle2D
+import minirpg.ui.SpriteView
 
 class GearEntity(val id : String, val gear : Gear) extends Entity {
   
   val name = gear.name;
   override val description = gear.description;
   override val useable = true;
-  val node : Node = GearEntity.mkImageView;
-  val nodeWidth = GearEntity.frameWidth;
-  val nodeHeight = GearEntity.frameHeight;
+  val node : Node = SpriteView(GearEntity.sprite);
+  val nodeWidth = GearEntity.sprite.frameWidth;
+  val nodeHeight = GearEntity.sprite.frameHeight;
   
   override def beUsedBy(user : Entity) : Unit = {
     if (user.isInstanceOf[Actor]) {
@@ -31,20 +32,13 @@ class GearEntity(val id : String, val gear : Gear) extends Entity {
 }
 
 object GearEntity {
-  val sheet = new Image("file:res\\sprites\\entities\\drop.png");
-  val duration = new Duration(Duration(500));
-  val frameWidth = 32;
-  val frameHeight = 32;
-  val columns = 4;
-  val rows = 2;
-  
-  def mkImageView : ImageView = {
-    val out = new ImageView(sheet);
-    out.viewport = new Rectangle2D(0, 0, frameWidth, frameHeight);
-    val anim = new SpriteTransition(out, duration, frameWidth, frameHeight, columns, rows);
-    anim.play();
-    return out;
-  };
+  val sprite = new Sprite(
+      sheet = new Image("file:res\\sprites\\entities\\drop.png"),
+      duration = new Duration(Duration(500)),
+      frameWidth = 32,
+      frameHeight = 32,
+      columns = 4,
+      rows = 2);
 }
 
 object GearEntityBuilder extends EntityBuilder[GearEntity] {
