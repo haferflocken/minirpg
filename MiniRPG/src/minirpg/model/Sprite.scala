@@ -12,4 +12,8 @@ class Sprite(
     val columns : Int, 
     val rows : Int) {
   
+  def this(sheet : Image) = this(sheet, null, sheet.width().toInt, sheet.height().toInt, 1, 1);
+  
+  val isAnimated = columns > 1 || rows > 1;
+  
 }

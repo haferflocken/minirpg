@@ -11,6 +11,7 @@ import minirpg.actorAIMap
 import minirpg.model._
 import minirpg.model.world._
 import minirpg.entities._
+import minirpg.ui.SpriteView
 
 abstract class Actor(
     val id : String,
@@ -34,7 +35,11 @@ abstract class Actor(
   val skills = new LinkedHashMap[String, Int] ++= baseSkills;
   protected var path : Queue[(Int, Int)] = null;
   protected var moveProgress : Long = 0;
-  protected var dir : (Int, Int) = (0, 0);
+  private var _dir : (Int, Int) = (0, 0);
+  
+  val spriteView : SpriteView;
+  val idleSprite : Sprite;
+  val walkSprite : Sprite;
  
   /* * * * * * * * * * * * * *
    * Methods.
@@ -215,6 +220,26 @@ abstract class Actor(
   // Check if we have a path.
   def hasPath = path != null;
   
+  // Set the direction we're going.
+  def dir_=(o : (Int, Int)) : Unit = {
+    _dir = o;
+    if (_dir == (0, 0)) {
+      spriteView.sprite = idleSprite;
+    }
+    else {
+      spriteView.sprite = walkSprite;
+      _dir match {
+        case (1, 0) => spriteView.rotate = 90;
+        case (-1, 0) => spriteView.rotate = 270;
+        case (0, 1) => spriteView.rotate = 180;
+        case (0, -1) => spriteView.rotate = 0;
+        case _ => spriteView.rotate = 0;
+      };
+    }
+  };
+  
+  // Get the direction we're going.
+  def dir = _dir;
   
   /* * * * * * * * * * * * * *
    * Helper methods.

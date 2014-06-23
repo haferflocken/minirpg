@@ -19,8 +19,13 @@ class SpriteView extends ImageView {
     _sprite = o;
     image = _sprite.sheet;
     viewport = new Rectangle2D(0, 0, _sprite.frameWidth, _sprite.frameHeight);
-    _anim = new SpriteTransition(this, _sprite.duration, _sprite.frameWidth, _sprite.frameHeight, _sprite.columns, _sprite.rows);
-    anim.play();
+    if (_sprite.isAnimated) {
+      _anim = new SpriteTransition(this, _sprite.duration, _sprite.frameWidth, _sprite.frameHeight, _sprite.columns, _sprite.rows);
+      anim.play();
+    }
+    else {
+      _anim = null;
+    }
   };
   
   def anim = _anim;
@@ -29,8 +34,8 @@ class SpriteView extends ImageView {
 
 object SpriteView {
   
-  def apply(_sprite : Sprite) = new SpriteView {
-    sprite = _sprite;
+  def apply(s : Sprite) = new SpriteView {
+    sprite = s;
   };
   
 }

@@ -9,6 +9,8 @@ import minirpg.model.world._
 import scalafx.scene.image.Image
 import scalafx.scene.image.ImageView
 import minirpg.actorai.MoveRightAI
+import scalafx.util.Duration
+import minirpg.ui.SpriteView
 
 class Human(
     override val id : String,
@@ -24,15 +26,26 @@ class Human(
   
   val vitals = new LinkedHashMap[String, (Int, Int)] ++= Map("Blood" -> (100, 100), "Oxygen" -> (100, 100), "Energy" -> (100, 100));
   
-  val node = new ImageView(Human.image);
-  val nodeWidth = Human.imageWidth;
-  val nodeHeight = Human.imageHeight;
+  val spriteView = SpriteView(Human.idleSprite);
+  val idleSprite = Human.idleSprite;
+  val walkSprite = Human.walkSprite;
+  
+  val node = spriteView;
+  val nodeWidth = Human.frameWidth;
+  val nodeHeight = Human.frameHeight;
 }
 
 object Human {
-  val image = new Image("file:res\\sprites\\entities\\tombstone.png");
-  val imageWidth = image.width().toInt;
-  val imageHeight = image.height().toInt;
+  val frameWidth = 32;
+  val frameHeight = 32;
+  
+  val idleSprite = new Sprite(new Image("file:res\\sprites\\entities\\actors\\human\\idle.png"));
+  val walkSprite = new Sprite(
+      new Image("file:res\\sprites\\entities\\actors\\human\\walk.png"),
+      new Duration(Duration(500)),
+      frameWidth,
+      frameHeight,
+      4, 2);
 }
 
 object HumanBuilder extends ActorBuilder[Human] {
