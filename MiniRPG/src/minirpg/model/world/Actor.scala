@@ -208,12 +208,12 @@ abstract class Actor(
     path = world.findPath(x, y, targetX, targetY);
     if (path != null && path.length == 0) {
       path = null;
+      dir = (0, 0);
     }
     else {
       val (nX, nY) = path.front;
       dir = (nX - x, nY - y);
     }
-    moveProgress = 0;
     publish(ActorEvent(this, ActorEvent.MOVE_TARGET_SET));
   }
   
@@ -222,13 +222,12 @@ abstract class Actor(
   
   // Set the direction we're going.
   def dir_=(o : (Int, Int)) : Unit = {
-    _dir = o;
-    if (_dir == (0, 0)) {
+    if (o == (0, 0)) {
       spriteView.sprite = idleSprite;
     }
     else {
       spriteView.sprite = walkSprite;
-      _dir match {
+      o match {
         case (1, 0) => spriteView.rotate = 90;
         case (-1, 0) => spriteView.rotate = 270;
         case (0, 1) => spriteView.rotate = 180;
@@ -236,6 +235,12 @@ abstract class Actor(
         case _ => spriteView.rotate = 0;
       };
     }
+    if (o != _dir || o == (0, 0)) {
+      moveProgress = 0;
+      x = x;
+      y = y;
+    }
+    _dir = o;
   };
   
   // Get the direction we're going.
