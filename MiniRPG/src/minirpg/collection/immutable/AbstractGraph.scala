@@ -19,6 +19,7 @@ abstract class AbstractGraph[K] {
   val nodes : Set[K];
   val connections : Map[K, Map[K, Int]];
   val optimize : Boolean;
+  type This <: AbstractGraph[K];
   
   
   /**
@@ -116,4 +117,10 @@ abstract class AbstractGraph[K] {
     
     return out.toMap;
   }
+  
+  
+  def addConnections(es : (K, K, Int)*) : This;
+  
+  def removeConnections(es : (K, K)*) : This;
+  
 }

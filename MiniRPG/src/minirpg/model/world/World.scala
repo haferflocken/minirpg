@@ -30,6 +30,8 @@ class World(
     val tileGrid : TileGrid)
     extends Savable {
   
+  private var _navMap = tileGrid.navMap;
+  
   private val _entities = new ObservableBuffer[Entity];
   
   val entityGroup = new Pane;
@@ -84,11 +86,19 @@ class World(
   val height = tileGrid.height;
   val area = tileGrid.area;
   
+  def navMap = _navMap;
+  
+  def disableNavConnection(x1 : Int, y1 : Int, x2 : Int, y2 : Int) : Unit =
+    _navMap = _navMap.removeConnections(((x1, y1), (x2, y2)), ((x2, y2), (x1, y1)));
+  
+  def enableNavConnection(x1 : Int, y1 : Int, x2 : Int, y2 : Int) : Unit =
+    _navMap = _navMap.addConnections(((x1, y1), (x2, y2), 1), ((x2, y2), (x1, y1), 1));
+   
   def findPath(x1 : Int, y1 : Int, x2 : Int, y2 : Int) : Queue[(Int, Int)] = {
     val startId = (x1, y1);
     val endId = (x2, y2);
     
-    val path = tileGrid.navMap.findPath(startId, endId);
+    val path = _navMap.findPath(startId, endId);
     debugDisplayPath(path);
     if (path == null)
       println("No path: failed to find path.");
@@ -96,7 +106,7 @@ class World(
   }
   
   def getSpotNextTo(x : Int, y : Int) : (Int, Int) = {
-    val connections = tileGrid.navMap.connections((x, y));
+    val connections = _navMap.connections((x, y));
     if (connections.isEmpty)
       return (x, y);
     for ((p, c) <- connections) {
@@ -157,7 +167,7 @@ class World(
       };
       addParticle(particle, new Duration(Duration.INDEFINITE));
     };
-    tileGrid.navMap.render(renderNode, renderEdge);
+    _navMap.render(renderNode, renderEdge);
   };
   if (minirpg.global_debugWorldNavMap)
     debugDisplayNavMap;

@@ -11,6 +11,9 @@ class HeuristicGraph[K](
     override val optimize : Boolean = false)
     extends AbstractGraph[K] {
   
+  type This = HeuristicGraph[K];
+  
+  
   /**
    * Find paths using A*.
    */
@@ -92,6 +95,32 @@ class HeuristicGraph[K](
     
     return outPaths.toMap;
   }
+  
+  
+  def addConnections(es : (K, K, Int)*) : HeuristicGraph[K] = {
+    var outConnections = connections;
+    for ((a, b, weight) <- es) {
+      val cons = connections.getOrElse(a, Map[K, Int]());
+      val outCons = cons + ((b, weight));
+      outConnections = (outConnections - a) + ((a, outCons));
+    }
+    
+    return new HeuristicGraph(nodes, outConnections, heuristic, false);
+  };
+  
+  
+  def removeConnections(es : (K, K)*) : HeuristicGraph[K] = {
+    var outConnections = connections;
+    for ((a, b) <- es) {
+      val cons = connections.getOrElse(a, null);
+      if (cons != null && cons.contains(b)) {
+        val outCons = cons - b;
+        outConnections = (outConnections - a) + ((a, outCons));
+      }
+    }
+    
+    return new HeuristicGraph(nodes, outConnections, heuristic, false);
+  };
 
 }
 

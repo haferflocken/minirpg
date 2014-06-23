@@ -8,23 +8,29 @@ import scalafx.scene.image.Image
 class Door(val id : String, val name : String, val orientation : Door.Orientation) extends Entity {
   
   override val useable = true;
-  private val _node = new ImageView(orientation.closedImage);
+  private val _node = new ImageView(orientation.openImage);
   val node : Node = _node;
   val nodeWidth = Corpse.imageWidth;
   val nodeHeight = Corpse.imageHeight;
   
   var locked = false;
   
-  var _open = false;
+  var _open = true;
   
   def open = _open;
   
   def open_=(o : Boolean) : Unit = {
+    if (o == _open)
+      return;
     _open = o;
-    if (_open == false)
+    if (_open == false) {
       _node.image = orientation.closedImage;
-    else
+      world.disableNavConnection(x, y, x + orientation.dX, y + orientation.dY);
+    }
+    else {
       _node.image = orientation.openImage;
+      world.enableNavConnection(x, y, x + orientation.dX, y + orientation.dY);
+    }
   };
   
   override def beUsedBy(user : Entity) = {
@@ -39,11 +45,11 @@ class Door(val id : String, val name : String, val orientation : Door.Orientatio
 
 object Door {
   
-  sealed abstract class Orientation(val dir : Int, val openImage : Image, val closedImage : Image);
-  case object Top extends Orientation(0, topOpen, topClosed);
-  case object Left extends Orientation(1, leftOpen, leftClosed);
-  case object Bottom extends Orientation(2, bottomOpen, bottomClosed);
-  case object Right extends Orientation(3, rightOpen, rightClosed);
+  sealed abstract class Orientation(val dX : Int, val dY : Int, val openImage : Image, val closedImage : Image);
+  case object Top extends Orientation(0, -1, topOpen, topClosed);
+  case object Left extends Orientation(-1, 0, leftOpen, leftClosed);
+  case object Bottom extends Orientation(0, 1, bottomOpen, bottomClosed);
+  case object Right extends Orientation(1, 0, rightOpen, rightClosed);
   
   val topOpen = new Image("file:res\\sprites\\entities\\doors\\topOpen.png");
   val topClosed = new Image("file:res\\sprites\\entities\\doors\\topClosed.png");

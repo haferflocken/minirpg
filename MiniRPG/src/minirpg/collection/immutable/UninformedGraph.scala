@@ -20,6 +20,9 @@ class UninformedGraph[K](
   override val optimize : Boolean = false)
   extends AbstractGraph[K] {
   
+  type This = UninformedGraph[K];
+  
+  
   /**
    * Find paths using Dijkstra's Algorithm, adapted from pseudocode courtesy of Wikipedia.
    */
@@ -90,4 +93,16 @@ class UninformedGraph[K](
     
     return outPaths.toMap;
   }
+  
+  
+  def addConnections(es : (K, K, Int)*) : UninformedGraph[K] = {
+    // TODO
+    return null;
+  };
+  
+  
+  def removeConnections(es : (K, K)*) : UninformedGraph[K] = {
+    // TODO
+    return null;
+  };
 }
