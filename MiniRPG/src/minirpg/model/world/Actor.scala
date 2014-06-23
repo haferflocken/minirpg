@@ -208,6 +208,7 @@ abstract class Actor(
       val (nX, nY) = path.front;
       dir = (nX - x, nY - y);
     }
+    moveProgress = 0;
     publish(ActorEvent(this, ActorEvent.MOVE_TARGET_SET));
   }
   

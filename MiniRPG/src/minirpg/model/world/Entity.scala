@@ -51,6 +51,8 @@ trait Entity {
   def nodeOffsetX = world.tileGrid.tileWidth / 2 - nodeWidth / 2;
   def nodeOffsetY = world.tileGrid.tileHeight / 2 - nodeHeight / 2;
   
+  def isNextTo(oX : Int, oY : Int) = world.tileGrid.navMap.connections((x, y)).contains((oX, oY));
+  
   def tick(delta : Long) : Unit = {};
   
   def beUsedBy(user : Entity) : Unit = {};
