@@ -206,11 +206,11 @@ abstract class Actor(
   // Tell the actor to move to a coordinate.
   def setMoveTarget(targetX : Int, targetY : Int) = {
     path = world.findPath(x, y, targetX, targetY);
-    if (path != null && path.length == 0) {
+    if (path == null || path.length == 0) {
       path = null;
       dir = (0, 0);
     }
-    else {
+    else if (path != null) {
       val (nX, nY) = path.front;
       dir = (nX - x, nY - y);
     }
