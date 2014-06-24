@@ -34,7 +34,8 @@ class WieldMenu(actor : Actor) extends TilePane with Subscriber[Actor.Event, Act
     children.clear;
     
     var i = 0;
-    for (g <- actor.equipped if actor.canWield(g)) {
+    val wieldable = actor.equipped.filter(actor.canWield(_));
+    for (g <- wieldable) {
       i += 1;
       val accelKey = numsToDigitKeys.getOrElse(i, null);
       val button = new WieldButton(g, actor, accelKey);
@@ -45,11 +46,7 @@ class WieldMenu(actor : Actor) extends TilePane with Subscriber[Actor.Event, Act
       }
     }
     
-    for (g <- actor.equipped if !actor.canWield(g)) {
-      children.add(new WieldButton(g, actor, null));
-    }
-    
-    prefColumns = actor.equipped.size;
+    prefColumns = wieldable.size;
   }
   
   def init = {
