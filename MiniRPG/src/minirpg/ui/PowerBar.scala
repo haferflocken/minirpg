@@ -2,7 +2,7 @@ package minirpg.ui
 
 import minirpg.numsToLetterActionKeys
 import minirpg.model._
-import minirpg.model.world.ActorEvent._
+import minirpg.model.world.Actor.Event._
 import scalafx.Includes._
 import scalafx.scene.layout.TilePane
 import scala.collection.mutable.Subscriber
@@ -25,14 +25,13 @@ import scala.collection.mutable
 import scalafx.scene.image.ImageView
 import scalafx.scene.Node
 
-class PowerBar(gui : ActorGUI, actor : Actor) extends TilePane with Subscriber[ActorEvent, Actor] with Initializable with Tickable {
+class PowerBar(gui : ActorGUI, actor : Actor) extends TilePane with Subscriber[Actor.Event, Actor] with Initializable with Tickable {
   orientation = Orientation.HORIZONTAL;
   
   private val buttons = new mutable.ArrayBuffer[PowerButton];
   
-  def notify(pub : Actor, e : ActorEvent) : Unit = {
-    if (e.event == EQUIP || e.event == UNEQUIP || e.event == WIELD || e.event == UNWIELD || e.event == POWER_NOW_USEABLE || e.event == POWER_NO_LONGER_USEABLE)
-      refreshButtons;
+  def notify(pub : Actor, e : Actor.Event) : Unit = {
+    refreshButtons;
   }
   
   def refreshButtons : Unit = {
@@ -77,12 +76,10 @@ class PowerBar(gui : ActorGUI, actor : Actor) extends TilePane with Subscriber[A
   def init = {
     actor.subscribe(
         this,
-        e => e.event == EQUIP ||
-             e.event == UNEQUIP ||
-             e.event == WIELD || 
-             e.event == UNWIELD ||
-             e.event == POWER_NOW_USEABLE || 
-             e.event == POWER_NO_LONGER_USEABLE);
+        _ match {
+          case Equip(_) | Unequip(_) | Wield(_) | Unwield(_) | PowerNowUseable(_) | PowerNowNotUseable(_) => true;
+          case _ => false;
+        });
     refreshButtons;
   }
   

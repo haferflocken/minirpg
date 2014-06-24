@@ -12,6 +12,7 @@ import minirpg.model._
 import minirpg.model.world._
 import minirpg.entities._
 import minirpg.ui.SpriteView
+import minirpg.TENTOTHE9 
 
 abstract class Actor(
     val id : String,
@@ -20,7 +21,7 @@ abstract class Actor(
     val wieldSlots : Vector[String],
     defaultPowers : Vector[Power],
     baseSkills : Map[String, Int],
-    val brain : ActorAI) extends Entity with Publisher[ActorEvent] {
+    val brain : ActorAI) extends Entity with Publisher[Actor.Event] {
   
   type Pub = Actor;
   override val useable = true;
@@ -36,7 +37,7 @@ abstract class Actor(
   protected var path : Queue[(Int, Int)] = null;
   protected var moveProgress : Long = 0;
   private var _dir : (Int, Int) = (0, 0);
-  private var _state : Actor.State = Actor.Normal;
+  private var _state : Actor.State = Actor.State.Normal;
   private var _stateTimer : Long = 0;
   
   val spriteView : SpriteView;
@@ -50,7 +51,7 @@ abstract class Actor(
   
   override def beUsedBy(user : Entity) : Unit = {
     // TODO
-    publish(ActorEvent(this, ActorEvent.BE_USED));
+    publish(Actor.Event.BeUsedBy(user));
   }
   
   override def tick(delta : Long) : Unit = {
@@ -64,7 +65,7 @@ abstract class Actor(
         };
         world.addEntity(corpse);
         world.removeEntity(this);
-        publish(ActorEvent(this, ActorEvent.DIE));
+        publish(Actor.Event.Die);
         return;
       }
     }
@@ -74,9 +75,9 @@ abstract class Actor(
       val canUse = p.canBeUsedBy(this);
       powerUseables(p) = canUse;
       if (u && !canUse)
-        publish(ActorEvent(this, ActorEvent.POWER_NO_LONGER_USEABLE));
+        publish(Actor.Event.PowerNowNotUseable(p));
       else if (!u && canUse)
-        publish(ActorEvent(this, ActorEvent.POWER_NOW_USEABLE));
+        publish(Actor.Event.PowerNowUseable(p));
     }
     
     // Cool powers off.
@@ -87,8 +88,8 @@ abstract class Actor(
       else if (c != p.cooldown) powerCooldowns(p) = p.cooldown;
     }
     
-    // When feeling normal, move and think.
-    if (_state == Actor.Normal) {
+    // Move and think when not stunned.
+    if (_state != Actor.State.Stunned) {
       // Move along the path.
       if (path != null) {
         val speed = skills(Skills.speed);
@@ -124,7 +125,7 @@ abstract class Actor(
       _stateTimer -= delta;
       if (_stateTimer <= 0) {
         _stateTimer = 0;
-        _state = Actor.Normal;
+        _state = Actor.State.Normal;
         spriteView.sprite = idleSprite;
       }
     }
@@ -166,7 +167,7 @@ abstract class Actor(
     //initEquipped;
     initPowers;
     initSkills;
-    publish(ActorEvent(this, ActorEvent.EQUIP));
+    publish(Actor.Event.Equip(g));
     
     return out;
   }
@@ -180,7 +181,7 @@ abstract class Actor(
     unequipNoUpdate(g);
     initPowers;
     initSkills;
-    publish(ActorEvent(this, ActorEvent.UNEQUIP));
+    publish(Actor.Event.Unequip(g));
   }
   
   // Returns true if the actor has the wield slots to wield a gear, false otherwise.
@@ -206,7 +207,7 @@ abstract class Actor(
     }
     
     initPowers;
-    publish(ActorEvent(this, ActorEvent.WIELD));
+    publish(Actor.Event.Wield(g));
   }
   
   // Have this actor unwield a piece of gear.
@@ -216,7 +217,7 @@ abstract class Actor(
     
     unwieldNoUpdate(g);
     initPowers;
-    publish(ActorEvent(this, ActorEvent.UNWIELD));
+    publish(Actor.Event.Unwield(g));
   }
   
   // Tell the actor to move to a coordinate.
@@ -230,7 +231,7 @@ abstract class Actor(
       val (nX, nY) = path.front;
       dir = (nX - x, nY - y);
     }
-    publish(ActorEvent(this, ActorEvent.MOVE_TARGET_SET));
+    publish(Actor.Event.MoveTargetSet(targetX, targetY));
   }
   
   // Check if we have a path.
@@ -271,10 +272,10 @@ abstract class Actor(
     _state = newState;
     _stateTimer = duration;
     
-    import Actor._
+    import Actor.State._
     _state match {
-      case Normal => spriteView.sprite = idleSprite;
       case Stunned => spriteView.sprite = stunnedSprite;
+      case _ => spriteView.sprite = idleSprite;
     }
   };
   
@@ -334,36 +335,29 @@ abstract class Actor(
   }
 }
 
-sealed trait ActorEvent {
-  val actor : Actor;
-  val event : String;
-}
 
-object ActorEvent {
-  val BE_USED = "be used";
-  val EQUIP = "equip";
-  val UNEQUIP = "unequip";
-  val WIELD = "wield";
-  val UNWIELD = "unwield";
-  val MOVE_TARGET_SET = "move target set";
-  val DIE = "die";
-  val VITALS_CHANGED = "vitals changed";
-  val POWER_NOW_USEABLE = "power now useable";
-  val POWER_NO_LONGER_USEABLE = "power no longer useable";
-    
-  def apply(a : Actor, e : String) : ActorEvent = {
-    return new ActorEvent {
-      val actor = a;
-      val event = e;
-    }
+object Actor {
+  abstract class State(val name : String);
+  object State {
+    case object Normal extends State("normal");
+    case object Stunned extends State("stunned");
+  }
+  
+  abstract class Event(val eventName : String);
+  object Event {
+    case class BeUsedBy(val by : Entity) extends Event("be used");
+    case class Equip(val gear : Gear) extends Event("equip");
+    case class Unequip(val gear : Gear) extends Event("unequip");
+    case class Wield(val gear : Gear) extends Event("wield");
+    case class Unwield(val gear : Gear) extends Event("unwield");
+    case class MoveTargetSet(val targetX : Int, val targetY : Int) extends Event("move target set");
+    case object Die extends Event("die");
+    case object VitalsChanged extends Event("vitals changed");
+    case class PowerNowUseable(val power : Power) extends Event("power now useable");
+    case class PowerNowNotUseable(val power : Power) extends Event("power now not useable");
   }
 }
 
-object Actor {
-  class State(val name : String);
-  case object Normal extends State("normal");
-  case object Stunned extends State("stunned");
-}
 
 abstract class ActorBuilder[A <: Actor] extends EntityBuilder[A] {
   

@@ -91,7 +91,7 @@ object CyanConduitBlasterAttack extends ConduitBlasterAttack {
     addCooldown(user);
     mkParticles(user.world, region);
     for (t <- targets.collect({case a : Actor => a})) {
-      t.state = (Actor.Stunned, TENTOTHE9 * 24 / 10);
+      t.state = (Actor.State.Stunned, TENTOTHE9 * 24 / 10);
     }
   }
   

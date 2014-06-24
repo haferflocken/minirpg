@@ -10,9 +10,10 @@ import scalafx.geometry.Pos
 import scalafx.scene.control.Tooltip
 import javafx.scene.input.KeyCode
 import scala.collection.mutable.Subscriber
+import minirpg.model.world.Actor.Event._
 
-class WieldButton(gear : Gear, actor : Actor, accelKey : KeyCode) extends StackPane with Subscriber[ActorEvent, Actor] {
-  actor.subscribe(this, e => e.event == ActorEvent.WIELD || e.event == ActorEvent.UNWIELD);
+class WieldButton(gear : Gear, actor : Actor, accelKey : KeyCode) extends StackPane with Subscriber[Actor.Event, Actor] {
+  actor.subscribe(this, _ match { case Wield(_) | Unwield(_) => true; case _ => false });
   
   private val _width = 0;
   private val _height = 0;
@@ -41,7 +42,7 @@ class WieldButton(gear : Gear, actor : Actor, accelKey : KeyCode) extends StackP
       actor.wield(gear);
   };
   
-  def notify(pub : Actor, event : ActorEvent) : Unit = {
+  def notify(pub : Actor, event : Actor.Event) : Unit = {
     if (actor.isWielding(gear))
       imageView.image = gear.uiWieldImage;
     else 

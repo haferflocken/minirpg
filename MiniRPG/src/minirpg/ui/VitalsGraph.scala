@@ -12,7 +12,7 @@ import scalafx.geometry.Insets
 import minirpg.model.world._
 
 class VitalsGraph(actor : Actor) extends GridPane
-  with Subscriber[ActorEvent, Actor] with Initializable {
+  with Subscriber[Actor.Event, Actor] with Initializable {
   hgap = 8;
   vgap = 2;
   padding = Insets(2, 4, 2, 4);
@@ -21,7 +21,7 @@ class VitalsGraph(actor : Actor) extends GridPane
   
   val vitalNames = actor.vitals.keySet.toVector
   
-  def notify(pub : Actor, event : ActorEvent) : Unit = {
+  def notify(pub : Actor, event : Actor.Event) : Unit = {
     children.clear;
     var i = 0;
     for (v <- vitalNames) {
@@ -47,7 +47,7 @@ class VitalsGraph(actor : Actor) extends GridPane
   }
   
   def init = {
-    actor.subscribe(this, e => e.event == ActorEvent.VITALS_CHANGED);
+    actor.subscribe(this, _ match { case Actor.Event.VitalsChanged => true; case _ => false });
     notify(null, null);
   }
   

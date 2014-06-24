@@ -49,7 +49,7 @@ object Human {
       4, 2);
   val stunnedSprite = new Sprite(
       new Image("file:res\\sprites\\entities\\actors\\human\\stunned.png"),
-      new Duration(Duration(400)),
+      new Duration(Duration(800)),
       frameWidth,
       frameHeight,
       7, 1);

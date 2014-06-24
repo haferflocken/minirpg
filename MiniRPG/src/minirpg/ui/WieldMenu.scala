@@ -24,13 +24,13 @@ import scalafx.scene.layout.Border
 import scalafx.scene.layout.Background
 import scala.collection.mutable.Subscriber
 import scalafx.geometry.Orientation
-import minirpg.model.world.ActorEvent._
+import minirpg.model.world.Actor.Event._
 import minirpg.model.world._
 
-class WieldMenu(actor : Actor) extends TilePane with Subscriber[ActorEvent, Actor] with Initializable {
+class WieldMenu(actor : Actor) extends TilePane with Subscriber[Actor.Event, Actor] with Initializable {
   orientation = Orientation.HORIZONTAL;
   
-  def notify(pub : Actor, event : ActorEvent) : Unit = {
+  def notify(pub : Actor, event : Actor.Event) : Unit = {
     children.clear;
     
     var i = 0;
@@ -53,7 +53,7 @@ class WieldMenu(actor : Actor) extends TilePane with Subscriber[ActorEvent, Acto
   }
   
   def init = {
-    actor.subscribe(this, e => e.event == EQUIP || e.event == UNEQUIP);
+    actor.subscribe(this, _ match { case Equip(_) | Unequip(_) => true; case _ => false });
     notify(null, null);
   }
   
