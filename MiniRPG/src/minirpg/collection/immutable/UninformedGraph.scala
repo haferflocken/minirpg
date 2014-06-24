@@ -105,4 +105,8 @@ class UninformedGraph[K](
     // TODO
     return null;
   };
+  
+  
+  def setConnections(o : Map[K, Map[K, Int]]) : UninformedGraph[K] = 
+    new UninformedGraph(nodes, o, optimize);
 }

@@ -123,4 +123,6 @@ abstract class AbstractGraph[K] {
   
   def removeConnections(es : (K, K)*) : This;
   
+  def setConnections(o : Map[K, Map[K, Int]]) : This;
+  
 }

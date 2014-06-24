@@ -44,15 +44,38 @@ class Overworld(
       closest(l1) = l2 +: closest(l1);
     }
     
-    // Find the paths through the terrain.
-    val paths = terrain.navMap.findPaths(closest.map(p => (p._1.coords, p._2.map(_.coords))).toMap);
+    // Find the paths through the terrain sequentially so the paths can affect each other.
+    val closestCoords = closest.map(p => (p._1.coords, p._2.map(_.coords))).toMap;
+    val pathBuff = new mutable.HashMap[((Int, Int), (Int, Int)), Queue[(Int, Int)]];
+    var navMap = terrain.navMap;
+    for ((a, bs) <- closestCoords; b <- bs) {
+      val path = navMap.findPath(a, b);
+      if (path != null) {
+        pathBuff += (((a, b), path));
+        
+        val cons = navMap.connections;
+        val newCons = cons.map(x => {
+          val (a, bs) = (x._1, x._2);
+          if (path contains a) {
+            (a, bs.map(y => {
+              val (b, weight) = (y._1, y._2);
+              if (path contains b) (b, 1);
+              else y;
+            }));
+          }
+          else x;
+        });
+        navMap = navMap.setConnections(newCons);
+      }
+    }
+    //val paths = terrain.navMap.findPaths(closestCoords);
     
-    // Make the roads.
+    // Make the paths into roads.
     val coordsToLandmark : Map[(Int, Int), Landmark] = landmarks.map(l => ((l.x, l.y), l)).toMap;
-    paths.map(p => (
+    pathBuff.map(p => (
         (coordsToLandmark(p._1._1), coordsToLandmark(p._1._2)),
         p._2.toVector
-      ));
+      )).toMap;
   };
   
   def artilleryOuterRadius = _artilleryOuterRadius;

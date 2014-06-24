@@ -35,23 +35,23 @@ class Terrain(
       if (grid(i)(j) > waterLevel) {
         if (isInBounds(i - 1, j) && grid(i - 1)(j) > waterLevel) {
           val s = gradient(i - 1)(j)._1;
-          val weight = (s * s).toInt + 1;
+          val weight = (s * s).toInt + 10;
           cons += (((i - 1, j), weight));
         }
         if (isInBounds(i, j - 1) && grid(i)(j - 1) > waterLevel) {
           val s = gradient(i)(j - 1)._2;
-          val weight = (s * s).toInt + 1;
+          val weight = (s * s).toInt + 10;
           cons += (((i, j - 1), weight));
         }
         if (isInBounds(i + 1, j) && grid(i + 1)(j) > waterLevel) {
           val s = gradient(i)(j)._1
-          val weight = (s * s).toInt + 1;
+          val weight = (s * s).toInt + 10;
           cons += (((i + 1, j), weight));
           
         }
         if (isInBounds(i, j + 1) && grid(i)(j + 1) > waterLevel) {
           val s = gradient(i)(j)._2;
-          val weight = (s * s).toInt + 1;
+          val weight = (s * s).toInt + 10;
           cons += (((i, j + 1), weight));
         }
       }

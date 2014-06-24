@@ -121,6 +121,10 @@ class HeuristicGraph[K](
     
     return new HeuristicGraph(nodes, outConnections, heuristic, false);
   };
+  
+  
+  def setConnections(o : Map[K, Map[K, Int]]) : HeuristicGraph[K] = 
+    new HeuristicGraph(nodes, o, heuristic, optimize);
 
 }
 
