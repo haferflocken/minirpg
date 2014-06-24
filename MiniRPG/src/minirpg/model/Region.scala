@@ -3,8 +3,9 @@ package minirpg.model
 import scala.collection.mutable
 import scalafx.scene.canvas.Canvas
 import scalafx.scene.paint.Color
+import scala.collection.immutable.HashSet
 
-class Region(val coords : Set[(Int, Int)]) extends Canvasable {
+class Region(val coords : HashSet[(Int, Int)]) extends Canvasable {
   
   val leftmost = coords.minBy(_._1)._1;
   val rightmost = coords.maxBy(_._1)._1;
@@ -36,11 +37,7 @@ class Region(val coords : Set[(Int, Int)]) extends Canvasable {
   def contains(x : Int, y : Int) : Boolean = {
     val tX = x - anchorX;
     val tY = y - anchorY;
-    
-    for ((x, y) <- coords)
-      if (tX == x && tY == y) return true;
-    
-    return false;
+    return coords.contains((tX, tY));
   }
   
   def clip(clipX : Int, clipY : Int, clipWidth : Int, clipHeight : Int) : Region = {
@@ -100,15 +97,15 @@ class Region(val coords : Set[(Int, Int)]) extends Canvasable {
     return canvas;
   }
   
-  def normalizeCoords : Set[(Int, Int)] = coords.map(c => ((c._1 + anchorX, c._2 + anchorY)));
+  def normalizeCoords : HashSet[(Int, Int)] = coords.map(c => ((c._1 + anchorX, c._2 + anchorY)));
   
-  def zeroCoords : Set[(Int, Int)] = coords.map(c => ((c._1 - leftmost, c._2 - topmost)));
+  def zeroCoords : HashSet[(Int, Int)] = coords.map(c => ((c._1 - leftmost, c._2 - topmost)));
   
 }
 
 object Region {
   
-  def tile(x : Int, y : Int) : Region = new Region(Set((0, 0))) { anchorX = x; anchorY = y; };
+  def tile(x : Int, y : Int) : Region = new Region(HashSet((0, 0))) { anchorX = x; anchorY = y; };
   
   def circle(centerX : Int, centerY : Int, radius : Int) : Region = {
     return ring(centerX, centerY, radius, radius);
@@ -131,7 +128,7 @@ object Region {
     val bottom = -top;
      
     val coords = for (i <- left to right; j <- top to bottom) yield (i, j);
-    return new Region(coords.toSet) {
+    return new Region(HashSet() ++ coords) {
       anchorX = cX;
       anchorY = cY;
     }
@@ -148,7 +145,7 @@ object Region {
       for (i <- left to right) buff += ((i, top), (i, bottom));
       for (j <- top + 1 to bottom - 1) buff += ((left, j), (right, j));
     }
-    return new Region(buff.toSet) {
+    return new Region(HashSet() ++ buff) {
       anchorX = cX;
       anchorY = cY;
     };
