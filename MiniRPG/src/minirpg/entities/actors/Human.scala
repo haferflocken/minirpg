@@ -46,6 +46,12 @@ object Human {
       frameWidth,
       frameHeight,
       4, 2);
+  val stunnedSprite = new Sprite(
+      new Image("file:res\\sprites\\entities\\actors\\human\\stunned.png"),
+      new Duration(Duration(400)),
+      frameWidth,
+      frameHeight,
+      7, 1);
 }
 
 object HumanBuilder extends ActorBuilder[Human] {
