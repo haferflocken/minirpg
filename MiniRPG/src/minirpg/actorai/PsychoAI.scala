@@ -27,8 +27,14 @@ object PsychoAI extends ActorAI {
     
     // Murder it.
     if (target != null && !actor.hasPath && !actor.isNextTo(target.x, target.y) && actor.powers.contains(Move) && Move.canBeUsedBy(actor)) {
-      val (x, y) = actor.world.getSpotNextTo(target.x, target.y);
-      Move(actor, null, Region.tile(x, y));
+      nearRegion.anchorX = actor.x;
+      nearRegion.anchorY = actor.y;
+      if (nearRegion contains (target.x, target.y)) {
+        val (x, y) = actor.world.getSpotNextTo(target.x, target.y);
+        Move(actor, null, Region.tile(x, y));
+      }
+      else
+        targetOf -= actor;
     }
   };
 
