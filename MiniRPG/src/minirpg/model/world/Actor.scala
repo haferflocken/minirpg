@@ -36,10 +36,13 @@ abstract class Actor(
   protected var path : Queue[(Int, Int)] = null;
   protected var moveProgress : Long = 0;
   private var _dir : (Int, Int) = (0, 0);
+  private var _state : Actor.State = Actor.Normal;
+  private var _stateTimer : Long = 0;
   
   val spriteView : SpriteView;
   val idleSprite : Sprite;
   val walkSprite : Sprite;
+  val stunnedSprite : Sprite;
  
   /* * * * * * * * * * * * * *
    * Methods.
@@ -84,34 +87,47 @@ abstract class Actor(
       else if (c != p.cooldown) powerCooldowns(p) = p.cooldown;
     }
     
-    // Move along the path.
-    if (path != null) {
-      val speed = skills(Skills.speed);
-      moveProgress += (speed * delta).toLong;
-      val (tileWidth, tileHeight) = (world.tileGrid.tileWidth, world.tileGrid.tileHeight);
-      node.layoutX = x * tileWidth + nodeOffsetX + tileWidth * dir._1 * moveProgress / minirpg.TENTOTHE11;
-      node.layoutY = y * tileHeight + nodeOffsetY + tileHeight * dir._2 * moveProgress / minirpg.TENTOTHE11;
-      
-      if (moveProgress >= minirpg.TENTOTHE11) {
-        val next = path.dequeue;
-        x = next._1._1;
-        y = next._1._2;
-        path = next._2;
-        if (path.length == 0) {
-          path = null;
-          dir = (0, 0);
+    // When feeling normal, move and think.
+    if (_state == Actor.Normal) {
+      // Move along the path.
+      if (path != null) {
+        val speed = skills(Skills.speed);
+        moveProgress += (speed * delta).toLong;
+        val (tileWidth, tileHeight) = (world.tileGrid.tileWidth, world.tileGrid.tileHeight);
+        node.layoutX = x * tileWidth + nodeOffsetX + tileWidth * dir._1 * moveProgress / minirpg.TENTOTHE11;
+        node.layoutY = y * tileHeight + nodeOffsetY + tileHeight * dir._2 * moveProgress / minirpg.TENTOTHE11;
+        
+        if (moveProgress >= minirpg.TENTOTHE11) {
+          val next = path.dequeue;
+          x = next._1._1;
+          y = next._1._2;
+          path = next._2;
+          if (path.length == 0) {
+            path = null;
+            dir = (0, 0);
+          }
+          else {
+            val (nX, nY) = path.front;
+            dir = (nX - x, nY - y);
+          }
+          moveProgress = 0;
         }
-        else {
-          val (nX, nY) = path.front;
-          dir = (nX - x, nY - y);
-        }
-        moveProgress = 0;
       }
+      
+      // Think about life.
+      if (brain != null)
+        brain.tick(this, delta);
     }
     
-    // Think about life.
-    if (brain != null)
-      brain.tick(this, delta);
+    // Progress the state.
+    if (_stateTimer > 0) {
+      _stateTimer -= delta;
+      if (_stateTimer <= 0) {
+        _stateTimer = 0;
+        _state = Actor.Normal;
+        spriteView.sprite = idleSprite;
+      }
+    }
   }
   
   // Change the value of a vital.
@@ -246,6 +262,22 @@ abstract class Actor(
   // Get the direction we're going.
   def dir = _dir;
   
+  // Get the state.
+  def state = _state;
+  def stateTimer = _stateTimer;
+  
+  def state_=(tempState : (Actor.State, Long)) : Unit = {
+    val (newState, duration) = tempState;
+    _state = newState;
+    _stateTimer = duration;
+    
+    import Actor._
+    _state match {
+      case Normal => spriteView.sprite = idleSprite;
+      case Stunned => spriteView.sprite = stunnedSprite;
+    }
+  };
+  
   /* * * * * * * * * * * * * *
    * Helper methods.
    * * * * * * * * * * * * * */
@@ -302,7 +334,7 @@ abstract class Actor(
   }
 }
 
-trait ActorEvent {
+sealed trait ActorEvent {
   val actor : Actor;
   val event : String;
 }
@@ -325,6 +357,12 @@ object ActorEvent {
       val event = e;
     }
   }
+}
+
+object Actor {
+  class State(val name : String);
+  case object Normal extends State("normal");
+  case object Stunned extends State("stunned");
 }
 
 abstract class ActorBuilder[A <: Actor] extends EntityBuilder[A] {

@@ -7,7 +7,7 @@ class DeltaTicker(handler : (Long) => Unit) extends AnimationTimer {
   var lastTime : Long = 0;
   
   override def start() : Unit = {
-    lastTime = System.currentTimeMillis();
+    lastTime = System.currentTimeMillis() * 1000000;
     super.start();
   }
 

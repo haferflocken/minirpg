@@ -90,6 +90,9 @@ object CyanConduitBlasterAttack extends ConduitBlasterAttack {
     // TODO
     addCooldown(user);
     mkParticles(user.world, region);
+    for (t <- targets.collect({case a : Actor => a})) {
+      t.state = (Actor.Stunned, TENTOTHE9 * 24 / 10);
+    }
   }
   
   val uiImage = Power.uiImage;

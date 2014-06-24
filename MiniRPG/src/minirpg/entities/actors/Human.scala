@@ -29,6 +29,7 @@ class Human(
   val spriteView = SpriteView(Human.idleSprite);
   val idleSprite = Human.idleSprite;
   val walkSprite = Human.walkSprite;
+  val stunnedSprite = Human.stunnedSprite;
   
   val node = spriteView;
   val nodeWidth = Human.frameWidth;
