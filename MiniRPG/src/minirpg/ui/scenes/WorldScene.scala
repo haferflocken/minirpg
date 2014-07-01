@@ -13,6 +13,7 @@ import minirpg.util.Tickable
 import minirpg.model.world._
 import scalafx.scene.layout.Pane
 import scalafx.geometry.Pos
+import scalafx.scene.input.KeyCode
 
 class WorldScene(val world : World) extends Scene with Initializable with Tickable {
   
@@ -21,17 +22,28 @@ class WorldScene(val world : World) extends Scene with Initializable with Tickab
     maxWidth <== WorldScene.this.width;
     maxHeight <== WorldScene.this.height;
   };
+  val inspector = new ActorInspector(player) {
+    maxWidth <== WorldScene.this.width * 3 / 4;
+    maxHeight <== WorldScene.this.height * 3 / 4;
+  };
+  val inspectorPane = new StackPane {
+    alignment = Pos.CENTER;
+    content = inspector;
+    maxWidth <== WorldScene.this.width;
+    maxHeight <== WorldScene.this.height;
+  };
   val worldPane = new Pane {
     children.addAll(world.tileGrid.node, world.entityGroup, world.particleGroup);
   };
-  
-  fill = Color.BLACK;
-  content = new StackPane {
+  val contentStack = new StackPane {
     alignment = Pos.TOP_LEFT;
     children.addAll(worldPane, gui);
     minWidth <== WorldScene.this.width;
     minHeight <== WorldScene.this.height;
   };
+  
+  fill = Color.BLACK;
+  content = contentStack;
   
   onMouseMoved = (me : MouseEvent) => {
     gui.mouseX = me.x;
@@ -43,7 +55,16 @@ class WorldScene(val world : World) extends Scene with Initializable with Tickab
   };
 
   onKeyPressed = (ke : KeyEvent) => {
-
+    if (ke.code == KeyCode.TAB) {
+      if (contentStack.children.contains(gui)) {
+        contentStack.children.remove(gui);
+        contentStack.children.add(inspectorPane);
+      }
+      else {
+        contentStack.children.remove(inspectorPane);
+        contentStack.children.add(gui);
+      }
+    }
   };
   
   onKeyReleased = (ke : KeyEvent) => {
