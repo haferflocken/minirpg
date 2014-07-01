@@ -22,7 +22,7 @@ class WorldScene(val world : World) extends Scene with Initializable with Tickab
     maxWidth <== WorldScene.this.width;
     maxHeight <== WorldScene.this.height;
   };
-  val inspector = new ActorInspector(player) {
+  val inspector = new ActorInspector(this, player) {
     maxWidth <== WorldScene.this.width * 3 / 4;
     maxHeight <== WorldScene.this.height * 3 / 4;
   };
@@ -56,19 +56,23 @@ class WorldScene(val world : World) extends Scene with Initializable with Tickab
 
   onKeyPressed = (ke : KeyEvent) => {
     if (ke.code == KeyCode.TAB) {
-      if (contentStack.children.contains(gui)) {
-        contentStack.children.remove(gui);
-        contentStack.children.add(inspectorPane);
-      }
-      else {
-        contentStack.children.remove(inspectorPane);
-        contentStack.children.add(gui);
-      }
+      toggleGUIAndInspector;
     }
   };
   
   onKeyReleased = (ke : KeyEvent) => {
 
+  };
+  
+  def toggleGUIAndInspector : Unit = {
+    if (contentStack.children.contains(gui)) {
+      contentStack.children.remove(gui);
+      contentStack.children.add(inspectorPane);
+    }
+    else {
+      contentStack.children.remove(inspectorPane);
+      contentStack.children.add(gui);
+    }
   };
   
   def tick(delta : Long) : Unit = {

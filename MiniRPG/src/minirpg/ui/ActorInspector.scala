@@ -8,16 +8,28 @@ import scalafx.scene.Node
 import scalafx.scene.control.Button
 import scalafx.Includes._
 import scalafx.scene.paint.Color
+import scalafx.geometry.Pos
+import scalafx.scene.text.TextAlignment
+import minirpg.ui.scenes.WorldScene
+import scalafx.scene.layout.StackPane
 
-class ActorInspector(actor : Actor) extends BorderPane {
+class ActorInspector(worldScene : WorldScene, actor : Actor) extends BorderPane {
   
   // Styling.
   background = FXUtils.DefaultBackground;
   border = FXUtils.DefaultBorder;
   
-  // Top title bar: centered title and right aligned close button. TODO
+  // Top title bar: centered title and right aligned close button.
   val title = new Text(actor.name);
-  top = title;
+  val closeButton = new Button("[X]") {
+    onAction = handle { worldScene.toggleGUIAndInspector; };
+  };
+  val titlePane = new StackPane {
+    children.addAll(title, closeButton);
+    title.alignmentInParent = Pos.TOP_CENTER;
+    closeButton.alignmentInParent = Pos.TOP_RIGHT;
+  };
+  top = titlePane;
   
   // Skill display.
   val skillDisplay = new Text("Skill display");
