@@ -12,6 +12,9 @@ import scalafx.geometry.Pos
 import scalafx.scene.text.TextAlignment
 import minirpg.ui.scenes.WorldScene
 import scalafx.scene.layout.StackPane
+import scalafx.scene.control.TabPane
+import scalafx.scene.control.Tab
+import scalafx.geometry.Side
 
 class ActorInspector(worldScene : WorldScene, actor : Actor) extends BorderPane {
   
@@ -33,33 +36,32 @@ class ActorInspector(worldScene : WorldScene, actor : Actor) extends BorderPane 
   
   // Skill display.
   val skillDisplay = new Text("Skill display");
-  center = skillDisplay;
+  val skillTab = new Tab {
+    text = "Skills";
+    content = skillDisplay;
+  };
   
   // Equipment display.
   val equipmentDisplay = new Text("Equipment display");
+  val equipmentTab = new Tab {
+    text = "Equipment";
+    content = equipmentDisplay;
+  };
   
   // Power display, with display of unavailable powers and why they're unavailable.
   val powerDisplay = new Text("Power display");
-  
-  // Bottom tabs controlling what is displayed in the center.
-  val tabButtons = Vector(
-      new Button("Skills") {
-        onAction = handle { center = skillDisplay };
-      },
-      new Button("Equipment") {
-        onAction = handle { center = equipmentDisplay };
-      },
-      new Button("Powers") {
-        onAction = handle { center = powerDisplay };
-      }).map(b => (b.text(), b)).toMap;
-  
-  val tabBox = new HBox {
-    for (b <- tabButtons.values) {
-      b.prefWidth <== width / tabButtons.size;
-      children.add(b);
-    }
+  val powerTab = new Tab {
+    text = "Powers";
+    content = powerDisplay;
   };
-  bottom = tabBox;
+  
+  // The tab pane which displays the different tabs.
+  val tabPane = new TabPane {
+    tabs = Seq(skillTab, equipmentTab, powerTab);
+    tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE;
+    side = Side.BOTTOM;
+  };
+  center = tabPane;
   
 
 }
