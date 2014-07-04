@@ -68,10 +68,12 @@ class WorldScene(val world : World) extends Scene with Initializable with Tickab
     if (contentStack.children.contains(gui)) {
       contentStack.children.remove(gui);
       contentStack.children.add(inspectorPane);
+      inspector.enableUpdates;
     }
     else {
       contentStack.children.remove(inspectorPane);
       contentStack.children.add(gui);
+      inspector.disableUpdates;
     }
   };
   

@@ -27,16 +27,17 @@ object Skills {
   val yellowRes = "Yellow Resistance";
   val blackRes = "Black Resistance";
   
-  // Other
+  // Hidden.
   val confidence = "Confidence";
   val threat = "Threat";
 
   // Utilities.
-  val all = Vector(
+  val displayOrder = Vector(
     archery, blocking, melee, pointing, speed, style,
     pierceRes, slashRes, bashRes,
     emotionalRes, persaudeRes,
     cyanRes, magentaRes, yellowRes, blackRes);
+  val all = displayOrder ++ Vector(confidence, threat);
   val zeroTuples = all.map((_, 0));
   val zeroMap = zeroTuples.toMap;
   

@@ -15,8 +15,13 @@ import scalafx.scene.layout.StackPane
 import scalafx.scene.control.TabPane
 import scalafx.scene.control.Tab
 import scalafx.geometry.Side
+import scalafx.scene.layout.GridPane
+import scalafx.scene.control.ScrollPane
+import scala.collection.mutable.Subscriber
+import minirpg.model.Skills
 
 class ActorInspector(worldScene : WorldScene, actor : Actor) extends BorderPane {
+  import ActorInspector._
   
   // Styling.
   background = FXUtils.DefaultBackground;
@@ -35,21 +40,21 @@ class ActorInspector(worldScene : WorldScene, actor : Actor) extends BorderPane 
   top = titlePane;
   
   // Skill display.
-  val skillDisplay = new Text("Skill display");
+  val skillDisplay = new SkillDisplay(actor);
   val skillTab = new Tab {
     text = "Skills";
     content = skillDisplay;
   };
   
   // Equipment display.
-  val equipmentDisplay = new Text("Equipment display");
+  val equipmentDisplay = new EquipmentDisplay(actor);
   val equipmentTab = new Tab {
     text = "Equipment";
     content = equipmentDisplay;
   };
   
   // Power display, with display of unavailable powers and why they're unavailable.
-  val powerDisplay = new Text("Power display");
+  val powerDisplay = new PowerDisplay(actor);
   val powerTab = new Tab {
     text = "Powers";
     content = powerDisplay;
@@ -62,6 +67,67 @@ class ActorInspector(worldScene : WorldScene, actor : Actor) extends BorderPane 
     side = Side.BOTTOM;
   };
   center = tabPane;
-  
 
+  def enableUpdates : Unit = {
+    skillDisplay.enableUpdates;
+  };
+  
+  def disableUpdates : Unit = {
+    skillDisplay.disableUpdates;
+  };
+}
+
+object ActorInspector {
+  
+  // Displays skills in rows, sorted alphabetically.
+  class SkillDisplay(actor : Actor) extends ScrollPane with Subscriber[Actor.Event, Actor] {
+    val grid = new GridPane;
+    private var updatesEnabled = false;
+    
+    content = grid;
+    
+    def enableUpdates : Unit = {
+      if (updatesEnabled) return;
+      updatesEnabled = true;
+      actor.subscribe(this);
+      notify(actor, null);
+    };
+    
+    def disableUpdates : Unit = {
+      if (!updatesEnabled) return;
+      updatesEnabled = false;
+      actor.removeSubscription(this);
+    };
+    
+    def notify(pub : Actor, evt : Actor.Event) : Unit = {
+      grid.children.clear;
+      
+      var i = 0;
+      for (skill <- Skills.displayOrder) {
+        val value = actor.skills(skill);
+        grid.add(new Text(skill), 0, i);
+        grid.add(new Text(String.valueOf(value)), 1, i);
+        i += 1;
+      }
+    };
+  }
+  
+  // Display equipment in rows, sorted alphabetically by slot.
+  class EquipmentDisplay(actor : Actor) extends ScrollPane {
+    val grid = new GridPane;
+    
+    def refresh : Unit = {
+      grid.children.clear;
+    };
+  }
+  
+  // Display powers in rows, with available powers on top and unavailable powers on bottom.
+  class PowerDisplay(actor : Actor) extends ScrollPane {
+    val grid = new GridPane;
+    
+    def refresh : Unit = {
+      grid.children.clear;
+    };
+  }
+  
 }
