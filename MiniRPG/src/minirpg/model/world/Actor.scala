@@ -18,6 +18,7 @@ abstract class Actor(
     val id : String,
     val name : String,
     val equipSlots : Map[String, Int],
+    val equipSlotOrder : Vector[String],
     val wieldSlots : Vector[String],
     defaultPowers : Vector[Power],
     baseSkills : Map[String, Int],

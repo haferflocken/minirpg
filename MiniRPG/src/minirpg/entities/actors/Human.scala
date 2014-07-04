@@ -19,6 +19,7 @@ class Human(
       id,
       name,
       Map(("Head", 1), ("Torso", 1), ("Legs", 1), ("Hands", 1), ("Feet", 1), ("Hip", 2), ("Back", 2)),
+      Vector("Head", "Torso", "Legs", "Hands", "Feet", "Hip", "Back"),
       Vector("Main Hand", "Off Hand"),
       Vector(Move, Use, Examine),
       Skills.zeroMap ++ Map(Skills.speed -> 200),

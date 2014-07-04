@@ -70,10 +70,12 @@ class ActorInspector(worldScene : WorldScene, actor : Actor) extends BorderPane 
 
   def enableUpdates : Unit = {
     skillDisplay.enableUpdates;
+    equipmentDisplay.enableUpdates;
   };
   
   def disableUpdates : Unit = {
     skillDisplay.disableUpdates;
+    equipmentDisplay.disableUpdates;
   };
 }
 
@@ -89,8 +91,9 @@ object ActorInspector {
     def enableUpdates : Unit = {
       if (updatesEnabled) return;
       updatesEnabled = true;
-      actor.subscribe(this);
-      notify(actor, null);
+      import Actor.Event._
+      actor.subscribe(this, _ match { case Equip(_) | Unequip(_) => true; case _ => false });
+      this.notify(actor, null);
     };
     
     def disableUpdates : Unit = {
@@ -112,12 +115,42 @@ object ActorInspector {
     };
   }
   
-  // Display equipment in rows, sorted alphabetically by slot.
-  class EquipmentDisplay(actor : Actor) extends ScrollPane {
+  // Display equipment in groups of rows, each group representing a slot.
+  class EquipmentDisplay(actor : Actor) extends ScrollPane with Subscriber[Actor.Event, Actor] {
     val grid = new GridPane;
+    private var updatesEnabled = false;
     
-    def refresh : Unit = {
+    content = grid;
+    
+    def enableUpdates : Unit = {
+      if (updatesEnabled) return;
+      updatesEnabled = true;
+      
+      import Actor.Event._
+      actor.subscribe(this, _ match { case Equip(_) | Unequip(_) | Wield(_) | Unwield(_) => true; case _ => false });
+      this.notify(actor, null);
+    };
+    
+    def disableUpdates : Unit = {
+      if (!updatesEnabled) return;
+      updatesEnabled = false;
+      actor.removeSubscription(this);
+    };
+    
+    def notify(pub : Actor, evt : Actor.Event) : Unit = {
       grid.children.clear;
+      
+      val sortedGear = actor.equipSlotOrder.map(slot => (slot, actor.equipSlotContents(slot)));
+      
+      var i = 0;
+      for ((slot, gear) <- sortedGear) {
+        grid.add(new Text(slot), 0, i);
+        i += 1;
+        for (g <- gear) {
+          grid.add(new Text(g.name), 1, i);
+          i += 1;
+        }
+      }
     };
   }
   
