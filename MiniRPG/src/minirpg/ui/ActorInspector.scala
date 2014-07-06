@@ -71,11 +71,13 @@ class ActorInspector(worldScene : WorldScene, actor : Actor) extends BorderPane 
   def enableUpdates : Unit = {
     skillDisplay.enableUpdates;
     equipmentDisplay.enableUpdates;
+    powerDisplay.enableUpdates;
   };
   
   def disableUpdates : Unit = {
     skillDisplay.disableUpdates;
     equipmentDisplay.disableUpdates;
+    powerDisplay.disableUpdates;
   };
 }
 
@@ -155,11 +157,49 @@ object ActorInspector {
   }
   
   // Display powers in rows, with available powers on top and unavailable powers on bottom.
-  class PowerDisplay(actor : Actor) extends ScrollPane {
+  class PowerDisplay(actor : Actor) extends ScrollPane with Subscriber[Actor.Event, Actor] {
     val grid = new GridPane;
+    private var updatesEnabled = false;
     
-    def refresh : Unit = {
+    content = grid;
+    
+    def enableUpdates : Unit = {
+      if (updatesEnabled) return;
+      updatesEnabled = true;
+      
+      import Actor.Event._
+      actor.subscribe(this,
+          _ match {
+              case Equip(_) | Unequip(_) | Wield(_) | Unwield(_) | PowerNowUseable(_) | PowerNowNotUseable(_) => true;
+              case _ => false;
+          });
+      this.notify(actor, null);
+    };
+    
+    def disableUpdates : Unit = {
+      if (!updatesEnabled) return;
+      updatesEnabled = false;
+      actor.removeSubscription(this);
+    };
+    
+    def notify(pub : Actor, evt : Actor.Event) : Unit = {
       grid.children.clear;
+      
+      val useable = actor.powerUseables.filter(_._2).map(_._1);
+      val notUseable = actor.powerUseables.filter(!_._2).map(_._1);
+      
+      grid.add(new Text("Useable:"), 0, 0);
+      var i = 1;
+      for (p <- useable) {
+        grid.add(new Text(p.name), 1, i);
+        i += 1;
+      }
+      grid.add(new Text("Not useable:"), 0, i);
+      i += 1;
+      for (p <- notUseable) {
+        grid.add(new Text(p.name), 1, i);
+        i += 1;
+      }
     };
   }
   
