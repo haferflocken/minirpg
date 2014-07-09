@@ -8,6 +8,8 @@ trait Power {
   val name : String;
   val range : Int;
   val cooldown : Long;
+  val spriteId : String;
+  val animDuration : Long;
   def apply(user : Actor, targets : Vector[Entity], region : Region) : Unit;
   def canBeUsedBy(user : Actor) : Boolean;
   def mkRegion(cX : Int = 0, cY : Int = 0) : Region;

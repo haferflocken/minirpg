@@ -11,6 +11,8 @@ object Examine extends Power {
   val name = "Examine";
   val range = 1;
   val cooldown : Long = 0;
+  val spriteId = null;
+  val animDuration : Long = 0;
   
   def apply(user : Actor, targets : Vector[Entity], region : Region) = {
     val gui = ActorGUI.guis(user);

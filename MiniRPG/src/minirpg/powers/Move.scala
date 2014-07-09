@@ -9,6 +9,8 @@ object Move extends Power {
   val name = "Move";
   val range = 4;
   val cooldown : Long = 0;
+  val spriteId = null;
+  val animDuration : Long = 0;
   
   def apply(user : Actor, targets : Vector[Entity], region : Region) = 
     user.setMoveTarget(region.anchorX, region.anchorY);

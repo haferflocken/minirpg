@@ -49,12 +49,12 @@ abstract class AbstractGraph[K] {
               stack += e;
           }
           
-          println("Found a sub-graph of size " + visited.size + ".");
+          //println("Found a sub-graph of size " + visited.size + ".");
           out = out :+ visited.toSet;
         }
       }
       
-      println("Found " + out.length + " sub-graphs.");
+      //println("Found " + out.length + " sub-graphs.");
       out;
     }
   };

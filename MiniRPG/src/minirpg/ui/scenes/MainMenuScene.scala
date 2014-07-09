@@ -12,18 +12,33 @@ import minirpg.util.Tickable
 import minirpg.model.overworld.Terrain
 import scalafx.scene.image.ImageView
 import minirpg.model.overworld.Overworld
+import scalafx.scene.layout.BorderPane
 import scalafx.scene.layout.StackPane
+import scalafx.geometry.Pos
 
 class MainMenuScene extends Scene with Tickable with Initializable {
   
   fill = Color.BLACK;
-  content = new StackPane {
+  content = new VBox {
+    alignment = Pos.CENTER;
     minWidth <== MainMenuScene.this.width;
     minHeight <== MainMenuScene.this.height;
-    content = new Button("New Game") {
+      
+    val title = new Text("MiniRPG") {
+      fill = Color.WHITE;
+    };
+    val newGameButton = new Button("New Game") {
       onMouseClicked = handle { MiniRPGApp.scene = new NewGameSetupScene };
-    }
-  }
+    };
+    val optionsButton = new Button("Options") {
+      // TODO
+    };
+    val exitButton = new Button("Exit") {
+      // TODO
+    };
+      
+    children.addAll(title, newGameButton, optionsButton, exitButton);
+  };
   
   def init : Unit = {
     

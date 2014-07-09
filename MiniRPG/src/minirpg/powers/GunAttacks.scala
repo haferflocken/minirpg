@@ -19,6 +19,8 @@ trait GunAttack extends Power {
   val particleColor : Color;
   
   def canBeUsedBy(user : Actor) = user.equipped.contains(orb);
+  val spriteId = "attack-ranged";
+  val animDuration = TENTOTHE9;
   
 }
 
@@ -88,11 +90,13 @@ object CyanConduitBlasterAttack extends ConduitBlasterAttack {
   
   def apply(user : Actor, targets : Vector[Entity], region : Region) = {
     // TODO
-    addCooldown(user);
     mkParticles(user.world, region);
     for (t <- targets.collect({case a : Actor => a})) {
       t.state = (Actor.State.Stunned, TENTOTHE9 * 24 / 10);
     }
+    
+    user.state = (Actor.State.UsingPower(this), animDuration);
+    addCooldown(user);
   }
   
   val uiImage = Power.uiImage;
@@ -106,8 +110,10 @@ object CyanConduitRifleAttack extends ConduitRifleAttack {
   
   def apply(user : Actor, targets : Vector[Entity], region : Region) = {
     // TODO
-    addCooldown(user);
     mkParticles(user.world, region);
+    
+    user.state = (Actor.State.UsingPower(this), animDuration);
+    addCooldown(user);
   }
   
   val uiImage = Power.uiImage;
@@ -121,12 +127,14 @@ object CyanConduitMineLauncherAttack extends ConduitMineLauncherAttack {
   
   def apply(user : Actor, targets : Vector[Entity], region : Region) = {
     // TODO
-    addCooldown(user);
     val world = user.world;
     world.addEntity(new ProximityMine(world.makeEntityId) {
       x = region.anchorX;
       y = region.anchorY;
     });
+    
+    user.state = (Actor.State.UsingPower(this), animDuration);
+    addCooldown(user);
   }
   
   val uiImage = Power.uiImage;

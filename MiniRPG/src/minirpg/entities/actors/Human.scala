@@ -28,9 +28,7 @@ class Human(
   val vitals = new LinkedHashMap[String, (Int, Int)] ++= Map("Blood" -> (100, 100), "Oxygen" -> (100, 100), "Energy" -> (100, 100));
   
   val spriteView = SpriteView(Human.idleSprite);
-  val idleSprite = Human.idleSprite;
-  val walkSprite = Human.walkSprite;
-  val stunnedSprite = Human.stunnedSprite;
+  val sprites = Human.sprites;
   
   val node = spriteView;
   val nodeWidth = Human.frameWidth;
@@ -54,6 +52,18 @@ object Human {
       frameWidth,
       frameHeight,
       7, 1);
+  val attackMeleeSprite = new Sprite(
+      new Image("file:res\\sprites\\entities\\actors\\human\\attack-melee.png"),
+      new Duration(Duration(600)),
+      frameWidth,
+      frameHeight,
+      6, 1);
+  
+  val sprites = Map(
+      "idle" -> idleSprite, 
+      "walk" -> walkSprite, 
+      "stunned" -> stunnedSprite, 
+      "attack-melee" -> attackMeleeSprite);
 }
 
 object HumanBuilder extends ActorBuilder[Human] {

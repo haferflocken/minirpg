@@ -38,13 +38,11 @@ abstract class Actor(
   protected var path : Queue[(Int, Int)] = null;
   protected var moveProgress : Long = 0;
   private var _dir : (Int, Int) = (0, 0);
-  private var _state : Actor.State = Actor.State.Normal;
+  private var _state : Actor.State = Actor.State.Idle;
   private var _stateTimer : Long = 0;
   
   val spriteView : SpriteView;
-  val idleSprite : Sprite;
-  val walkSprite : Sprite;
-  val stunnedSprite : Sprite;
+  val sprites : Map[String, Sprite];
  
   /* * * * * * * * * * * * * *
    * Methods.
@@ -126,8 +124,8 @@ abstract class Actor(
       _stateTimer -= delta;
       if (_stateTimer <= 0) {
         _stateTimer = 0;
-        _state = Actor.State.Normal;
-        spriteView.sprite = idleSprite;
+        _state = Actor.State.Idle;
+        spriteView.sprite = sprites("idle");
       }
     }
   }
@@ -241,10 +239,10 @@ abstract class Actor(
   // Set the direction we're going.
   def dir_=(o : (Int, Int)) : Unit = {
     if (o == (0, 0)) {
-      spriteView.sprite = idleSprite;
+      spriteView.sprite = sprites("idle");
     }
     else {
-      spriteView.sprite = walkSprite;
+      spriteView.sprite = sprites("walk");
       o match {
         case (1, 0) => spriteView.rotate = 90;
         case (-1, 0) => spriteView.rotate = 270;
@@ -273,11 +271,11 @@ abstract class Actor(
     _state = newState;
     _stateTimer = duration;
     
-    import Actor.State._
-    _state match {
-      case Stunned => spriteView.sprite = stunnedSprite;
-      case _ => spriteView.sprite = idleSprite;
-    }
+    val sprite = sprites.getOrElse(newState.spriteId, null);
+    if (sprite != null)
+      spriteView.sprite = sprite;
+    else
+      spriteView.sprite = sprites("idle");
   };
   
   /* * * * * * * * * * * * * *
@@ -338,10 +336,11 @@ abstract class Actor(
 
 
 object Actor {
-  abstract class State(val name : String);
+  abstract class State(val name : String, val spriteId : String);
   object State {
-    case object Normal extends State("normal");
-    case object Stunned extends State("stunned");
+    case object Idle extends State("idle", "idle");
+    case class UsingPower(val power : Power) extends State("using power", power.spriteId);
+    case object Stunned extends State("stunned", "stunned");
   }
   
   abstract class Event(val eventName : String);

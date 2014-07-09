@@ -10,9 +10,12 @@ object ShortswordAttack extends Power {
   val name = "Attack";
   val range = 1;
   val cooldown : Long = TENTOTHE9 / 2;
+  val spriteId = "attack-melee";
+  val animDuration : Long = TENTOTHE9 / 2;
   
   def apply(user : Actor, targets : Vector[Entity], region : Region) = {
     // TODO
+    user.state = (Actor.State.UsingPower(this), animDuration);
     addCooldown(user);
   }
   
