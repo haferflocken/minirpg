@@ -41,7 +41,7 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
       val xOffset = (-Landmark.Image.width() + tileWidth) / 2;
       val yOffset = (-Landmark.Image.height() + tileHeight) / 2;
       
-      for (l <- overworld.landmarks) {
+      for (l <- overworld.allLandmarks) {
         // Make the node.
         val landmarkNode = {
           // Nodes that aren't in the artillery region are clickable and display a tooltip.

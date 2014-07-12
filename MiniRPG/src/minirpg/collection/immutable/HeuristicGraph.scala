@@ -119,7 +119,9 @@ class HeuristicGraph[K](
       }
     }
     
-    return new HeuristicGraph(nodes, outConnections, heuristic, false);
+    if (outConnections != connections)
+      return new HeuristicGraph(nodes, outConnections, heuristic, false);
+    return this;
   };
   
   

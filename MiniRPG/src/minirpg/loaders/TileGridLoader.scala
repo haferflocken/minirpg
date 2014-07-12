@@ -8,6 +8,7 @@ import scala.util.parsing.json.JSONObject
 import scala.collection.mutable
 import minirpg.model.world.TileGrid
 import java.util.regex.Pattern
+import minirpg.model.world.Portal
 
 object TileGridLoader extends Loader[TileGrid] {
 
@@ -39,6 +40,11 @@ object TileGridLoader extends Loader[TileGrid] {
       warnInvalidField("tileHeight", filePath);
       return null;
     }
+    val jsonPortals = jsonMap.getOrElse("portals", null);
+    if (jsonPortals == null || !jsonPortals.isInstanceOf[JSONArray] || jsonPortals.asInstanceOf[JSONArray].list == null) {
+      warnInvalidField("portals", filePath);
+      return null;
+    }
     
     val grid = makeGrid(filePath, jsonGrid.asInstanceOf[JSONArray].list);
     if (grid == null)
@@ -48,8 +54,12 @@ object TileGridLoader extends Loader[TileGrid] {
       return null;
     val tileWidth = jsonTileWidth.asInstanceOf[Double].intValue;
     val tileHeight = jsonTileHeight.asInstanceOf[Double].intValue;
+    val portals = {
+      val portalObjs = jsonPortals.asInstanceOf[JSONArray].list.collect({ case x : JSONObject => x });
+      portalObjs.map(x => makePortal(x.obj)).collect({ case x : AnyRef if x != null => x });
+    }.toVector;
     
-    return TileGrid(grid, tileMap, tileWidth, tileHeight);
+    return TileGrid(grid, tileMap, tileWidth, tileHeight, portals);
   }
   
   private def makeGrid(filePath : String, raw : List[Any]) : Array[Array[Int]] = {
@@ -99,6 +109,30 @@ object TileGridLoader extends Loader[TileGrid] {
       println(e);
     }
     return null;
+  }
+  
+  private def makePortal(obj : Map[String, Any]) : Portal = {
+    val gridX = obj.getOrElse("gridX", null);
+    if (gridX == null || !gridX.isInstanceOf[Double])
+      return null;
+    
+    val gridY = obj.getOrElse("gridY", null);
+    if (gridY == null || !gridY.isInstanceOf[Double])
+      return null;
+    
+    val overworldX = obj.getOrElse("overworldX", null);
+    if (overworldX == null || !overworldX.isInstanceOf[Double])
+      return null;
+    
+    val overworldY = obj.getOrElse("overworldY", null);
+    if (overworldY == null || !overworldY.isInstanceOf[Double])
+      return null;
+    
+    return new Portal(
+        gridX.asInstanceOf[Double].toInt, 
+        gridY.asInstanceOf[Double].toInt,
+        overworldX.asInstanceOf[Double].toInt,
+        overworldY.asInstanceOf[Double].toInt);
   }
 
 }

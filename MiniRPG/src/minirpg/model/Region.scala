@@ -40,6 +40,23 @@ class Region(val coords : HashSet[(Int, Int)]) extends Canvasable {
     return coords.contains((tX, tY));
   }
   
+  def containsAny(ps : Iterable[(Int, Int)]) : Boolean = {
+    for (p <- ps) {
+      if (contains(p._1, p._2))
+        return true;
+    }
+    return false;
+  }
+  
+  def containsAny[A](ps : Iterable[A])(implicit toCoord : (A => (Int, Int))) : Boolean = {
+    for (p <- ps) {
+      val c = toCoord(p);
+      if (contains(c._1, c._2))
+        return true;
+    }
+    return false;
+  }
+  
   def clip(clipX : Int, clipY : Int, clipWidth : Int, clipHeight : Int) : Region = {
     val modClipX = clipX - anchorX;
     val modClipY = clipY - anchorY;

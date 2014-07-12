@@ -3,7 +3,7 @@ package minirpg.model.overworld
 import scala.collection.mutable.ArrayBuffer
 import scalafx.scene.image.Image
 
-class Landmark(val name : String, val x : Int, val y : Int, val worldPath : String) {
+class Landmark(val name : String, val x : Int, val y : Int, val worldPath : String, val portalIndex : Int) {
   
   val coords = (x, y);
   

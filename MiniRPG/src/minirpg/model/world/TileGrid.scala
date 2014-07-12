@@ -10,13 +10,15 @@ import scala.Array.canBuildFrom
 import scala.collection.mutable
 import minirpg.collection.immutable.HeuristicGraph
 import minirpg.collection.immutable.UndirectedUtils
+import scala.collection.immutable.HashSet
 
 class TileGrid(
     cells : Vector[Vector[Int]],
     tileMap : Map[Int, Image],
     val navMap : HeuristicGraph[(Int, Int)],
     val tileWidth : Int,
-    val tileHeight : Int)
+    val tileHeight : Int,
+    val portals : Vector[Portal])
     extends Savable {
   
   val width = cells.length;
@@ -56,6 +58,15 @@ class TileGrid(
   
   def screenYToTileY(screenY : Double) : Int = (screenY / tileHeight).intValue;
   
+  def mkPortalRegion : Region = {
+    val top = portals.minBy(_.overworldY).overworldY;
+    val bottom = portals.maxBy(_.overworldY).overworldY;
+    val left = portals.minBy(_.overworldX).overworldX;
+    val right = portals.maxBy(_.overworldX).overworldX;
+    val coords = for (x <- left to right; y <- top to bottom) yield (x, y);
+    return new Region(HashSet() ++ coords);
+  };
+  
   def toJsonString() = null;
   
   override def toString() = s"gridDim: $width x $height\ntileDim: $tileWidth x $tileHeight\ncells: " + cells.toPrettyString;
@@ -64,7 +75,7 @@ class TileGrid(
 
 object TileGrid {
   
-  def apply(grid : Array[Array[Int]], tileMap : Map[Int, Image], tileWidth : Int, tileHeight : Int) : TileGrid = {
+  def apply(grid : Array[Array[Int]], tileMap : Map[Int, Image], tileWidth : Int, tileHeight : Int, portals : Vector[Portal]) : TileGrid = {
     // Extract the cells from the grid.
     val cellBuff = new mutable.ArrayBuffer[Vector[Int]];
     for (x <- Range(0, grid.length, 2)) {
@@ -105,7 +116,7 @@ object TileGrid {
     val cellSeq = for (x <- 0 until cells.length; y <- 0 until cells(x).length) yield (x, y);
     val navMap = new HeuristicGraph(cellSeq.toSet, UndirectedUtils.undirectedToDirected(edgeBuff), HeuristicGraph.manhattanDist, true);
     
-    return new TileGrid(cells, tileMap, navMap, tileWidth, tileHeight);
+    return new TileGrid(cells, tileMap, navMap, tileWidth, tileHeight, portals);
   }
   
 }

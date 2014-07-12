@@ -56,9 +56,6 @@ class NewGameSetupScene extends Scene with Initializable with Tickable {
     }
     overworldFuture onSuccess {
       case overworld => {
-        for (l <- overworld.landmarks) {
-          WorldLoader.loadJsonFile(l.worldPath);
-        }
         NewGameSetupScene.this.overworld = overworld;
       }
     }

@@ -6,6 +6,7 @@ import scalafx.scene.SnapshotParameters
 import scalafx.scene.image.WritableImage
 import scalafx.scene.image.ImageView
 import scala.collection.mutable
+import scala.collection.immutable
 import scala.collection.immutable.Queue
 import scalafx.scene.paint.Color
 import minirpg.model.world.World
@@ -15,19 +16,41 @@ import minirpg.model.Canvasable
 
 class Overworld(
     val terrain : Terrain,
-    val landmarks : Vector[Landmark],
+    val worlds : Map[World, (Region, Vector[Landmark])],
     val artillery : Landmark,
     val artilleryInnerRadius : Int,
     private var _artilleryOuterRadius : Int) extends Canvasable {
   
   val width = terrain.width;
   val height = terrain.height;
+  val allLandmarks = worlds.values.map(_._2).toVector.flatten;
+  val navMap = {
+    var out = terrain.navMap;
+    
+    for ((w, (r, ls)) <- worlds) {
+      // Remove world regions from the navMap.
+      for (p1 <- r.coords; p2 <- r.coords) {
+        if (p1 != p2) {
+          out = out.removeConnections((p1, p2));
+        }
+      }
+      
+      // Add connections between each world's landmarks.
+      for (i <- 0 until ls.length; j <- i until ls.length) {
+        val l1 = ls(i);
+        val l2 = ls(j);
+        out = out.addConnections((l1.coords, l2.coords, 1));
+      }
+    }
+    
+    out;
+  }
   
   val roads : Map[(Landmark, Landmark), Vector[(Int, Int)]] = {
     // Find the as-the-crow flies distance between all of the landmarks.
     val distances = new mutable.HashMap[(Landmark, Landmark), Double];
-    for (i <- 0 until landmarks.length; l1 = landmarks(i)) {
-      for (j <- i + 1 until landmarks.length; l2 = landmarks(j)) {
+    for (i <- 0 until allLandmarks.length; l1 = allLandmarks(i)) {
+      for (j <- i + 1 until allLandmarks.length; l2 = allLandmarks(j)) {
         val dX = l1.x - l2.x;
         val dY = l1.y - l2.y;
         val dist = Math.sqrt(dX * dX + dY * dY);
@@ -39,7 +62,7 @@ class Overworld(
     val avgDist = distances.foldLeft(0.0)((b, d) => b + d._2) / distances.size;
     
     // Grab the landmarks with less than the average distance to each landmark.
-    val closest = new mutable.HashMap[Landmark, List[Landmark]] ++= landmarks.map((_, Nil));
+    val closest = new mutable.HashMap[Landmark, List[Landmark]] ++= allLandmarks.map((_, Nil));
     for (((l1, l2), dist) <- distances if dist < avgDist) {
       closest(l1) = l2 +: closest(l1);
     }
@@ -47,7 +70,7 @@ class Overworld(
     // Find the paths through the terrain sequentially so the paths can affect each other.
     val closestCoords = closest.map(p => (p._1.coords, p._2.map(_.coords))).toMap;
     val pathBuff = new mutable.HashMap[((Int, Int), (Int, Int)), Queue[(Int, Int)]];
-    var navMap = terrain.navMap;
+    var navMap = this.navMap;
     for ((a, bs) <- closestCoords; b <- bs) {
       val path = navMap.findPath(a, b);
       if (path != null) {
@@ -68,10 +91,9 @@ class Overworld(
         navMap = navMap.setConnections(newCons);
       }
     }
-    //val paths = terrain.navMap.findPaths(closestCoords);
     
     // Make the paths into roads.
-    val coordsToLandmark : Map[(Int, Int), Landmark] = landmarks.map(l => ((l.x, l.y), l)).toMap;
+    val coordsToLandmark : Map[(Int, Int), Landmark] = allLandmarks.map(l => ((l.x, l.y), l)).toMap;
     pathBuff.map(p => (
         (coordsToLandmark(p._1._1), coordsToLandmark(p._1._2)),
         p._2.toVector
@@ -87,7 +109,7 @@ class Overworld(
   
   def artilleryRegion = _artilleryRegion;
   
-  def landmarksInArtillery = landmarks.filter(l => _artilleryRegion.contains(l.x, l.y));
+  def landmarksInArtillery = allLandmarks.filter(l => _artilleryRegion.contains(l.x, l.y));
   
   private var _artilleryRegion = mkArtilleryRegion;
   private def mkArtilleryRegion : Region = {
@@ -105,6 +127,8 @@ class Overworld(
     
     val tileWidth = imageWidth.toDouble / width;
     val tileHeight = imageHeight.toDouble / height;
+    val halfTileWidth = tileWidth / 2;
+    val halfTileHeight = tileHeight / 2;
     
     var i = 0;
     for (((l1, l2), path) <- roads) {
@@ -117,11 +141,23 @@ class Overworld(
       }
     }
     
-    g.fill = Color.PINK;
-    for (l <- landmarks) {
-      val lX = l.x * imageWidth / width;
-      val lY = l.y * imageHeight / height;
-      g.fillRect(lX, lY, tileWidth, tileHeight);
+    g.stroke = Color.BLUE;
+    g.fill = Color.WHITE;
+    for ((w, (r, ls)) <- worlds) {
+      // Fill the background of the polygon.
+      val poly = ls.map(l => (l.x.toDouble, l.y.toDouble));
+      g.fillPolygon(poly);
+      
+      // Draw the lines of the polygon.
+      for (i <- 0 until ls.length; j <- i + 1 until ls.length) {
+        val l1 = ls(i);
+        val l2 = ls(j);
+        val l1X = l1.x * imageWidth / width + halfTileWidth;
+        val l1Y = l1.y * imageHeight / height + halfTileHeight;
+        val l2X = l2.x * imageWidth / width + halfTileWidth;
+        val l2Y = l2.y * imageHeight / height + halfTileHeight;
+        g.strokeLine(l1X, l1Y, l2X, l2Y);
+      }
     }
     
     return canvas;
@@ -131,10 +167,11 @@ class Overworld(
 
 object Overworld {
   
-  def mkRandomOverworld(width : Int, height : Int, numLandmarks : Int, numBarrows : Int) : Overworld = {
+  def mkRandomOverworld(width : Int, height : Int, numWorlds : Int, numBarrows : Int) : Overworld = {
     val powerOf2 = Math.pow(2, Math.ceil(Math.log(Math.max(width, height)) / Math.log(2))).toInt;
     val terrain = Terrain.mkRandomTerrain(powerOf2, 100.0, 0.0).crop((powerOf2 - width) / 2, (powerOf2 - height) / 2, width, height);
-    var landmarks = Vector[Landmark]();
+    val terrainDiagonal = Math.sqrt(width * width + height * height).toInt;
+    val landmarks = new mutable.HashMap[World, (Region, Vector[Landmark])];
     
     // Place the Necropolis. It consists of a center barrow surrounded by smaller barrows.
     val centerBarrowPath = WorldLoader.nRandomFrom(1, WorldLoader.centerBarrowPaths)(0);
@@ -151,40 +188,51 @@ object Overworld {
       region = necropolisCircle,
       startX = (Math.random * (width - necropolisRadius * 2)).toInt + necropolisRadius,
       startY = (Math.random * (height - necropolisRadius * 2)).toInt + necropolisRadius,
-      maxRadius = Math.sqrt(width * width + height * height).toInt,
+      maxRadius = terrainDiagonal,
       accept = (r) => terrain.isInBounds(r) && terrain.isLand(r));
     
     // Make the barrows.
-    val centerBarrow = new Landmark(centerBarrowWorld.name, necropolisCircle.anchorX, necropolisCircle.anchorY, centerBarrowPath);
-    landmarks = landmarks :+ centerBarrow;
+    val centerBarrow = new Landmark(centerBarrowWorld.name, necropolisCircle.anchorX, necropolisCircle.anchorY, centerBarrowPath, 0);
+    landmarks += ((centerBarrowWorld, (Region.tile(necropolisCircle.anchorX, necropolisCircle.anchorY), Vector(centerBarrow))));
     
     val angleOffset = Math.random * Math.PI * 2.0;
     for (i <- 0 until numOuterBarrows) {
       val angle = Math.PI * 2.0 * i / numOuterBarrows + angleOffset;
       val x = (necropolisCircle.anchorX + necropolisRadius * Math.cos(angle)).toInt;
       val y = (necropolisCircle.anchorY + necropolisRadius * Math.sin(angle)).toInt;
-      val outerBarrow = new Landmark(outerBarrowWorlds(i).name, x, y, outerBarrowPaths(i));
-      landmarks = landmarks :+ outerBarrow;
+      val outerBarrow = new Landmark(outerBarrowWorlds(i).name, x, y, outerBarrowPaths(i), 0);
+      landmarks += ((outerBarrowWorlds(i), (Region.tile(x, y), Vector(outerBarrow))));
     }
     
     // Place the other landmarks.
-    val numRemaining = numLandmarks - numBarrows;
+    val numRemaining = numWorlds - numBarrows;
     val landmarkPaths = WorldLoader.nRandomFrom(numRemaining, WorldLoader.nonBarrowPaths);
     val landmarkWorlds = landmarkPaths.map(p => WorldLoader.loadJsonFile(p));
     
     for (i <- 0 until numRemaining) {
-      val circle = Region.circle((Math.random * width).toInt, (Math.random * height).toInt, 5);
-      while (!terrain.isLand(circle.anchorX, circle.anchorY) || 
+      val world = landmarkWorlds(i);
+      val circle = world.tileGrid.mkPortalRegion;
+      circle.anchorX = (Math.random * width).toInt;
+      circle.anchorY = (Math.random * height).toInt;
+      /*while (!terrain.isLand(circle.anchorX, circle.anchorY) || 
              necropolisCircle.contains(circle.anchorX, circle.anchorY) || 
-             landmarks.find(l => circle.contains(l.x, l.y)).nonEmpty) {
+             landmarks.find(l => circle.containsAny(l._2)(_.coords)).nonEmpty) {
         circle.anchorX = (Math.random * width).toInt;
         circle.anchorY = (Math.random * height).toInt;
-      }
-      val landmark = new Landmark(landmarkWorlds(i).name, circle.anchorX, circle.anchorY, landmarkPaths(i));
-      landmarks = landmarks :+ landmark;
+      }*/
+      placeBySpiral(
+        region = circle,
+        startX = (Math.random * (width - circle.width)).toInt + circle.width / 2,
+        startY = (Math.random * (height - circle.height)).toInt + circle.height / 2,
+        maxRadius = terrainDiagonal,
+        accept = (r) => terrain.isInBounds(r) && terrain.isLand(r));
+      
+      val ls = for(pI <- 0 until world.tileGrid.portals.length; p <- world.tileGrid.portals)
+        yield new Landmark(world.name, circle.anchorX + p.overworldX, circle.anchorY + p.overworldY, landmarkPaths(i), i);
+      landmarks += ((world, (circle, ls.toVector)));
     }
     
-    return new Overworld(terrain, landmarks, centerBarrow, necropolisRadius * 2, 50);
+    return new Overworld(terrain, landmarks.toMap, centerBarrow, necropolisRadius * 2, 50);
   }
   
   private def placeBySpiral(region : Region, startX : Int, startY : Int, maxRadius : Int, accept : (Region) => Boolean) : Boolean = {
