@@ -17,10 +17,18 @@ import scalafx.scene.input.KeyCode
 import scala.collection.mutable.Subscriber
 import scalafx.scene.control.Button
 
-class WorldScene(val world : World) extends Scene with Initializable with Tickable with Subscriber[Actor.Event, Actor] {
+class WorldScene(val world : World, val entryPortalId : Int) extends Scene with Initializable with Tickable with Subscriber[Actor.Event, Actor] {
   
-  val player = world.getEntitiesById("player")(0).asInstanceOf[Actor];
+  // Place the player at the portal they entered through.
+  val player = MiniRPGApp.player;
+  player.x = world.tileGrid.portals(entryPortalId).gridX;
+  player.y = world.tileGrid.portals(entryPortalId).gridY;
+  world.addEntity(player);
+  
+  // Get notified when the player dies.
   player.subscribe(this, _ match { case Actor.Event.Die => true; case _ => false } );
+  
+  // Build the user interface.
   val gui = new ActorGUI(player) {
     maxWidth <== WorldScene.this.width;
     maxHeight <== WorldScene.this.height;
@@ -48,6 +56,7 @@ class WorldScene(val world : World) extends Scene with Initializable with Tickab
   fill = Color.BLACK;
   content = contentStack;
   
+  // Hold on to mouse information.
   onMouseMoved = (me : MouseEvent) => {
     gui.mouseX = me.x;
     gui.mouseY = me.y;
@@ -55,9 +64,11 @@ class WorldScene(val world : World) extends Scene with Initializable with Tickab
   
   onMouseClicked = (me : MouseEvent) => {
     val tileCoords = world.tileGrid.screenToTileCoords(me.x, me.y);
+    // TODO
   };
 
   onKeyPressed = (ke : KeyEvent) => {
+    // Tab toggles the control interface versus the inspector interface.
     if (ke.code == KeyCode.TAB) {
       toggleGUIAndInspector;
     }

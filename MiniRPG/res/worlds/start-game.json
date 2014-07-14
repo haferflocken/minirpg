@@ -1,0 +1,16 @@
+{
+	"name" : "Arbuta Village",
+	"tileGrid" : "res/tileGrids/world1-tileGrid.json",
+	"entities" : [
+			{	"id" : "npc1",
+				"class" : "Human",
+				"args" : {	"name" : "NPC 1",
+							"x" : 11, "y" : 13,
+							"gear" : [],
+							"brain" : "psycho"
+							} },
+			{	"id" : "doorTest",
+				"class" : "Door",
+				"args" : { "name" : "doorTest", "x" : 11, "y" : 9, "orientation" : "top" }}
+		]
+}

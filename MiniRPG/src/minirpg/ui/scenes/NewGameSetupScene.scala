@@ -13,6 +13,7 @@ import scalafx.geometry.Pos
 import scala.concurrent._
 import scalafx.scene.layout.VBox
 import scalafx.scene.control.ProgressIndicator
+import minirpg.entities.actors.Human
 
 class NewGameSetupScene extends Scene with Initializable with Tickable {
   
@@ -42,7 +43,10 @@ class NewGameSetupScene extends Scene with Initializable with Tickable {
 
   // Check if the overworld is done yet. This is necessary to avoid blocking the main JavaFX thread.
   def tick(delta : Long) : Unit = {
+    // If the overworld is made, make the player and switch to the overworld scene.
     if (overworld != null) {
+      MiniRPGApp.player = new Human("player", "Player", null);
+      
       MiniRPGApp.overworld = overworld;
       MiniRPGApp.scene = new OverworldScene(overworld);
     }

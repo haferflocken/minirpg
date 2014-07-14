@@ -228,7 +228,7 @@ object Overworld {
         accept = (r) => terrain.isInBounds(r) && terrain.isLand(r));
       
       val ls = for(pI <- 0 until world.tileGrid.portals.length; p <- world.tileGrid.portals)
-        yield new Landmark(world.name, circle.anchorX + p.overworldX, circle.anchorY + p.overworldY, landmarkPaths(i), i);
+        yield new Landmark(world.name, circle.anchorX + p.overworldX, circle.anchorY + p.overworldY, landmarkPaths(i), pI);
       landmarks += ((world, (circle, ls.toVector)));
     }
     

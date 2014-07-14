@@ -28,6 +28,7 @@ import scalafx.scene.layout.StackPane
 import scalafx.scene.layout.BorderPane
 import minirpg.ui.scenes._
 import minirpg.util.Tickable
+import minirpg.model.world.Actor
 
 object MiniRPGApp extends JFXApp {
   
@@ -36,6 +37,7 @@ object MiniRPGApp extends JFXApp {
   private var _scene : Scene with Tickable with Initializable = new MainMenuScene
   
   var overworld : Overworld = null;
+  var player : Actor = null;
   
   stage = new JFXApp.PrimaryStage {
     title = "MiniRPG";

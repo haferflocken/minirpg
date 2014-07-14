@@ -51,7 +51,7 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
               onMouseClicked = (me : MouseEvent) => {
   	            println(l.toString);
   	            val world = WorldLoader.loadJsonFile(l.worldPath);
-  	            MiniRPGApp.scene = new WorldScene(world);
+  	            MiniRPGApp.scene = new WorldScene(world, l.portalIndex);
               };
             }
           }
