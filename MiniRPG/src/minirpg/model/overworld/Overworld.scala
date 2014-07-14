@@ -214,21 +214,17 @@ object Overworld {
       val circle = world.tileGrid.mkPortalRegion;
       circle.anchorX = (Math.random * width).toInt;
       circle.anchorY = (Math.random * height).toInt;
-      /*while (!terrain.isLand(circle.anchorX, circle.anchorY) || 
-             necropolisCircle.contains(circle.anchorX, circle.anchorY) || 
-             landmarks.find(l => circle.containsAny(l._2)(_.coords)).nonEmpty) {
-        circle.anchorX = (Math.random * width).toInt;
-        circle.anchorY = (Math.random * height).toInt;
-      }*/
       placeBySpiral(
         region = circle,
         startX = (Math.random * (width - circle.width)).toInt + circle.width / 2,
         startY = (Math.random * (height - circle.height)).toInt + circle.height / 2,
         maxRadius = terrainDiagonal,
-        accept = (r) => terrain.isInBounds(r) && terrain.isLand(r));
+        accept = (r) => terrain.isInBounds(r) && terrain.isLand(r) && landmarks.forall(l => !l._2._1.intersects(circle)));
       
-      val ls = for(pI <- 0 until world.tileGrid.portals.length; p <- world.tileGrid.portals)
-        yield new Landmark(world.name, circle.anchorX + p.overworldX, circle.anchorY + p.overworldY, landmarkPaths(i), pI);
+      val ls = for(pI <- 0 until world.tileGrid.portals.length) yield {
+        val p = world.tileGrid.portals(pI);
+        new Landmark(world.name, circle.anchorX + p.overworldX, circle.anchorY + p.overworldY, landmarkPaths(i), pI);
+      }
       landmarks += ((world, (circle, ls.toVector)));
     }
     
@@ -246,10 +242,13 @@ object Overworld {
     val startTime = System.currentTimeMillis;
     
     val maxTheta = Math.PI * 2.0;
-    val thetaStep = maxTheta / 360.0;
-    val initialAngle = maxTheta * Math.random;
+    val initialAngle = {
+      val rand = (Math.random * 4).toInt;
+      maxTheta * rand / 4;
+    }
     for (r <- 1 until maxRadius) {
       var theta = 0.0;
+      val thetaStep = maxTheta / (4.0 * r);
       while (theta < maxTheta) {
         val angle = theta + initialAngle;
         region.anchorX = startX + (r * Math.cos(angle)).toInt;
