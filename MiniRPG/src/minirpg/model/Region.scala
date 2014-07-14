@@ -98,6 +98,9 @@ class Region(val coords : HashSet[(Int, Int)]) extends Canvasable {
     }
   }
   
+  def intersects(other : Region) : Boolean =
+    other.containsAny(coords);
+  
   def mkCanvas(imageWidth : Int, imageHeight : Int) : Canvas = {
     val canvas = new Canvas(imageWidth, imageHeight);
     val g = canvas.graphicsContext2D;
