@@ -45,8 +45,6 @@ class NewGameSetupScene extends Scene with Initializable with Tickable {
   def tick(delta : Long) : Unit = {
     // If the overworld is made, make the player and switch to the overworld scene.
     if (overworld != null) {
-      MiniRPGApp.player = new Human("player", "Player", null);
-      
       MiniRPGApp.overworld = overworld;
       MiniRPGApp.scene = new OverworldScene(overworld);
     }

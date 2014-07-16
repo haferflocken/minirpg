@@ -28,7 +28,7 @@ class MainMenuScene extends Scene with Tickable with Initializable {
       fill = Color.WHITE;
     };
     val newGameButton = new Button("New Game") {
-      onMouseClicked = handle { MiniRPGApp.scene = new NewGameSetupScene };
+      onMouseClicked = handle { MiniRPGApp.scene = new PlayerCreationScene };
     };
     val optionsButton = new Button("Options") {
       onMouseClicked = handle { MiniRPGApp.scene = new OptionsScene };
