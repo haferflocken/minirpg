@@ -12,7 +12,7 @@ import scala.annotation.tailrec
  * 
  * @author John Werner
  */
-class MinDHeap[E](d : Int, initialCapacity : Int = 16) {
+class MinDHeap[E](val d : Int, initialCapacity : Int = 16) {
   
   private val elems = new mutable.ArrayBuffer[E](initialCapacity);
   private var priorities = new Array[Int](initialCapacity);
@@ -20,7 +20,6 @@ class MinDHeap[E](d : Int, initialCapacity : Int = 16) {
   
   private def ensureCapacity : Unit = {
     if (_size == priorities.length) {
-      println("Doubling capacity.")
       val newPriorities = new Array[Int](priorities.length * 2);
       for (i <- 0 until _size)
         newPriorities(i) = priorities(i);
@@ -147,5 +146,75 @@ class MinDHeap[E](d : Int, initialCapacity : Int = 16) {
    */
   def isEmpty = _size == 0;
   
+  def height = (Math.log(_size) / Math.log(d)).toInt + 1;
+  
+  def getInternals = (elems, priorities);
+  
+}
 
+import scalafx.application.JFXApp
+import scalafx.scene.Scene
+import scalafx.scene.layout.VBox
+import scalafx.scene.layout.TilePane
+import scalafx.geometry.Orientation
+import scalafx.scene.text.Text
+import scalafx.scene.paint.Color
+import scalafx.geometry.Pos
+import scalafx.scene.layout.StackPane
+object MinDHeapTests extends JFXApp {
+  import scalafx.Includes._
+  
+  val heap = new MinDHeap[String](2);
+  
+  for (i <- 0 until 15) {
+    val x = (Math.random * 100).toInt;
+    heap.add(String.valueOf(x), x);
+  }
+  
+  val height = heap.height;
+  val rows = for (i <- 0 until height) yield Math.pow(heap.d, i).toInt;
+  
+  stage = new JFXApp.PrimaryStage {
+    title = "MiniRPG";
+    width = 800;
+    height = 600;
+    resizable = false;
+    scene = new Scene {
+      content = new VBox {
+        prefWidth = 800;
+        prefHeight = 600;
+        alignment = Pos.CENTER;
+        
+        val (elems, priorities) = heap.getInternals;
+        var i = 0;
+        for (r <- rows) {
+          println(s"Adding row of size $r");
+          val rowPane = new TilePane {
+            prefColumns = r;
+            prefWidth = 800;
+            alignment = Pos.CENTER;
+            orientation = Orientation.HORIZONTAL;
+          };
+          for (j <- 0 until r) {
+            if (i < heap.size) {
+              val e = elems(i);
+              val p = priorities(i);
+              val display = new Text(s"($e @ $p)") {
+                fill = Color.BLACK;
+              };
+              val displayPane = new StackPane {
+                minWidth = 800 / r;
+                content = display;
+                alignment = Pos.CENTER;
+              }
+              rowPane.children.add(displayPane);
+              i += 1;
+            }
+          }
+          children.add(rowPane);
+        }
+      }
+    }
+  }
+  
 }
