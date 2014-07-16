@@ -89,6 +89,10 @@ class HeuristicGraph[K](
           }
           if (!open.contains(v))
             open += (v, minEstimate);
+          else {
+            open -= v;
+            open += (v, minEstimate);
+          }
         }
       }
     }
