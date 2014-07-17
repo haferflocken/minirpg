@@ -106,7 +106,7 @@ class MinDHeap[E](val d : Int, initialCapacity : Int = 16) {
     val out = (elems(0), priorities(0));
     _size -= 1;
     elems(0) = elems(_size);
-    priorities(1) = priorities(_size);
+    priorities(0) = priorities(_size);
     elems.remove(_size);
     
     // Swap down to fix the heap.
@@ -146,13 +146,14 @@ class MinDHeap[E](val d : Int, initialCapacity : Int = 16) {
    */
   def isEmpty = _size == 0;
   
+  /**
+   * Return the height of the internal tree.
+   */
   def height = (Math.log(_size) / Math.log(d)).toInt + 1;
-  
-  def getInternals = (elems, priorities);
   
 }
 
-import scalafx.application.JFXApp
+/*import scalafx.application.JFXApp
 import scalafx.scene.Scene
 import scalafx.scene.layout.VBox
 import scalafx.scene.layout.TilePane
@@ -217,4 +218,4 @@ object MinDHeapTests extends JFXApp {
     }
   }
   
-}
+}*/
