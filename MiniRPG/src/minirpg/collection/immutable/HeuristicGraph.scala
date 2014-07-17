@@ -1,8 +1,9 @@
 package minirpg.collection.immutable
 
-import scala.collection.mutable;
+import scala.collection.mutable
 import scala.collection.immutable.Queue
 import minirpg.collection.mutable.PQueue
+import minirpg.collection.mutable.CountingMinDHeap
 
 class HeuristicGraph[K](
     override val nodes : Set[K],
@@ -37,20 +38,20 @@ class HeuristicGraph[K](
       return Map();
     }
     
-    val open = new PQueue[K](nodes.size / 4); // The open set ordered by estimated cost.
+    val open = new CountingMinDHeap[K](4, nodes.size / 4); // The open set ordered by estimated cost.
     val closed = new mutable.HashSet[K]; // The nodes that have been evaluated already.
     val dist = new mutable.HashMap[K, Int]; // The actual cost so far to a node.
     val estimate = new mutable.HashMap[(K, K), Int]; // The estimated cost to a node to a goal.
     val previous = new mutable.HashMap[K, K];
     val outPaths = new mutable.HashMap[K, Queue[K]];
     
-    open += (startId, 0);
+    open.add(startId, 0);
     dist(startId) = 0;
     for (goal <- endNodes)
       estimate((startId, goal)) = dist(startId) + heuristic(startId, goal);
     
     while (open.nonEmpty) {
-      val (u, uDist) = open.dequeue;
+      val (u, uDist) = open.deleteMin;
       
       // If we have found a path we are looking for, save it.
       if (endNodes.contains(u)) {
@@ -88,10 +89,9 @@ class HeuristicGraph[K](
             estimate((v, goal)) = est;
           }
           if (!open.contains(v))
-            open += (v, minEstimate);
+            open.add(v, minEstimate);
           else {
-            open -= v;
-            open += (v, minEstimate);
+            open.updatePriority(v, minEstimate);
           }
         }
       }

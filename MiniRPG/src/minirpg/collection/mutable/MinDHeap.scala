@@ -36,7 +36,7 @@ class MinDHeap[E](val d : Int, initialCapacity : Int = 16) {
     priorities(j) = p;
   };
   
-  @tailrec private def swapDown(i : Int) : Unit = {
+  private def swapDown(i : Int) : Unit = {
     val min = minChildOf(i);
     if (min == -1)
       return;
@@ -60,15 +60,15 @@ class MinDHeap[E](val d : Int, initialCapacity : Int = 16) {
   
   private def minChildOf(i : Int) : Int = {
     val firstChild = jthChildOf(i, 1);
-    if (firstChild < _size) {
-      var out = firstChild;
-      for (c <- firstChild + 1 until firstChild + d) {
-        if (priorities(out) > priorities(c))
-          out = c;
-      }
-      return out;
+    if (firstChild >= _size)
+      return -1;
+    val lastChild = Math.min(jthChildOf(i, d), _size - 1);
+    var minIndex = firstChild;
+    for (c <- firstChild + 1 to lastChild) {
+      if (priorities(c) < priorities(minIndex))
+        minIndex = c;
     }
-    return -1;
+    return minIndex;
   };
   
   /**
@@ -92,7 +92,7 @@ class MinDHeap[E](val d : Int, initialCapacity : Int = 16) {
     val i = elems.indexOf(e);
     val oldP = priorities(i);
     priorities(i) = p;
-    if (p < oldP)
+    if (p > oldP)
       swapDown(i);
     else
       swapUp(i);

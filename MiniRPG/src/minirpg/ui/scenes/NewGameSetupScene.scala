@@ -61,6 +61,9 @@ class NewGameSetupScene extends Scene with Initializable with Tickable {
         NewGameSetupScene.this.overworld = overworld;
       }
     }
+    overworldFuture onFailure {
+      case e => e.printStackTrace;
+    }
   };
   
 }
