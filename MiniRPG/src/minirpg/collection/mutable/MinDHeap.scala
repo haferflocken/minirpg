@@ -151,6 +151,13 @@ class MinDHeap[E](val d : Int, initialCapacity : Int = 16) {
    */
   def height = (Math.log(_size) / Math.log(d)).toInt + 1;
   
+  /**
+   * Check if the heap contains an element. If this method is going
+   * to be called a lot, consider using a CountingMinDHeap as it
+   * performs this in constant time rather than linear time.
+   */
+  def contains(e : E) = elems.contains(e);
+  
 }
 
 /*import scalafx.application.JFXApp

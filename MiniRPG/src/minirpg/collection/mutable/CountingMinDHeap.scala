@@ -14,5 +14,7 @@ class CountingMinDHeap[E](override val d : Int, initialCapacity : Int = 16) exte
     counter.remove(out._1);
     return out;
   };
+  
+  override def contains(e : E) = counter.count(e) > 0;
 
 }
