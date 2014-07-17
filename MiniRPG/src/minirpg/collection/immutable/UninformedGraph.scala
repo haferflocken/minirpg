@@ -7,6 +7,7 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import ExecutionContext.Implicits.global
 import minirpg.collection.mutable.PQueue
+import minirpg.collection.mutable.CountingMinDHeap
 
 /**
  * An immutable graph.
@@ -46,17 +47,18 @@ class UninformedGraph[K](
       return Map();
     }
     
-    val pq = new PQueue[K](nodes.size / 4);
+    val d = connections.foldLeft(0)((b, x) => b + x._2.size) / nodes.size; // Calculate d for the heap (edges / nodes).
+    val pq = new CountingMinDHeap[K](d, nodes.size / 4); // The open set ordered by estimated cost.
     val dist = new mutable.HashMap[K, Int];
     val previous = new mutable.HashMap[K, K];
     val outPaths = new mutable.HashMap[K, Queue[K]];
     
     for (key <- nodes) dist(key) = Int.MaxValue;
     dist(startId) = 0;
-    for ((node, distance) <- dist) pq += (node, distance);
+    for ((node, distance) <- dist) pq.add(node, distance);
     
     while (pq.nonEmpty) {
-      val (u, uDist) = pq.dequeue;
+      val (u, uDist) = pq.deleteMin;
       
       // If we have found a path we are looking for, save it.
       if (endNodes.contains(u)) {
@@ -85,8 +87,10 @@ class UninformedGraph[K](
         if (alt < dist(v)) {
           dist(v) = alt;
           previous(v) = u;
-          pq -= v;
-          pq += (v, alt);
+          if (pq.contains(v))
+            pq.updatePriority(v, alt);
+          else
+            pq.add(v, alt);
         }
       }
     }
