@@ -38,7 +38,8 @@ class HeuristicGraph[K](
       return Map();
     }
     
-    val open = new CountingMinDHeap[K](4, nodes.size / 4); // The open set ordered by estimated cost.
+    val d = connections.foldLeft(0)((b, x) => b + x._2.size) / nodes.size; // Calculate d for the heap (edges / nodes).
+    val open = new CountingMinDHeap[K](d, nodes.size / 4); // The open set ordered by estimated cost.
     val closed = new mutable.HashSet[K]; // The nodes that have been evaluated already.
     val dist = new mutable.HashMap[K, Int]; // The actual cost so far to a node.
     val estimate = new mutable.HashMap[(K, K), Int]; // The estimated cost to a node to a goal.
