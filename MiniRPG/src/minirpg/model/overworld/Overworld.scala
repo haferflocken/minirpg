@@ -44,7 +44,7 @@ class Overworld(
     }
     
     out;
-  }
+  };
   
   val roads : Map[(Landmark, Landmark), Vector[(Int, Int)]] = {
     // Find the as-the-crow flies distance between all of the landmarks.
@@ -105,7 +105,7 @@ class Overworld(
   def artilleryOuterRadius_=(a : Int) : Unit = {
     _artilleryOuterRadius = a;
     _artilleryRegion = mkArtilleryRegion;
-  }
+  };
   
   def artilleryRegion = _artilleryRegion;
   
@@ -115,7 +115,7 @@ class Overworld(
   private def mkArtilleryRegion : Region = {
     val artilleryDoughnut = Region.ring(artillery.x, artillery.y, _artilleryOuterRadius, _artilleryOuterRadius - artilleryInnerRadius);
     return artilleryDoughnut.clip(0, 0, width, height);
-  }
+  };
   
   /**
    * Make a canvas of some given dimensions and return it, along with the
@@ -161,7 +161,7 @@ class Overworld(
     }
     
     return canvas;
-  }
+  };
 
 }
 
@@ -229,7 +229,7 @@ object Overworld {
     }
     
     return new Overworld(terrain, landmarks.toMap, centerBarrow, necropolisRadius * 2, 50);
-  }
+  };
   
   private def placeBySpiral(region : Region, startX : Int, startY : Int, maxRadius : Int, accept : (Region) => Boolean) : Boolean = {
     region.anchorX = startX;
@@ -266,6 +266,6 @@ object Overworld {
     val endTime = System.currentTimeMillis;
     println("Spiraling took " + (endTime - startTime) + " ms but failed to find a place for the region.");
     return false;
-  }
+  };
   
 }
