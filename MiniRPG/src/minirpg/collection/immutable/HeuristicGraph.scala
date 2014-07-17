@@ -2,7 +2,6 @@ package minirpg.collection.immutable
 
 import scala.collection.mutable
 import scala.collection.immutable.Queue
-import minirpg.collection.mutable.PQueue
 import minirpg.collection.mutable.CountingMinDHeap
 
 class HeuristicGraph[K](

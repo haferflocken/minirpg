@@ -6,7 +6,6 @@ import scala.collection.concurrent.TrieMap
 import scala.concurrent._
 import scala.concurrent.duration._
 import ExecutionContext.Implicits.global
-import minirpg.collection.mutable.PQueue
 import minirpg.collection.mutable.CountingMinDHeap
 
 /**
