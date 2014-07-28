@@ -31,8 +31,10 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
     
     center = new AnchorPane {
       // Add the background image (terrain and roads).
-      val overworldImage = overworld.mkImage(oIWidth, oIHeight);
-      content = new ImageView(overworldImage);
+      val overworldCanvas = overworld.mkResizableCanvas;
+      overworldCanvas.setWidth(oIWidth);
+      overworldCanvas.setHeight(oIHeight);
+      content = overworldCanvas;
       
       // Add the clickable landmark nodes.
       val artilleryRegion = overworld.artilleryRegion;

@@ -5,7 +5,7 @@ import scalafx.scene.canvas.Canvas
 import scalafx.scene.paint.Color
 import scala.collection.immutable.HashSet
 
-class Region(val coords : HashSet[(Int, Int)]) extends Canvasable {
+class Region(val coords : HashSet[(Int, Int)]) {
   
   val leftmost = coords.minBy(_._1)._1;
   val rightmost = coords.maxBy(_._1)._1;

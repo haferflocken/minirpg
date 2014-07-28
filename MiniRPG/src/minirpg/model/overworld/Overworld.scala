@@ -13,6 +13,8 @@ import minirpg.model.world.World
 import minirpg.loaders.WorldLoader
 import minirpg.model.Region
 import minirpg.model.Canvasable
+import minirpg.ui.ResizableCanvas
+import javafx.scene.canvas.GraphicsContext
 
 class Overworld(
     val terrain : Terrain,
@@ -117,36 +119,39 @@ class Overworld(
     return artilleryDoughnut.clip(0, 0, width, height);
   };
   
-  /**
-   * Make a canvas of some given dimensions and return it, along with the
-   * width and height of the border surrounding it.
-   */
-  def mkCanvas(imageWidth : Int, imageHeight : Int) : Canvas = {
-    val canvas = terrain.mkCanvas(imageWidth, imageHeight);
-    val g = canvas.graphicsContext2D;
-    
+  def mkResizableCanvas : ResizableCanvas = {
+    val canvas = terrain.mkResizableCanvas;
+    for (((l1, l2), path) <- roads) {
+      canvas.layers += drawPath(path) _;
+    }
+    canvas.layers += drawWorlds;
+    return canvas;
+  };
+  
+  def drawPath(path : Vector[(Int, Int)])(g : GraphicsContext, imageWidth : Double, imageHeight : Double) : Unit = {
     val tileWidth = imageWidth.toDouble / width;
     val tileHeight = imageHeight.toDouble / height;
-    val halfTileWidth = tileWidth / 2;
-    val halfTileHeight = tileHeight / 2;
     
-    var i = 0;
-    for (((l1, l2), path) <- roads) {
-      i += 1;
-      g.fill = Color.rgb(255 * i / roads.size, 0, 0);
-      for (p <- path) {
-        val rX = p._1 * imageWidth / width;
-        val rY = p._2 * imageHeight / height;
-        g.fillRect(rX, rY, tileWidth, tileHeight);
-      }
+    for (j <- 0 until path.length) {
+      val p = path(j);
+      g.setFill(Color.rgb(255 * j / path.length, 0, 0));
+      val rX = p._1 * imageWidth / width;
+      val rY = p._2 * imageHeight / height;
+      g.fillRect(rX, rY, tileWidth, tileHeight);
     }
+  };
+  
+  def drawWorlds(g : GraphicsContext, imageWidth : Double, imageHeight : Double) : Unit = {
+    val halfTileWidth = imageWidth.toDouble / width / 2;
+    val halfTileHeight = imageHeight.toDouble / height / 2;
     
-    g.stroke = Color.BLUE;
-    g.fill = Color.WHITE;
+    g.setStroke(Color.BLUE);
+    g.setFill(Color.WHITE);
     for ((w, (r, ls)) <- worlds) {
       // Fill the background of the polygon.
-      val poly = ls.map(l => (l.x.toDouble, l.y.toDouble));
-      g.fillPolygon(poly);
+      val polyX = ls.map(l => l.x.toDouble).toArray;
+      val polyY = ls.map(l => l.y.toDouble).toArray;
+      g.fillPolygon(polyX, polyY, ls.size);
       
       // Draw the lines of the polygon.
       for (i <- 0 until ls.length; j <- i + 1 until ls.length) {
@@ -159,8 +164,6 @@ class Overworld(
         g.strokeLine(l1X, l1Y, l2X, l2Y);
       }
     }
-    
-    return canvas;
   };
 
 }

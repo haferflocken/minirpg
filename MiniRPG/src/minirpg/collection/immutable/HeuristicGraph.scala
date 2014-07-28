@@ -41,43 +41,39 @@ class HeuristicGraph[K](
     val open = new CountingMinDHeap[K](d, nodes.size / 4); // The open set ordered by estimated cost.
     val closed = new mutable.HashSet[K]; // The nodes that have been evaluated already.
     val dist = new mutable.HashMap[K, Int]; // The actual cost so far to a node.
-    val estimate = new mutable.HashMap[(K, K), Int]; // The estimated cost to a node to a goal.
     val previous = new mutable.HashMap[K, K];
     val outPaths = new mutable.HashMap[K, Queue[K]];
     
     open.add(startId, 0);
     dist(startId) = 0;
-    for (goal <- endNodes)
-      estimate((startId, goal)) = dist(startId) + heuristic(startId, goal);
     
     while (open.nonEmpty) {
       val (u, uDist) = open.deleteMin;
       
       // If we have found a path we are looking for, save it.
       if (endNodes.contains(u)) {
+        // Build the path.
         var outPath = Queue[K]();
         var outU = u;
-        
-        // Build the path, with an extra clause to prevent infinite loops.
-        while (previous.contains(outU) && !outPath.contains(outU)) {
+        while (previous.contains(outU)) {
           outPath = outU +: outPath;
           outU = previous(outU);
         }
         
-        // If no cycle was found, keep the path.
-        if (!outPath.contains(outU))
-          outPaths.update(u, outPath);
-        else
-          println(s"Cycle detected while finding path from $startId to $u at $outU.");
-        
+        // Save the path and stop looking for it.
+        outPaths.update(u, outPath);
         endNodes -= u;
         if (endNodes.size <= 0)
           return outPaths.toMap;
       }
       
+      // Add the node to the closed set, then go over its unvisited neighbors.
       closed += u;
-      for ((v, weight) <- connections(u) if (!closed.contains(v))) {
+      for ((v, weight) <- connections(u) if !closed.contains(v)) {
         val alt = uDist + weight;
+        
+        // If we haven't considered this node or if we found a shorter path to it,
+        // re-estimate its cost and then add it to the open set or update its priority.
         if (!open.contains(v) || alt < dist(v)) {
           dist(v) = alt;
           previous(v) = u;
@@ -86,7 +82,6 @@ class HeuristicGraph[K](
             val est = alt + heuristic(v, goal);
             if (est < minEstimate) 
               minEstimate = est;
-            estimate((v, goal)) = est;
           }
           if (!open.contains(v))
             open.add(v, minEstimate);

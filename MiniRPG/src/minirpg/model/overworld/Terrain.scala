@@ -11,11 +11,14 @@ import scala.collection.mutable
 import minirpg.model.Region
 import minirpg.model.Canvasable
 import minirpg.collection.immutable.HeuristicGraph
+import minirpg.ui.ResizableCanvas
+import javafx.scene.canvas.GraphicsContext
 
 class Terrain(
     val grid : Vector[Vector[Double]],
     val gradient : Vector[Vector[(Double, Double)]],
-    val waterLevel : Double) extends Canvasable {
+    val waterLevel : Double,
+    var painter : TerrainPainter) extends Canvasable {
   
   val width = grid.length;
   val height = grid(0).length;
@@ -61,14 +64,17 @@ class Terrain(
     new HeuristicGraph(conMap.keySet.toSet, conMap.toMap, HeuristicGraph.manhattanDist, true);
   }
   
-  def mkCanvas(imageWidth : Int, imageHeight : Int) : Canvas =
-    mkCanvas(imageWidth, imageHeight, TropicalPainter);
+  def mkResizableCanvas : ResizableCanvas = {
+    val canvas = new ResizableCanvas;
+    canvas.layers += draw;
+    return canvas;
+  };
   
-  def mkCanvas(imageWidth : Int, imageHeight : Int, painter : TerrainPainter) : Canvas = {
-    val canvas = new Canvas(imageWidth, imageHeight);
-    val g = canvas.graphicsContext2D;
-    val tileWidth = imageWidth.toDouble / width;
-    val tileHeight = imageHeight.toDouble / height;
+  def draw(g : GraphicsContext, imageWidth : Double, imageHeight : Double) : Unit = {
+    val tileWidth = imageWidth / width;
+    val tileHeight = imageHeight / height;
+    val intWidth = imageWidth.toInt;
+    val intHeight = imageHeight.toInt;
     
     val landHeightRange = (maxHeight - waterLevel);
     val waterHeightRange = (waterLevel - minHeight);
@@ -76,31 +82,24 @@ class Terrain(
     for (i <- 0 until width; j <- 0 until height) {
       if (grid(i)(j) > waterLevel) {
         val percHeight = (grid(i)(j) - waterLevel) / landHeightRange;
-        g.fill = painter.paintForLand(percHeight, gradient(i)(j));
+        g.setFill(painter.paintForLand(percHeight, gradient(i)(j)));
       }
       else {
         val percDepth = (waterLevel + grid(i)(j)) / waterHeightRange;
-        g.fill = painter.paintForWater(percDepth, gradient(i)(j));
+        g.setFill(painter.paintForWater(percDepth, gradient(i)(j)));
       }
-      val x = i * imageWidth / width;
-      val y = j * imageHeight / height;
+      val x = i * intWidth / width;
+      val y = j * intHeight / height;
       g.fillRect(x, y, tileWidth, tileHeight);
     }
-    
-    return canvas;
-  }
-  
-  def mkImage(imageWidth : Int, imageHeight : Int, painter : TerrainPainter = TropicalPainter) : Image = {
-    val canvas = mkCanvas(imageWidth, imageHeight, painter);
-    return canvas.snapshot(new SnapshotParameters, new WritableImage(imageWidth, imageHeight));
-  }
+  };
   
   def crop(rX : Int, rY : Int, rWidth : Int, rHeight : Int) : Terrain = {
     if (rX == 0 && rY == 0 && rWidth == width && rHeight == height)
       return this;
     val cGrid = grid.slice(rX, rX + rWidth).map(v => v.slice(rY, rY + rHeight));
     val cGrad = gradient.slice(rX, rX + rWidth).map(v => v.slice(rY, rY + rHeight));
-    return new Terrain(cGrid, cGrad, waterLevel);
+    return new Terrain(cGrid, cGrad, waterLevel, painter);
   }
   
   def isInBounds(x : Int, y : Int) = x >= 0 && y >= 0 && x < width && y < height;
@@ -122,7 +121,7 @@ class Terrain(
 
 object Terrain {
   
-  def mkRandomTerrain(gridSize : Int, maxHeight : Double, waterLevel : Double) : Terrain = {
+  def mkRandomTerrain(gridSize : Int, maxHeight : Double, waterLevel : Double, painter : TerrainPainter = TropicalPainter) : Terrain = {
     val gridBuff = new Array[Double](gridSize * gridSize);
     
     // Create initial random seed values.
@@ -157,7 +156,7 @@ object Terrain {
     val grid = unrolledGrid.grouped(gridSize).toVector;
     val unrolledGradient = gradientBuff.toVector;
     val gradient = unrolledGradient.grouped(gridSize).toVector;
-    return new Terrain(grid, gradient, waterLevel);
+    return new Terrain(grid, gradient, waterLevel, painter);
   }
   
   private def diamondSquareStep(gridBuff : Array[Double], gridSize : Int, sideLength : Int, scale : Double) : Unit = {
