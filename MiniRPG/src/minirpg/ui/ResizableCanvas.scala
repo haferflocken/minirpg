@@ -8,7 +8,7 @@ import javafx.beans.value.ObservableValue
 
 class ResizableCanvas extends Canvas {
   
-  val layers = new mutable.ArrayBuffer[(GraphicsContext, Double, Double) => Unit];
+  val layers = new mutable.ArrayBuffer[ResizableCanvas.ResizableLayer];
   
   private val sizeListener = new ChangeListener[Any] {
     def changed(observable : ObservableValue[_], oldValue : Any, newValue : Any) : Unit = redraw;
@@ -23,7 +23,7 @@ class ResizableCanvas extends Canvas {
     
     g.clearRect(0, 0, width, height);
     for (layer <- layers) {
-      layer(g, width, height);
+      layer.draw(g, width, height);
     }
   };
   
@@ -31,4 +31,16 @@ class ResizableCanvas extends Canvas {
   override def prefWidth(width : Double) = getWidth;
   override def prefHeight(height : Double) = getHeight;
 
+}
+
+object ResizableCanvas {
+  
+  abstract class ResizableLayer {
+    
+    def draw(g : GraphicsContext, canvasWidth : Double, canvasHeight : Double) : Unit;
+    
+    def isClickableAt(mouseX : Double, mouseY : Double, canvasWidth : Double, canvasHeight : Double) : Boolean;
+    
+  }
+  
 }

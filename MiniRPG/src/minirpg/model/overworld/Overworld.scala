@@ -12,16 +12,16 @@ import scalafx.scene.paint.Color
 import minirpg.model.world.World
 import minirpg.loaders.WorldLoader
 import minirpg.model.Region
-import minirpg.model.Canvasable
 import minirpg.ui.ResizableCanvas
 import javafx.scene.canvas.GraphicsContext
+import scala.collection.immutable.HashSet
 
 class Overworld(
     val terrain : Terrain,
     val worlds : Map[World, (Region, Vector[Landmark])],
     val artillery : Landmark,
     val artilleryInnerRadius : Int,
-    private var _artilleryOuterRadius : Int) extends Canvasable {
+    private var _artilleryOuterRadius : Int) {
   
   val width = terrain.width;
   val height = terrain.height;
@@ -122,28 +122,42 @@ class Overworld(
   def mkResizableCanvas : ResizableCanvas = {
     val canvas = terrain.mkResizableCanvas;
     for (((l1, l2), path) <- roads) {
-      canvas.layers += drawPath(path) _;
+      canvas.layers += new RoadLayer(path, width, height);
     }
-    canvas.layers += drawWorlds;
+    canvas.layers += new WorldsLayer(worlds, width, height);
     return canvas;
   };
+
+}
+
+class RoadLayer(road : Vector[(Int, Int)], overworldWidth : Int, overworldHeight : Int) extends ResizableCanvas.ResizableLayer {
   
-  def drawPath(path : Vector[(Int, Int)])(g : GraphicsContext, imageWidth : Double, imageHeight : Double) : Unit = {
-    val tileWidth = imageWidth.toDouble / width;
-    val tileHeight = imageHeight.toDouble / height;
+  val region = new Region(HashSet() ++ road);
+  
+  def draw(g : GraphicsContext, canvasWidth : Double, canvasHeight : Double) : Unit = {
+    val tileWidth = canvasWidth.toDouble / overworldWidth;
+    val tileHeight = canvasHeight.toDouble / overworldHeight;
     
-    for (j <- 0 until path.length) {
-      val p = path(j);
-      g.setFill(Color.rgb(255 * j / path.length, 0, 0));
-      val rX = p._1 * imageWidth / width;
-      val rY = p._2 * imageHeight / height;
+    for (j <- 0 until road.length) {
+      val p = road(j);
+      g.setFill(Color.rgb(255 * j / road.length, 0, 0));
+      val rX = p._1 * canvasWidth / overworldWidth;
+      val rY = p._2 * canvasHeight / overworldHeight;
       g.fillRect(rX, rY, tileWidth, tileHeight);
     }
   };
   
-  def drawWorlds(g : GraphicsContext, imageWidth : Double, imageHeight : Double) : Unit = {
-    val halfTileWidth = imageWidth.toDouble / width / 2;
-    val halfTileHeight = imageHeight.toDouble / height / 2;
+  def isClickableAt(mouseX : Double, mouseY : Double, canvasWidth : Double, canvasHeight : Double) = 
+    region.contains((mouseX / canvasWidth).toInt, (mouseY / canvasHeight).toInt);
+  
+}
+
+class WorldsLayer(worlds : Map[World, (Region, Vector[Landmark])], overworldWidth : Int, overworldHeight : Int)
+  extends ResizableCanvas.ResizableLayer {
+  
+  def draw(g : GraphicsContext, canvasWidth : Double, canvasHeight : Double) : Unit = {
+    val halfTileWidth = canvasWidth.toDouble / overworldWidth / 2;
+    val halfTileHeight = canvasHeight.toDouble / overworldHeight / 2;
     
     g.setStroke(Color.BLUE);
     g.setFill(Color.WHITE);
@@ -157,15 +171,25 @@ class Overworld(
       for (i <- 0 until ls.length; j <- i + 1 until ls.length) {
         val l1 = ls(i);
         val l2 = ls(j);
-        val l1X = l1.x * imageWidth / width + halfTileWidth;
-        val l1Y = l1.y * imageHeight / height + halfTileHeight;
-        val l2X = l2.x * imageWidth / width + halfTileWidth;
-        val l2Y = l2.y * imageHeight / height + halfTileHeight;
+        val l1X = l1.x * canvasWidth / overworldWidth + halfTileWidth;
+        val l1Y = l1.y * canvasHeight / overworldHeight + halfTileHeight;
+        val l2X = l2.x * canvasWidth / overworldWidth + halfTileWidth;
+        val l2Y = l2.y * canvasHeight / overworldHeight + halfTileHeight;
         g.strokeLine(l1X, l1Y, l2X, l2Y);
       }
     }
   };
-
+  
+  def isClickableAt(mouseX : Double, mouseY : Double, canvasWidth : Double, canvasHeight : Double) : Boolean = {
+    val mGX = (mouseX / canvasWidth).toInt;
+    val mGY = (mouseY / canvasHeight).toInt;
+    for ((w, (r, ls)) <- worlds) {
+      if (r.contains(mGX, mGY))
+        return true;
+    }
+    return false;
+  };
+  
 }
 
 object Overworld {

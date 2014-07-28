@@ -9,7 +9,6 @@ import scalafx.scene.canvas.Canvas
 import scalafx.scene.SnapshotParameters
 import scala.collection.mutable
 import minirpg.model.Region
-import minirpg.model.Canvasable
 import minirpg.collection.immutable.HeuristicGraph
 import minirpg.ui.ResizableCanvas
 import javafx.scene.canvas.GraphicsContext
@@ -18,7 +17,7 @@ class Terrain(
     val grid : Vector[Vector[Double]],
     val gradient : Vector[Vector[(Double, Double)]],
     val waterLevel : Double,
-    var painter : TerrainPainter) extends Canvasable {
+    var painter : TerrainPainter) {
   
   val width = grid.length;
   val height = grid(0).length;
@@ -66,32 +65,8 @@ class Terrain(
   
   def mkResizableCanvas : ResizableCanvas = {
     val canvas = new ResizableCanvas;
-    canvas.layers += draw;
+    canvas.layers += new TerrainLayer(this);
     return canvas;
-  };
-  
-  def draw(g : GraphicsContext, imageWidth : Double, imageHeight : Double) : Unit = {
-    val tileWidth = imageWidth / width;
-    val tileHeight = imageHeight / height;
-    val intWidth = imageWidth.toInt;
-    val intHeight = imageHeight.toInt;
-    
-    val landHeightRange = (maxHeight - waterLevel);
-    val waterHeightRange = (waterLevel - minHeight);
-    
-    for (i <- 0 until width; j <- 0 until height) {
-      if (grid(i)(j) > waterLevel) {
-        val percHeight = (grid(i)(j) - waterLevel) / landHeightRange;
-        g.setFill(painter.paintForLand(percHeight, gradient(i)(j)));
-      }
-      else {
-        val percDepth = (waterLevel + grid(i)(j)) / waterHeightRange;
-        g.setFill(painter.paintForWater(percDepth, gradient(i)(j)));
-      }
-      val x = i * intWidth / width;
-      val y = j * intHeight / height;
-      g.fillRect(x, y, tileWidth, tileHeight);
-    }
   };
   
   def crop(rX : Int, rY : Int, rWidth : Int, rHeight : Int) : Terrain = {
@@ -116,6 +91,36 @@ class Terrain(
   
   def isLand(region : Region) : Boolean =
     region.coords.forall((c : (Int, Int)) => isLand(c._1 + region.anchorX, c._2 + region.anchorY));
+  
+}
+
+class TerrainLayer(terrain : Terrain) extends ResizableCanvas.ResizableLayer {
+  
+  def draw(g : GraphicsContext, imageWidth : Double, imageHeight : Double) : Unit = {
+    val tileWidth = imageWidth / terrain.width;
+    val tileHeight = imageHeight / terrain.height;
+    val intWidth = imageWidth.toInt;
+    val intHeight = imageHeight.toInt;
+    
+    val landHeightRange = (terrain.maxHeight - terrain.waterLevel);
+    val waterHeightRange = (terrain.waterLevel - terrain.minHeight);
+    
+    for (i <- 0 until terrain.width; j <- 0 until terrain.height) {
+      if (terrain.grid(i)(j) > terrain.waterLevel) {
+        val percHeight = (terrain.grid(i)(j) - terrain.waterLevel) / landHeightRange;
+        g.setFill(terrain.painter.paintForLand(percHeight, terrain.gradient(i)(j)));
+      }
+      else {
+        val percDepth = (terrain.waterLevel + terrain.grid(i)(j)) / waterHeightRange;
+        g.setFill(terrain.painter.paintForWater(percDepth, terrain.gradient(i)(j)));
+      }
+      val x = i * intWidth / terrain.width;
+      val y = j * intHeight / terrain.height;
+      g.fillRect(x, y, tileWidth, tileHeight);
+    }
+  };
+  
+  def isClickableAt(mouseX : Double, mouseY : Double, canvasWidth : Double, canvasHeight : Double) = true;
   
 }
 
