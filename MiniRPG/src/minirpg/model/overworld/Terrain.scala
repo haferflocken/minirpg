@@ -120,7 +120,7 @@ class TerrainLayer(terrain : Terrain) extends ResizableCanvas.ResizableLayer {
     }
   };
   
-  def isClickableAt(mouseX : Double, mouseY : Double, canvasWidth : Double, canvasHeight : Double) = true;
+  def isClickableAt(x : Double, y : Double, canvasWidth : Double, canvasHeight : Double) = true;
   
 }
 

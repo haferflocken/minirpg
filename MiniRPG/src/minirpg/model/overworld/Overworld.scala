@@ -147,8 +147,8 @@ class RoadLayer(road : Vector[(Int, Int)], overworldWidth : Int, overworldHeight
     }
   };
   
-  def isClickableAt(mouseX : Double, mouseY : Double, canvasWidth : Double, canvasHeight : Double) = 
-    region.contains((mouseX / canvasWidth).toInt, (mouseY / canvasHeight).toInt);
+  def isClickableAt(x : Double, y : Double, canvasWidth : Double, canvasHeight : Double) = 
+    region.contains((x / canvasWidth).toInt, (y / canvasHeight).toInt);
   
 }
 
@@ -180,11 +180,11 @@ class WorldsLayer(worlds : Map[World, (Region, Vector[Landmark])], overworldWidt
     }
   };
   
-  def isClickableAt(mouseX : Double, mouseY : Double, canvasWidth : Double, canvasHeight : Double) : Boolean = {
-    val mGX = (mouseX / canvasWidth).toInt;
-    val mGY = (mouseY / canvasHeight).toInt;
+  def isClickableAt(x : Double, y : Double, canvasWidth : Double, canvasHeight : Double) : Boolean = {
+    val gX = (x / canvasWidth).toInt;
+    val gY = (y / canvasHeight).toInt;
     for ((w, (r, ls)) <- worlds) {
-      if (r.contains(mGX, mGY))
+      if (r.contains(gX, gY))
         return true;
     }
     return false;

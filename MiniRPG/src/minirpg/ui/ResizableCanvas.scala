@@ -16,6 +16,15 @@ class ResizableCanvas extends Canvas {
   widthProperty.addListener(sizeListener);
   heightProperty.addListener(sizeListener);
   
+  def layerAt(x : Double, y : Double) : ResizableCanvas.ResizableLayer = {
+    for (i <- Range(layers.length - 1, -1, -1)) {
+      val layer = layers(i);
+      if (layer.isClickableAt(x, y, getWidth, getHeight))
+        return layer;
+    }
+    return null;
+  };
+  
   private def redraw : Unit = {
     val g = getGraphicsContext2D();
     val width = getWidth;
@@ -39,7 +48,7 @@ object ResizableCanvas {
     
     def draw(g : GraphicsContext, canvasWidth : Double, canvasHeight : Double) : Unit;
     
-    def isClickableAt(mouseX : Double, mouseY : Double, canvasWidth : Double, canvasHeight : Double) : Boolean;
+    def isClickableAt(x : Double, y : Double, canvasWidth : Double, canvasHeight : Double) : Boolean;
     
   }
   
