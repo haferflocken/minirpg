@@ -18,57 +18,25 @@ import scalafx.scene.input.KeyCode
 import scalafx.scene.control.Tooltip
 import scalafx.scene.shape.Ellipse
 import minirpg.model.Region
+import minirpg.ui.overworld.OverworldDisplay
 
 class OverworldScene(val overworld : Overworld) extends Scene with Initializable with Tickable {
   
+  val overworldDisplay = new OverworldDisplay(overworld);
+  
   fill = Color.BLACK;
-  content = new BorderPane {
+  content = new OverworldDisplay(overworld) {
     minWidth <== OverworldScene.this.width;
     minHeight <== OverworldScene.this.height;
     
-    val oIWidth = MiniRPGApp.width;
+    /*val oIWidth = MiniRPGApp.width;
     val oIHeight = oIWidth * overworld.height / overworld.width;
     
     center = new AnchorPane {
       // Add the background image (terrain and roads).
-      val overworldCanvas = overworld.mkResizableCanvas;
-      overworldCanvas.setWidth(oIWidth);
-      overworldCanvas.setHeight(oIHeight);
+      overworldCanvas.width = oIWidth;
+      overworldCanvas.height = oIHeight;
       content = overworldCanvas;
-      
-      // Add the clickable landmark nodes.
-      val artilleryRegion = overworld.artilleryRegion;
-      val tileWidth = oIWidth / overworld.width;
-      val tileHeight = oIHeight / overworld.height;
-      val xOffset = (-Landmark.Image.width() + tileWidth) / 2;
-      val yOffset = (-Landmark.Image.height() + tileHeight) / 2;
-      
-      for (l <- overworld.allLandmarks) {
-        // Make the node.
-        val landmarkNode = {
-          // Nodes that aren't in the artillery region are clickable and display a tooltip.
-          if (!artilleryRegion.contains(l.x, l.y)) {
-            new ImageView(Landmark.Image) {
-              Tooltip.install(this, l.name);
-              onMouseClicked = (me : MouseEvent) => {
-  	            println(l.toString);
-  	            val world = WorldLoader.loadJsonFile(l.worldPath);
-  	            MiniRPGApp.scene = new WorldScene(world, l.portalIndex);
-              };
-            }
-          }
-          // Nodes in the artillery region display a "destroyed" tooltip and are not clickable.
-          else {
-            new ImageView(Landmark.DestroyedImage) {
-              Tooltip.install(this, l.name + " (Destroyed)");
-            }
-          }
-        };
-        // Add the node to this pane.
-        AnchorPane.setLeftAnchor(landmarkNode, l.x * oIWidth / overworld.width + xOffset);
-        AnchorPane.setTopAnchor(landmarkNode, l.y * oIHeight / overworld.height + yOffset);
-        content add landmarkNode;
-      }
       
       // Add the artillery area indicator.
       val artilleryImageWidth = artilleryRegion.width * oIWidth / overworld.width;
@@ -82,7 +50,7 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
       AnchorPane.setLeftAnchor(artilleryNode, artilleryX);
       AnchorPane.setTopAnchor(artilleryNode, artilleryY);
       content add artilleryNode;
-    };
+    };*/
   };
   
   onMouseMoved = (me : MouseEvent) => {
@@ -94,8 +62,10 @@ class OverworldScene(val overworld : Overworld) extends Scene with Initializable
   };
 
   onKeyPressed = (ke : KeyEvent) => {
-  	if (ke.code == KeyCode.R)
-  	  MiniRPGApp.scene = new NewGameSetupScene;
+  	ke.code match {
+  	  case KeyCode.R => MiniRPGApp.scene = new NewGameSetupScene;
+  	  case _ => ;
+  	}
   };
   
   onKeyReleased = (ke : KeyEvent) => {

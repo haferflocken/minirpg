@@ -7,7 +7,7 @@ import scalafx.scene.paint.Color
 import scalafx.scene.layout.StackPane
 import minirpg.ui.MiniRPGApp
 import scalafx.scene.text.Text
-import minirpg.model.overworld.Overworld
+import minirpg.model.overworld.{Overworld, OverworldGenerator}
 import minirpg.loaders.WorldLoader
 import scalafx.geometry.Pos
 import scala.concurrent._
@@ -54,7 +54,7 @@ class NewGameSetupScene extends Scene with Initializable with Tickable {
   def init : Unit = {
     import ExecutionContext.Implicits.global
     val overworldFuture = Future[Overworld] {
-      Overworld.mkRandomOverworld(200, 100, 18, 6);
+      OverworldGenerator.mkRandomOverworld(200, 100, 18, 6);
     }
     overworldFuture onSuccess {
       case overworld => {

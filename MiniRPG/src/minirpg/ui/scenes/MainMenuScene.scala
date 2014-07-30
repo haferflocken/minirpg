@@ -9,7 +9,7 @@ import scalafx.scene.text.Text
 import scalafx.scene.control.Button
 import minirpg.ui.MiniRPGApp
 import minirpg.util.Tickable
-import minirpg.model.overworld.Terrain
+import minirpg.model.overworld.terrain.Terrain
 import scalafx.scene.image.ImageView
 import minirpg.model.overworld.Overworld
 import scalafx.scene.layout.BorderPane

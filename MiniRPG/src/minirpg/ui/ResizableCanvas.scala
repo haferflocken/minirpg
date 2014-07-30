@@ -1,14 +1,16 @@
 package minirpg.ui
 
 import collection.mutable
-import javafx.beans.value.ChangeListener
-import javafx.scene.canvas.Canvas
-import javafx.scene.canvas.GraphicsContext
-import javafx.beans.value.ObservableValue
+import scalafx.scene.Node
+import scalafx.delegate.SFXDelegate
+import scalafx.beans.property.DoubleProperty
+import scalafx.scene.canvas.GraphicsContext
+import scalafx.Includes._
 
-class ResizableCanvas extends Canvas {
-  
-  val layers = new mutable.ArrayBuffer[ResizableCanvas.ResizableLayer];
+class ResizableJFXCanvas extends javafx.scene.canvas.Canvas {
+  import javafx.beans.value.ChangeListener
+  import javafx.scene.canvas.GraphicsContext
+  import javafx.beans.value.ObservableValue
   
   private val sizeListener = new ChangeListener[Any] {
     def changed(observable : ObservableValue[_], oldValue : Any, newValue : Any) : Unit = redraw;
@@ -16,24 +18,11 @@ class ResizableCanvas extends Canvas {
   widthProperty.addListener(sizeListener);
   heightProperty.addListener(sizeListener);
   
-  def layerAt(x : Double, y : Double) : ResizableCanvas.ResizableLayer = {
-    for (i <- Range(layers.length - 1, -1, -1)) {
-      val layer = layers(i);
-      if (layer.isClickableAt(x, y, getWidth, getHeight))
-        return layer;
-    }
-    return null;
-  };
+  var renderer : ResizableCanvas.Renderer = null;
   
-  private def redraw : Unit = {
-    val g = getGraphicsContext2D();
-    val width = getWidth;
-    val height = getHeight;
-    
-    g.clearRect(0, 0, width, height);
-    for (layer <- layers) {
-      layer.draw(g, width, height);
-    }
+  def redraw : Unit = {
+    if (renderer != null)
+        renderer.draw(getGraphicsContext2D, getWidth, getHeight);
   };
   
   override def isResizable() = true;
@@ -42,14 +31,40 @@ class ResizableCanvas extends Canvas {
 
 }
 
-object ResizableCanvas {
+class ResizableCanvas(override val delegate : ResizableJFXCanvas = new ResizableJFXCanvas)
+  extends Node(delegate) with SFXDelegate[ResizableJFXCanvas] {
   
-  abstract class ResizableLayer {
+  def renderer = delegate.renderer;
+  
+  def renderer_=(v : ResizableCanvas.Renderer) = delegate.renderer = v;
+  
+  def redraw : Unit = delegate.redraw;
     
+  def height: DoubleProperty = delegate.heightProperty;
+  
+  def height_=(v: Double) : Unit = height() = v;
+
+  def width: DoubleProperty = delegate.widthProperty;
+  
+  def width_=(v: Double) : Unit = width() = v;
+
+  def graphicsContext2D: GraphicsContext = delegate.getGraphicsContext2D;
+  
+}
+
+object ResizableCanvas {
+  implicit def sfxResizableCanvas2jfx(v: ResizableCanvas) = v.delegate;
+  
+  abstract class Renderer {
     def draw(g : GraphicsContext, canvasWidth : Double, canvasHeight : Double) : Unit;
-    
-    def isClickableAt(x : Double, y : Double, canvasWidth : Double, canvasHeight : Double) : Boolean;
-    
   }
   
+  class LayeredRenderer extends Renderer {
+    val layers = new mutable.ArrayBuffer[Renderer];
+    
+    def draw(g : GraphicsContext, canvasWidth : Double, canvasHeight : Double) : Unit = {
+      for (painter <- layers)
+        painter.draw(g, canvasWidth, canvasHeight);
+    };
+  }
 }
